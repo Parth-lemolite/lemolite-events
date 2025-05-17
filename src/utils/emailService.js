@@ -42,14 +42,9 @@ const sendLeadNotification = async (lead) => {
         }
         ${
           lead.selectedProducts?.length
-            ? `<p><strong>Selected Products:</strong> ${lead.selectedProducts.join(
-                ", "
-              )}</p>`
-            : ""
-        }
-        ${
-          lead.userCount
-            ? `<p><strong>User Count:</strong> ${lead.userCount}</p>`
+            ? `<p><strong>Selected Products:</strong> ${lead.selectedProducts
+                .map((product) => product.productName)
+                .join(", ")}</p>`
             : ""
         }
     `;
@@ -73,9 +68,9 @@ const sendAcknowledgment = async (lead) => {
         }
         ${
           lead.selectedProducts?.length
-            ? `<p><strong>Selected Products:</strong> ${lead.selectedProducts.join(
-                ", "
-              )}</p>`
+            ? `<p><strong>Selected Products:</strong> ${lead.selectedProducts
+                .map((product) => product.productName)
+                .join(", ")}</p>`
             : ""
         }
         <p>Best regards,<br>Lemolite Team</p>

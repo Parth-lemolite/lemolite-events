@@ -56,6 +56,51 @@ npm start
 ### Leads
 
 - `POST /api/leads` - Create a new lead
+  Body example 1
+  {
+  "companyName": "Example Corp",
+  "fullName": "Monik Rolex",
+  "email": "monik@example.com",
+  "phoneNumber": "1234567890",
+  "interestedIn": "Product",
+  "engagementModel": "SaaS-Based Subscription",
+  "selectedProducts": [
+  {
+  "productName": "Nexstaff",
+  "userCountRange": "100-200",
+  "totalPrice": 5000
+  },
+  {
+  "productName": "Scan2Hire",
+  "userCountRange": "10-50",
+  "totalPrice": 3000
+  }
+  ],
+  "totalAmount": 8000
+  }
+
+  Body example 2
+  {
+  "companyName": "Example Corp",
+  "fullName": "Monik Rolex",
+  "email": "monik@example.com",
+  "phoneNumber": "1234567890",
+  "interestedIn": "Product",
+  "engagementModel": "Partner",
+  "selectedProducts": [
+  {
+  "productName": "Integrated"
+  },
+  {
+  "productName": "CRM"
+  },
+  {
+  "productName": "Dukadin"
+  }
+  ],
+  "totalAmount": 8000
+  }
+
 - `GET /api/leads` - Get all leads
 - `GET /api/leads/:id` - Get lead by ID
 - `PATCH /api/leads/:id/status` - Update lead status

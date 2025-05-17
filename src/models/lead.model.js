@@ -36,16 +36,40 @@ const leadSchema = new mongoose.Schema({
   },
   selectedProducts: [
     {
-      type: String,
-      enum: ["Scan2Hire", "Nexstaff", "Integrated", "CRM", "IMS", "Dukadin"],
+      productName: {
+        type: String,
+        enum: [
+          "Scan2Hire (S2H)",
+          "Nexstaff",
+          "Integrated (S2H + Nexstaff)",
+          "CRM",
+          "IMS",
+          "Dukadin",
+        ],
+        required: true,
+      },
+      userCountRange: {
+        type: String,
+        required: function () {
+          return this.parent().engagementModel === "SaaS-Based Subscription";
+        },
+        validate: {
+          validator: function (v) {
+            // Validate format like "1-10", "11-50", etc.
+            return /^\d+-\d+$/.test(v);
+          },
+          message: (props) =>
+            `${props.value} is not a valid user count range! Use format like "1-10"`,
+        },
+      },
+      totalPrice: {
+        type: Number,
+        required: function () {
+          return this.parent().engagementModel === "SaaS-Based Subscription";
+        },
+      },
     },
   ],
-  userCount: {
-    type: Number,
-    required: function () {
-      return this.engagementModel === "SaaS-Based Subscription";
-    },
-  },
   totalAmount: {
     type: Number,
     default: 0,
@@ -53,15 +77,9 @@ const leadSchema = new mongoose.Schema({
   payment: {
     orderId: {
       type: String,
-      required: function () {
-        return this.engagementModel === "SaaS-Based Subscription";
-      },
     },
     amount: {
       type: Number,
-      required: function () {
-        return this.engagementModel === "SaaS-Based Subscription";
-      },
     },
     currency: {
       type: String,

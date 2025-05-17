@@ -15,33 +15,67 @@ const leadSchema = Joi.object({
     }),
   selectedProducts: Joi.array()
     .items(
-      Joi.string().valid(
-        "Scan2Hire",
-        "Nexstaff",
-        "Integrated",
-        "CRM",
-        "IMS",
-        "Dukadin"
-      )
+      Joi.object({
+        productName: Joi.string()
+          .valid(
+            "Scan2Hire (S2H)",
+            "Nexstaff",
+            "Integrated (S2H + Nexstaff)",
+            "CRM",
+            "IMS",
+            "Dukadin"
+          )
+          .required(),
+        userCountRange: Joi.string()
+          .pattern(/^\d+-\d+$/)
+          .when("..engagementModel", {
+            is: "SaaS-Based Subscription",
+            then: Joi.required(),
+            otherwise: Joi.optional(),
+          })
+          .messages({
+            "string.pattern.base": 'User count range must be in format "1-10"',
+          }),
+        totalPrice: Joi.number().min(0).when("..engagementModel", {
+          is: "SaaS-Based Subscription",
+          then: Joi.required(),
+          otherwise: Joi.optional(),
+        }),
+      })
     )
     .when("interestedIn", {
       is: "Product",
       then: Joi.required(),
       otherwise: Joi.forbidden(),
     }),
-  userCount: Joi.number().integer().min(1).when("engagementModel", {
+  totalAmount: Joi.number().min(0).default(0).when("engagementModel", {
     is: "SaaS-Based Subscription",
     then: Joi.required(),
-    otherwise: Joi.forbidden(),
+    otherwise: Joi.optional(),
   }),
-  totalAmount: Joi.number().integer().default(0).optional(),
+  payment: Joi.object({
+    orderId: Joi.string(),
+    amount: Joi.number().min(0),
+    currency: Joi.string().default("INR"),
+    status: Joi.string()
+      .valid("pending", "completed", "failed")
+      .default("pending"),
+    paymentId: Joi.string(),
+    paymentDate: Joi.date(),
+    paymentDetails: Joi.object(),
+  }).optional(),
+  //   .when("engagementModel", {
+  //     is: "SaaS-Based Subscription",
+  //     then: Joi.required(),
+  //     otherwise: Joi.forbidden(),
+  //   }),
 });
 
 const validateLead = (req, res, next) => {
   const { error } = leadSchema.validate(req.body, { abortEarly: false });
   if (error) {
     const errors = error.details.map((detail) => ({
-      field: detail.path[0],
+      field: detail.path.join("."),
       message: detail.message,
     }));
     return res.status(400).json({

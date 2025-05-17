@@ -5,37 +5,72 @@ const {
 } = require("../utils/emailService");
 const paymentService = require("../services/payment.service");
 
+// Pricing per user per month (in INR)
+const PRODUCT_PRICING = {
+  Scan2Hire: 500,
+  Nexstaff: 400,
+  Integrated: 800,
+  CRM: 300,
+  IMS: 350,
+  Dukadin: 450,
+};
+
 // Create a new lead
 exports.createLead = async (req, res) => {
   try {
-    const lead = new Lead(req.body);
-    await lead.save();
+    const leadData = { ...req.body };
 
-    // If SaaS subscription, create payment order
-    if (lead.engagementModel === "SaaS-Based Subscription") {
-      const paymentOrder = await paymentService.createOrder(
-        lead,
-        req.body?.totalAmount || 0
+    // If SaaS subscription, process the products
+    if (leadData.engagementModel === "SaaS-Based Subscription") {
+      // Transform selectedProducts to include pricing details
+      leadData.selectedProducts = leadData.selectedProducts.map((product) => ({
+        productName: product.productName,
+        userCountRange: product.userCountRange, // Store the range as is
+        totalPrice: product.totalPrice, // Use total price from frontend
+      }));
+
+      // Calculate total amount from frontend data
+      leadData.totalAmount = leadData.selectedProducts.reduce(
+        (sum, product) => sum + product.totalPrice,
+        0
       );
 
-      // Update lead with payment details
-      lead.payment = {
-        orderId: paymentOrder.orderId,
-        amount: totalAmount,
-        status: "pending",
-      };
+      const lead = new Lead(leadData);
       await lead.save();
+
+      // Create payment order
+      //   const paymentOrder = await paymentService.createOrder(
+      //     lead,
+      //     leadData.totalAmount
+      //   );
+
+      //   // Update lead with payment details
+      //   lead.payment = {
+      //     orderId: paymentOrder.orderId,
+      //     amount: leadData.totalAmount,
+      //     status: "pending",
+      //   };
+      //   await lead.save();
+
+      //   return res.status(201).json({
+      //     success: true,
+      //     data: lead,
+      //     paymentLink: paymentOrder.paymentLink,
+      //     message: "Lead created successfully. Please complete the payment.",
+      //   });
 
       return res.status(201).json({
         success: true,
         data: lead,
-        paymentLink: paymentOrder.paymentLink,
-        message: "Lead created successfully. Please complete the payment.",
       });
     }
 
-    // For non-SaaS leads, just send notifications
-    // await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
+    // For non-SaaS leads
+    const lead = new Lead(leadData);
+    await lead.save();
+
+    // Send notifications
+    await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
 
     res.status(201).json({
       success: true,
@@ -46,6 +81,39 @@ exports.createLead = async (req, res) => {
     res.status(400).json({
       success: false,
       message: "Error creating lead",
+      error: error.message,
+    });
+  }
+};
+
+// Calculate pricing for selected products
+exports.calculatePricing = async (req, res) => {
+  try {
+    const { products } = req.body;
+
+    const calculations = products.map((product) => ({
+      productName: product.productName,
+      userCount: product.userCount,
+      pricePerUser: PRODUCT_PRICING[product.productName],
+      totalPrice: PRODUCT_PRICING[product.productName] * product.userCount,
+    }));
+
+    const totalAmount = calculations.reduce(
+      (sum, calc) => sum + calc.totalPrice,
+      0
+    );
+
+    res.status(200).json({
+      success: true,
+      data: {
+        calculations,
+        totalAmount,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Error calculating pricing",
       error: error.message,
     });
   }
@@ -202,48 +270,6 @@ exports.updateLeadStatus = async (req, res) => {
     res.status(400).json({
       success: false,
       message: "Error updating lead status",
-      error: error.message,
-    });
-  }
-};
-
-// Calculate pricing for SaaS subscription
-exports.calculatePricing = async (req, res) => {
-  try {
-    const { products, userCount } = req.body;
-
-    // Pricing per user per month (in INR)
-    const pricing = {
-      Scan2Hire: 500,
-      Nexstaff: 400,
-      Integrated: 800,
-      CRM: 300,
-      IMS: 350,
-      Dukadin: 450,
-    };
-
-    const calculations = products.map((product) => ({
-      product,
-      pricePerUser: pricing[product],
-      totalPrice: pricing[product] * userCount,
-    }));
-
-    const totalAmount = calculations.reduce(
-      (sum, calc) => sum + calc.totalPrice,
-      0
-    );
-
-    res.status(200).json({
-      success: true,
-      data: {
-        calculations,
-        totalAmount,
-      },
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Error calculating pricing",
       error: error.message,
     });
   }
