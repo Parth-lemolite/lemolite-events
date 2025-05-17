@@ -13,22 +13,10 @@ exports.createLead = async (req, res) => {
 
     // If SaaS subscription, create payment order
     if (lead.engagementModel === "SaaS-Based Subscription") {
-      const { products, userCount } = lead;
-      const pricing = {
-        Scan2Hire: 500,
-        Nexstaff: 400,
-        Integrated: 800,
-        CRM: 300,
-        IMS: 350,
-        Dukadin: 450,
-      };
-
-      const totalAmount = products.reduce(
-        (sum, product) => sum + pricing[product] * userCount,
-        0
+      const paymentOrder = await paymentService.createOrder(
+        lead,
+        req.body?.totalAmount || 0
       );
-
-      const paymentOrder = await paymentService.createOrder(lead, totalAmount);
 
       // Update lead with payment details
       lead.payment = {
@@ -47,7 +35,7 @@ exports.createLead = async (req, res) => {
     }
 
     // For non-SaaS leads, just send notifications
-    await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
+    // await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
 
     res.status(201).json({
       success: true,

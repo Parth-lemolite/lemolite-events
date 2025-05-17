@@ -34,6 +34,7 @@ const leadSchema = Joi.object({
     then: Joi.required(),
     otherwise: Joi.forbidden(),
   }),
+  totalAmount: Joi.number().integer().default(0).optional(),
 });
 
 const validateLead = (req, res, next) => {

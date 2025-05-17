@@ -46,6 +46,10 @@ const leadSchema = new mongoose.Schema({
       return this.engagementModel === "SaaS-Based Subscription";
     },
   },
+  totalAmount: {
+    type: Number,
+    default: 0,
+  },
   payment: {
     orderId: {
       type: String,
