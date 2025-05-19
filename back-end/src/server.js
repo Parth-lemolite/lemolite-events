@@ -46,9 +46,13 @@ function getLocalIPAddress() {
   return "127.0.0.1";
 }
 
-app.listen(PORT, HOST, () => {
+app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-  console.log(
-    `Server is accessible on your local network at http://${getLocalIPAddress()}:${PORT}`
-  );
 });
+
+// app.listen(PORT, HOST, () => {
+//   console.log(`Server is running on http://localhost:${PORT}`);
+//   console.log(
+//     `Server is accessible on your local network at http://${getLocalIPAddress()}:${PORT}`
+//   );
+// });
