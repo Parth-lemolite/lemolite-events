@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -158,6 +159,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: const MainScreen(),
+        builder: EasyLoading.init(),
     );
   }
 }
@@ -350,6 +352,7 @@ class AppController extends GetxController {
   }
 
   Future<bool> sendUserData(Map<String, dynamic> data) async {
+    EasyLoading.show(status: "Loading...");
     final response = await ApiService.post(
       data,
       'https://events.lemolite360.in/api/leads',
@@ -358,9 +361,11 @@ class AppController extends GetxController {
       if (kDebugMode) {
         print('response=======>${response.data}');
       }
+      EasyLoading.dismiss();
       return true;
       // Get.snackbar('Success', 'response.data['success']');
     } else {
+      EasyLoading.dismiss();
       return false;
     }
   }

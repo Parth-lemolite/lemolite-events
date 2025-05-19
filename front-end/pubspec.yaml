@@ -37,6 +37,7 @@ dependencies:
   get:
   google_fonts:
   dio:
+  flutter_easyloading:
 
 dev_dependencies:
   flutter_test:
