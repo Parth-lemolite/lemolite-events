@@ -82228,7 +82228,7 @@ oE(a){return this.X4(a)},
 X4(a){var s=0,r=A.O(t.y),q,p
 var $async$oE=A.K(function(b,c){if(b===1)return A.L(c,r)
 while(true)switch(s){case 0:s=3
-return A.P(A.Xb(a,"http://192.168.29.171:3000/api/leads"),$async$oE)
+return A.P(A.Xb(a,"https://events.lemolite360.in/api/leads"),$async$oE)
 case 3:p=c
 if(p!=null&&p.c===201){q=!0
 s=1

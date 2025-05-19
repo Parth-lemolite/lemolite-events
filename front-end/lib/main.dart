@@ -352,7 +352,7 @@ class AppController extends GetxController {
   Future<bool> sendUserData(Map<String, dynamic> data) async {
     final response = await ApiService.post(
       data,
-      'http://192.168.29.171:3000/api/leads',
+      'https://events.lemolite360.in/api/leads',
     );
     if (response != null && response.statusCode == 201) {
       if (kDebugMode) {
