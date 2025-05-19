@@ -1,10 +1,13 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:nairobi_app/service/api_service.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -73,7 +76,7 @@ class MyApp extends StatelessWidget {
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.white.withOpacity(0.9),
+          fillColor: Colors.white.withValues(alpha:0.9),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -138,7 +141,7 @@ class MyApp extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha:0.9),
           surfaceTintColor: Colors.white,
         ),
         appBarTheme: AppBarTheme(
@@ -183,8 +186,10 @@ class ProductInfo {
 
 // Controller
 class AppController extends GetxController {
+  // final RxDouble totalPrice = 0.0.obs;
   final Rx<FlowType?> selectedFlowType = Rx<FlowType?>(null);
   final Rx<EngagementModel?> engagementModel = Rx<EngagementModel?>(null);
+  final RxMap<String, String> productUserRanges = <String, String>{}.obs;
   final RxList<String> selectedProducts = <String>[].obs;
   final RxMap<String, int> productUserCounts = <String, int>{}.obs;
   final RxBool isSubmitted = false.obs;
@@ -205,6 +210,31 @@ class AppController extends GetxController {
   final contactFormKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> userCountControllers = {};
 
+  String getApiEngagementModel(EngagementModel? model) {
+    switch (model) {
+      case EngagementModel.saas:
+        return 'SaaS-Based Subscription';
+      case EngagementModel.reseller:
+        return 'Reseller';
+      case EngagementModel.partner:
+        return 'Partner';
+      case EngagementModel.whitelabel:
+        return 'Whitelabel';
+      default:
+        return ''; // Handle null case
+    }
+  }
+
+  double get totalPrice {
+    double total = 0.0;
+    for (var productName in selectedProducts) {
+      final product = productsList.firstWhere((p) => p.name == productName);
+      final userCount = productUserCounts[productName] ?? 1;
+      total += product.pricePerUser * userCount;
+    }
+    return total;
+  }
+
   List<ProductInfo> get productsList => [
     ProductInfo(
       name: 'Scan2Hire (S2H)',
@@ -221,7 +251,7 @@ class AppController extends GetxController {
       pricePerUser: 300.0,
     ),
     ProductInfo(
-      name: 'Integrated (S2H+Nexstaff)',
+      name: 'Integrated (S2H + Nexstaff)',
       description: 'Seamless staffing and document solution',
       icon: Icons.integration_instructions_outlined,
       color: const Color(0xFF2EC4B6),
@@ -250,14 +280,26 @@ class AppController extends GetxController {
     ),
   ];
 
-  double get totalPrice {
-    double total = 0.0;
-    for (var productName in selectedProducts) {
-      final product = productsList.firstWhere((p) => p.name == productName);
-      final userCount = productUserCounts[productName] ?? 1;
-      total += product.pricePerUser * userCount;
-    }
-    return total;
+  // void calculateTotalPrice() {
+  //   double total = 0.0;
+  //   for (var productName in selectedProducts) {
+  //     final product = productsList.firstWhere((p) => p.name == productName);
+  //     final userCount = productUserCounts[productName] ?? 1;
+  //     total += product.pricePerUser * userCount;
+  //   }
+  //   totalPrice.value = total;
+  //   debugPrint('Calculated totalPrice: ${totalPrice.value}');
+  // }
+
+  // New method to update user range
+  void updateUserRange(String productName, String range) {
+    productUserRanges[productName] = range;
+    // Update user count based on the range
+    final minUsers = int.parse(range.split('-')[0]);
+    productUserCounts[productName] = minUsers;
+    userCountControllers[productName]!.text = minUsers.toString();
+    debugPrint('Updated user range for $productName: $range, users: $minUsers');
+    // calculateTotalPrice(); // Update totalPrice after changing user range
   }
 
   int get totalSteps => engagementModel.value == EngagementModel.saas ? 4 : 3;
@@ -267,7 +309,10 @@ class AppController extends GetxController {
     super.onInit();
     for (var product in productsList) {
       userCountControllers[product.name] = TextEditingController(text: '1');
+      // Initialize default range
+      productUserRanges[product.name] = '1-10';
     }
+    // calculateTotalPrice();
   }
 
   @override
@@ -286,6 +331,7 @@ class AppController extends GetxController {
     engagementModel.value = null;
     selectedProducts.clear();
     productUserCounts.clear();
+    productUserRanges.clear(); // Clear ranges
     nameController.clear();
     emailController.clear();
     companyController.clear();
@@ -296,7 +342,27 @@ class AppController extends GetxController {
     hasError.value = false;
     activeStep.value = 0;
     isLoading.value = false;
+    // totalPrice.value = 0.0;
+    for (var product in productsList) {
+      productUserRanges[product.name] = '1-10'; // Reset ranges
+    }
     debugPrint('Flow reset');
+  }
+
+  Future<bool> sendUserData(Map<String, dynamic> data) async {
+    final response = await ApiService.post(
+      data,
+      'http://192.168.29.171:3000/api/leads',
+    );
+    if (response != null && response.statusCode == 201) {
+      if (kDebugMode) {
+        print('response=======>${response.data}');
+      }
+      return true;
+      // Get.snackbar('Success', 'response.data['success']');
+    } else {
+      return false;
+    }
   }
 
   void goToNextStep() {
@@ -314,6 +380,10 @@ class AppController extends GetxController {
     }
   }
 
+  // void updateUserRange(String productName, String range) {
+  //   productUserRanges[productName] = range;
+  //   debugPrint('Updated user range for $productName: $range');
+  // }
   void goToPreviousStep() {
     if (activeStep.value > 0) {
       if (activeStep.value == 3 &&
@@ -363,6 +433,7 @@ class AppController extends GetxController {
       debugPrint('Added product: $productName');
     }
     selectedProducts.refresh();
+    // calculateTotalPrice();
     debugPrint(
       'Toggled product: $productName, Selected: $selectedProducts, Length: ${selectedProducts.length}',
     );
@@ -377,6 +448,7 @@ class AppController extends GetxController {
       productUserCounts.remove(productName);
       selectedProducts.remove(productName);
       userCountControllers[productName]!.text = '1';
+      // calculateTotalPrice();
       debugPrint('Removed $productName due to invalid user count');
     }
   }
@@ -711,7 +783,7 @@ nAIrobi Team
       context: context,
       barrierDismissible: true,
       barrierLabel: '',
-      barrierColor: Colors.black.withOpacity(0.2),
+      barrierColor: Colors.black.withValues(alpha:0.2),
       pageBuilder: (context, animation1, animation2) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
@@ -720,7 +792,7 @@ nAIrobi Team
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              backgroundColor: Colors.white.withOpacity(0.9),
+              backgroundColor: Colors.white.withValues(alpha:0.9),
               title: Text(
                 'Thank You!',
                 style: GoogleFonts.montserrat(
@@ -778,7 +850,7 @@ nAIrobi Team
 }
 
 class MainScreen extends StatelessWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -809,13 +881,13 @@ class GradientButton extends StatelessWidget {
   final double borderRadius;
 
   const GradientButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.isLoading,
     required this.text,
     this.gradientColors = const [Color(0xFFBFD633), Color(0xFF2EC4F3)],
     this.borderRadius = 12,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -883,7 +955,7 @@ class _LandingScreenState extends State<LandingScreen> {
     return Stack(
       children: [
         Container(decoration: BoxDecoration(color: Colors.grey.shade200)),
-        Container(color: Colors.white.withOpacity(0.1)),
+        Container(color: Colors.white.withValues(alpha:0.1)),
         SafeArea(
           child: GestureDetector(
             onTap: () {
@@ -903,11 +975,11 @@ class _LandingScreenState extends State<LandingScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha:0.9),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
+                                color: Colors.black.withValues(alpha:0.08),
                                 blurRadius: 24,
                                 offset: const Offset(0, 8),
                               ),
@@ -1040,88 +1112,111 @@ class _LandingScreenState extends State<LandingScreen> {
                     const SizedBox(height: 32),
                     Obx(() {
                       return GradientButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (controller.landingFormKey.currentState != null &&
                               controller.landingFormKey.currentState!
                                   .validate()) {
                             if (selectedOption.value == 'Service') {
-                              showGeneralDialog(
-                                context: context,
-                                barrierDismissible: true,
-                                barrierLabel: '',
-                                barrierColor: Colors.black.withOpacity(0.2),
-                                pageBuilder: (context, animation1, animation2) {
-                                  return BackdropFilter(
-                                    filter: ImageFilter.blur(
-                                      sigmaX: 5,
-                                      sigmaY: 5,
-                                    ),
-                                    child: Center(
-                                      child: AlertDialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
-                                        ),
-                                        backgroundColor: Colors.white
-                                            .withOpacity(0.9),
-                                        title: Text(
-                                          'Thank You!',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF0F1C35),
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Icon(
-                                              Icons.check_circle_outline,
-                                              size: 48,
-                                              color: Colors.green,
+                              final formData = {
+                                'companyName':
+                                    controller.companyController.text,
+                                'fullName': controller.nameController.text,
+                                'email': controller.emailController.text,
+                                'phoneNumber': controller.phoneController.text,
+                                'interestedIn': 'Service',
+                              };
+                              if (kDebugMode) {
+                                print('data====>$formData');
+                              }
+                              final isSuccess = await controller.sendUserData(
+                                formData,
+                              );
+                              if (isSuccess) {
+                                showGeneralDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  barrierLabel: '',
+                                  barrierColor: Colors.black.withValues(alpha:0.2),
+                                  pageBuilder: (
+                                    context,
+                                    animation1,
+                                    animation2,
+                                  ) {
+                                    return BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                        sigmaX: 5,
+                                        sigmaY: 5,
+                                      ),
+                                      child: Center(
+                                        child: AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              16,
                                             ),
-                                            const SizedBox(height: 16),
-                                            Text(
-                                              'Our team will contact you shortly.',
-                                              style: GoogleFonts.inter(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                color: const Color(0xFF404B69),
+                                          ),
+                                          backgroundColor: Colors.white
+                                              .withValues(alpha:0.9),
+                                          title: Text(
+                                            'Thank You!',
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color(0xFF0F1C35),
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Icon(
+                                                Icons.check_circle_outline,
+                                                size: 48,
+                                                color: Colors.green,
                                               ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
-                                        actions: [
-                                          Center(
-                                            child: TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-
-                                                // Get.offAll(
-                                                //       () => const SuccessScreen(),
-                                                // );
-                                              },
-                                              child: Text(
-                                                'OK',
+                                              const SizedBox(height: 16),
+                                              Text(
+                                                'Our team will contact you shortly.',
                                                 style: GoogleFonts.inter(
                                                   fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
+                                                  fontWeight: FontWeight.w400,
                                                   color: const Color(
-                                                    0xFF2EC4F3,
+                                                    0xFF404B69,
+                                                  ),
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                          actions: [
+                                            Center(
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+
+                                                  // Get.offAll(
+                                                  //       () => const SuccessScreen(),
+                                                  // );
+                                                },
+                                                child: Text(
+                                                  'OK',
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: const Color(
+                                                      0xFF2EC4F3,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              );
+                                    );
+                                  },
+                                );
+                              }
+
                               // Get.off(() => const ServiceRequestFlow());
                             } else if (selectedOption.value == 'Product') {
                               controller.selectFlowType(FlowType.product);
@@ -1173,7 +1268,7 @@ class _LandingScreenState extends State<LandingScreen> {
 }
 
 class ServiceRequestFlow extends StatelessWidget {
-  const ServiceRequestFlow({Key? key}) : super(key: key);
+  const ServiceRequestFlow({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1194,7 +1289,7 @@ class ServiceRequestFlow extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(color: Colors.grey.shade200),
         child: Container(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha:0.1),
           child: SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -1248,7 +1343,7 @@ class ServiceRequestFlow extends StatelessWidget {
                                       context: context,
                                       barrierDismissible: true,
                                       barrierLabel: '',
-                                      barrierColor: Colors.black.withOpacity(
+                                      barrierColor: Colors.black.withValues(alpha:
                                         0.2,
                                       ),
                                       pageBuilder: (
@@ -1268,7 +1363,7 @@ class ServiceRequestFlow extends StatelessWidget {
                                                     BorderRadius.circular(16),
                                               ),
                                               backgroundColor: Colors.white
-                                                  .withOpacity(0.9),
+                                                  .withValues(alpha:0.9),
                                               title: Text(
                                                 'Thank You!!',
                                                 style: GoogleFonts.montserrat(
@@ -1365,7 +1460,7 @@ class ServiceRequestFlow extends StatelessWidget {
 }
 
 class ServiceTypeSelector extends StatefulWidget {
-  const ServiceTypeSelector({Key? key}) : super(key: key);
+  const ServiceTypeSelector({super.key});
 
   @override
   _ServiceTypeSelectorState createState() => _ServiceTypeSelectorState();
@@ -1425,8 +1520,8 @@ class _ServiceTypeSelectorState extends State<ServiceTypeSelector> {
                     decoration: BoxDecoration(
                       color:
                           isSelected
-                              ? service['color'].withOpacity(0.1)
-                              : Colors.white.withOpacity(0.9),
+                              ? service['color'].withValues(alpha:0.1)
+                              : Colors.white.withValues(alpha:0.9),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color:
@@ -1470,7 +1565,7 @@ class _ServiceTypeSelectorState extends State<ServiceTypeSelector> {
 }
 
 class ProductInquiryFlow extends StatelessWidget {
-  const ProductInquiryFlow({Key? key}) : super(key: key);
+  const ProductInquiryFlow({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1491,7 +1586,7 @@ class ProductInquiryFlow extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(color: Colors.grey.shade200),
         child: Container(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha:0.1),
           child: SafeArea(
             child: Obx(() {
               final int activeStep = controller.activeStep.value;
@@ -1561,7 +1656,7 @@ class ProductInquiryFlow extends StatelessWidget {
                           context: context,
                           barrierDismissible: true,
                           barrierLabel: '',
-                          barrierColor: Colors.black.withOpacity(0.2),
+                          barrierColor: Colors.black.withValues(alpha:0.2),
                           pageBuilder: (context, animation1, animation2) {
                             return BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
@@ -1570,7 +1665,7 @@ class ProductInquiryFlow extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  backgroundColor: Colors.white.withOpacity(
+                                  backgroundColor: Colors.white.withValues(alpha:
                                     0.9,
                                   ),
                                   title: Text(
@@ -1671,9 +1766,54 @@ class ProductInquiryFlow extends StatelessWidget {
                       //         : null;
                       onPressed =
                           canProceed && !controller.isLoading.value
-                              ? () {
+                              ? () async {
+                                controller.isLoading.value = true;
                                 if (buttonText == 'Proceed to Payment') {
-                                  showSuccessDialog(context);
+                                  final formData = {
+                                    'companyName':
+                                        controller.companyController.text,
+                                    'fullName': controller.nameController.text,
+                                    'email': controller.emailController.text,
+                                    'phoneNumber':
+                                        controller.phoneController.text,
+                                    'interestedIn': 'Product',
+                                    'engagementModel': controller
+                                        .getApiEngagementModel(
+                                          controller.engagementModel.value,
+                                        ),
+                                    'selectedProducts':
+                                        controller.selectedProducts
+                                            .map(
+                                              (productName) => {
+                                                'productName': productName,
+                                                'userCountRange':
+                                                    controller
+                                                        .productUserRanges[productName] ??
+                                                    '1-10',
+                                                'totalPrice':
+                                                    controller.productsList
+                                                        .firstWhere(
+                                                          (p) =>
+                                                              p.name ==
+                                                              productName,
+                                                        )
+                                                        .pricePerUser *
+                                                    (controller
+                                                            .productUserCounts[productName] ??
+                                                        1),
+                                              },
+                                            )
+                                            .toList(),
+                                    'totalAmount': controller.totalPrice,
+                                  };
+                                  if (kDebugMode) {
+                                    print('data====>$formData');
+                                  }
+                                  final isSuccess = await controller
+                                      .sendUserData(formData);
+                                  if (isSuccess) {
+                                    showSuccessDialog(context);
+                                  }
                                 } else {
                                   HapticFeedback.lightImpact();
                                   debugPrint(
@@ -1687,7 +1827,42 @@ class ProductInquiryFlow extends StatelessWidget {
                                     isAgreement: isAgreement,
                                     context: context,
                                   );
+                                  final formData = {
+                                    'companyName':
+                                        controller.companyController.text,
+                                    'fullName': controller.nameController.text,
+                                    'email': controller.emailController.text,
+                                    'phoneNumber':
+                                        controller.phoneController.text,
+                                    'interestedIn': 'Product',
+                                    'engagementModel': controller
+                                        .getApiEngagementModel(
+                                          controller.engagementModel.value,
+                                        ),
+                                    'selectedProducts':
+                                        controller.selectedProducts
+                                            .map(
+                                              (productName) => {
+                                                'productName': productName,
+                                              },
+                                            )
+                                            .toList(),
+                                  };
+                                  if (kDebugMode) {
+                                    print('data====>$formData');
+                                  }
+                                  final isSuccess = await controller
+                                      .sendUserData(formData);
+                                  if (isSuccess) {
+                                    showSuccessDialog(context);
+                                  }
                                 }
+                                // controller.engagementModel.value = null;
+                                // controller.productUserCounts.value = {};
+                                // controller.selectedProducts.value = [];
+                                // controller.selectedFlowType.value = null;
+
+                                controller.isLoading.value = false;
                               }
                               : null;
 
@@ -1737,11 +1912,11 @@ class StepProgressIndicator extends StatelessWidget {
   final List<String> labels;
 
   const StepProgressIndicator({
-    Key? key,
+    super.key,
     required this.currentStep,
     required this.totalSteps,
     required this.labels,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1823,7 +1998,7 @@ class StepProgressIndicator extends StatelessWidget {
 }
 
 class EngagementModelStep extends StatelessWidget {
-  const EngagementModelStep({Key? key}) : super(key: key);
+  const EngagementModelStep({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1915,7 +2090,7 @@ class EngagementModelStep extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withValues(alpha:0.9),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isSelected ? color : const Color(0xFFEAEEF5),
@@ -1925,7 +2100,7 @@ class EngagementModelStep extends StatelessWidget {
             isSelected
                 ? [
                   BoxShadow(
-                    color: color.withOpacity(0.12),
+                    color: color.withValues(alpha:0.12),
                     blurRadius: 16,
                     offset: const Offset(0, 4),
                   ),
@@ -1945,7 +2120,7 @@ class EngagementModelStep extends StatelessWidget {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(icon, size: 32, color: color),
@@ -1994,7 +2169,7 @@ class EngagementModelStep extends StatelessWidget {
 }
 
 class ProductSelectionStep extends StatelessWidget {
-  const ProductSelectionStep({Key? key}) : super(key: key);
+  const ProductSelectionStep({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -2037,7 +2212,7 @@ class ProductSelectionStep extends StatelessWidget {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha:0.9),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color:
@@ -2048,7 +2223,7 @@ class ProductSelectionStep extends StatelessWidget {
                         isSelected
                             ? [
                               BoxShadow(
-                                color: product.color.withOpacity(0.1),
+                                color: product.color.withValues(alpha:0.1),
                                 blurRadius: 16,
                                 offset: const Offset(0, 4),
                               ),
@@ -2066,7 +2241,7 @@ class ProductSelectionStep extends StatelessWidget {
                               width: 56,
                               height: 56,
                               decoration: BoxDecoration(
-                                color: product.color.withOpacity(0.1),
+                                color: product.color.withValues(alpha:0.1),
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Icon(
@@ -2129,12 +2304,23 @@ class ProductSelectionStep extends StatelessWidget {
 }
 
 class PlanPricingStep extends StatelessWidget {
-  const PlanPricingStep({Key? key}) : super(key: key);
+  const PlanPricingStep({super.key});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AppController>();
-    final userRanges = ['1-10', '11-20', '21-30', '31-40', '41-50'];
+    // Define the user ranges to match your JSON data
+    final userRanges = [
+      '1-10',
+      '11-20',
+      '21-30',
+      '31-40',
+      '41-50',
+      '10-50',
+      '51-100',
+      '100-200',
+      '201-500',
+    ];
 
     return Obx(() {
       final isSaaS = controller.engagementModel.value == EngagementModel.saas;
@@ -2144,7 +2330,7 @@ class PlanPricingStep extends StatelessWidget {
       );
 
       return Form(
-        key: controller.pricingFormKey, // Changed: Use pricingFormKey
+        key: controller.pricingFormKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -2188,22 +2374,10 @@ class PlanPricingStep extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           DropdownButtonFormField<String>(
+                            // Use the stored range or default to the first option
                             value:
-                                controller.productUserCounts[productName] ==
-                                        null
-                                    ? userRanges[0]
-                                    : userRanges.firstWhere((range) {
-                                      final minUsers = int.parse(
-                                        range.split('-')[0],
-                                      );
-                                      final currentCount =
-                                          controller
-                                              .productUserCounts[productName] ??
-                                          1;
-                                      return currentCount >= minUsers &&
-                                          currentCount <=
-                                              int.parse(range.split('-')[1]);
-                                    }, orElse: () => userRanges[0]),
+                                controller.productUserRanges[productName] ??
+                                userRanges[0],
                             decoration: InputDecoration(
                               labelText: 'No. of Users',
                               prefixIcon: Icon(
@@ -2231,6 +2405,9 @@ class PlanPricingStep extends StatelessWidget {
                                 }).toList(),
                             onChanged: (String? value) {
                               if (value != null) {
+                                // Store the selected range
+                                controller.updateUserRange(productName, value);
+                                // Update user count based on the range (optional, for totalPrice calculation)
                                 final minUsers = int.parse(value.split('-')[0]);
                                 controller.updateUserCount(
                                   productName,
@@ -2238,6 +2415,11 @@ class PlanPricingStep extends StatelessWidget {
                                 );
                               }
                             },
+                            validator:
+                                (value) =>
+                                    value == null
+                                        ? 'Please select a user range'
+                                        : null,
                           ),
                           const SizedBox(height: 16),
                           Obx(() {
@@ -2261,7 +2443,7 @@ class PlanPricingStep extends StatelessWidget {
                     ),
                   ),
                 );
-              }).toList(),
+              }),
               const SizedBox(height: 16),
               Card(
                 child: Padding(
@@ -2329,7 +2511,7 @@ class PlanPricingStep extends StatelessWidget {
 }
 
 class ContactDetailsStep extends StatelessWidget {
-  const ContactDetailsStep({Key? key}) : super(key: key);
+  const ContactDetailsStep({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -2378,7 +2560,7 @@ class ContactForm extends StatelessWidget {
   final String messagePlaceholder;
 
   const ContactForm({
-    Key? key,
+    super.key,
     required this.formKey,
     required this.nameController,
     required this.emailController,
@@ -2387,7 +2569,7 @@ class ContactForm extends StatelessWidget {
     required this.messageController,
     required this.messageLabel,
     required this.messagePlaceholder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -2487,7 +2669,7 @@ class SuccessScreen extends StatelessWidget {
 
         ),
         child: Container(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha:0.1),
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
@@ -2498,7 +2680,7 @@ class SuccessScreen extends StatelessWidget {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFBFD633).withOpacity(0.1),
+                      color: const Color(0xFFBFD633).withValues(alpha:0.1),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
@@ -2548,7 +2730,7 @@ class SuccessScreen extends StatelessWidget {
                   //     vertical: 16,
                   //   ),
                   //   decoration: BoxDecoration(
-                  //     color: Colors.white.withOpacity(0.9),
+                  //     color: Colors.white.withValues(alpha:0.9),
                   //     borderRadius: BorderRadius.circular(16),
                   //     border: Border.all(color: const Color(0xFF2EC4F3)),
                   //   ),
