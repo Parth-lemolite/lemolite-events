@@ -70,7 +70,7 @@ exports.createLead = async (req, res) => {
     await lead.save();
 
     // Send notifications
-    await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
+    // await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
 
     res.status(201).json({
       success: true,
