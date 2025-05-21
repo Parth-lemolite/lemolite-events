@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:nairobi_app/service/api_service.dart';
+import 'package:nairobi_app/widgets/policy_pages.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -77,7 +78,7 @@ class MyApp extends StatelessWidget {
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.white.withValues(alpha:0.9),
+          fillColor: Colors.white.withValues(alpha: 0.9),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -142,7 +143,7 @@ class MyApp extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          color: Colors.white.withValues(alpha:0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           surfaceTintColor: Colors.white,
         ),
         appBarTheme: AppBarTheme(
@@ -159,7 +160,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: const MainScreen(),
-        builder: EasyLoading.init(),
+      builder: EasyLoading.init(),
     );
   }
 }
@@ -788,7 +789,7 @@ nAIrobi Team
       context: context,
       barrierDismissible: true,
       barrierLabel: '',
-      barrierColor: Colors.black.withValues(alpha:0.2),
+      barrierColor: Colors.black.withValues(alpha: 0.2),
       pageBuilder: (context, animation1, animation2) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
@@ -797,7 +798,7 @@ nAIrobi Team
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              backgroundColor: Colors.white.withValues(alpha:0.9),
+              backgroundColor: Colors.white.withValues(alpha: 0.9),
               title: Text(
                 'Thank You!',
                 style: GoogleFonts.montserrat(
@@ -960,7 +961,7 @@ class _LandingScreenState extends State<LandingScreen> {
     return Stack(
       children: [
         Container(decoration: BoxDecoration(color: Colors.grey.shade200)),
-        Container(color: Colors.white.withValues(alpha:0.1)),
+        Container(color: Colors.white.withValues(alpha: 0.1)),
         SafeArea(
           child: GestureDetector(
             onTap: () {
@@ -980,11 +981,11 @@ class _LandingScreenState extends State<LandingScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha:0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha:0.08),
+                                color: Colors.black.withValues(alpha: 0.08),
                                 blurRadius: 24,
                                 offset: const Offset(0, 8),
                               ),
@@ -1141,7 +1142,9 @@ class _LandingScreenState extends State<LandingScreen> {
                                   context: context,
                                   barrierDismissible: true,
                                   barrierLabel: '',
-                                  barrierColor: Colors.black.withValues(alpha:0.2),
+                                  barrierColor: Colors.black.withValues(
+                                    alpha: 0.2,
+                                  ),
                                   pageBuilder: (
                                     context,
                                     animation1,
@@ -1160,7 +1163,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                             ),
                                           ),
                                           backgroundColor: Colors.white
-                                              .withValues(alpha:0.9),
+                                              .withValues(alpha: 0.9),
                                           title: Text(
                                             'Thank You!',
                                             style: GoogleFonts.montserrat(
@@ -1260,7 +1263,28 @@ class _LandingScreenState extends State<LandingScreen> {
                         ],
                       );
                     }),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 16),
+                    //create three buttons textbutton privacy policy, terms and conditions, and shiping policy
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () {Get.to(() => const PrivacyPolicyPage());},
+                          child: Text('Privacy Policy',style: TextStyle(fontSize: 10),),
+                        ),
+
+                        TextButton(
+                          onPressed: () {Get.to(() => const TermsConditionsPage());},
+                          child:  Text('Terms and Conditions',style: TextStyle(fontSize: 10),),
+                        ),
+
+                        TextButton(
+                          onPressed: () {Get.to(() => const ShippingPolicyPage());},
+                          child:  Text('Shipping Policy',style: TextStyle(fontSize: 10),),
+                        ),
+                      ],
+                    ),
+
                   ],
                 ),
               ),
@@ -1294,7 +1318,7 @@ class ServiceRequestFlow extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(color: Colors.grey.shade200),
         child: Container(
-          color: Colors.white.withValues(alpha:0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           child: SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -1348,8 +1372,8 @@ class ServiceRequestFlow extends StatelessWidget {
                                       context: context,
                                       barrierDismissible: true,
                                       barrierLabel: '',
-                                      barrierColor: Colors.black.withValues(alpha:
-                                        0.2,
+                                      barrierColor: Colors.black.withValues(
+                                        alpha: 0.2,
                                       ),
                                       pageBuilder: (
                                         context,
@@ -1368,7 +1392,7 @@ class ServiceRequestFlow extends StatelessWidget {
                                                     BorderRadius.circular(16),
                                               ),
                                               backgroundColor: Colors.white
-                                                  .withValues(alpha:0.9),
+                                                  .withValues(alpha: 0.9),
                                               title: Text(
                                                 'Thank You!!',
                                                 style: GoogleFonts.montserrat(
@@ -1525,8 +1549,8 @@ class _ServiceTypeSelectorState extends State<ServiceTypeSelector> {
                     decoration: BoxDecoration(
                       color:
                           isSelected
-                              ? service['color'].withValues(alpha:0.1)
-                              : Colors.white.withValues(alpha:0.9),
+                              ? service['color'].withValues(alpha: 0.1)
+                              : Colors.white.withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color:
@@ -1591,7 +1615,7 @@ class ProductInquiryFlow extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(color: Colors.grey.shade200),
         child: Container(
-          color: Colors.white.withValues(alpha:0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           child: SafeArea(
             child: Obx(() {
               final int activeStep = controller.activeStep.value;
@@ -1661,7 +1685,7 @@ class ProductInquiryFlow extends StatelessWidget {
                           context: context,
                           barrierDismissible: true,
                           barrierLabel: '',
-                          barrierColor: Colors.black.withValues(alpha:0.2),
+                          barrierColor: Colors.black.withValues(alpha: 0.2),
                           pageBuilder: (context, animation1, animation2) {
                             return BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
@@ -1670,8 +1694,8 @@ class ProductInquiryFlow extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  backgroundColor: Colors.white.withValues(alpha:
-                                    0.9,
+                                  backgroundColor: Colors.white.withValues(
+                                    alpha: 0.9,
                                   ),
                                   title: Text(
                                     'Thank You!',
@@ -2095,7 +2119,7 @@ class EngagementModelStep extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha:0.9),
+        color: Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isSelected ? color : const Color(0xFFEAEEF5),
@@ -2105,7 +2129,7 @@ class EngagementModelStep extends StatelessWidget {
             isSelected
                 ? [
                   BoxShadow(
-                    color: color.withValues(alpha:0.12),
+                    color: color.withValues(alpha: 0.12),
                     blurRadius: 16,
                     offset: const Offset(0, 4),
                   ),
@@ -2125,7 +2149,7 @@ class EngagementModelStep extends StatelessWidget {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha:0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(icon, size: 32, color: color),
@@ -2217,7 +2241,7 @@ class ProductSelectionStep extends StatelessWidget {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha:0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color:
@@ -2228,7 +2252,7 @@ class ProductSelectionStep extends StatelessWidget {
                         isSelected
                             ? [
                               BoxShadow(
-                                color: product.color.withValues(alpha:0.1),
+                                color: product.color.withValues(alpha: 0.1),
                                 blurRadius: 16,
                                 offset: const Offset(0, 4),
                               ),
@@ -2246,7 +2270,7 @@ class ProductSelectionStep extends StatelessWidget {
                               width: 56,
                               height: 56,
                               decoration: BoxDecoration(
-                                color: product.color.withValues(alpha:0.1),
+                                color: product.color.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Icon(
@@ -2669,12 +2693,9 @@ class SuccessScreen extends StatelessWidget {
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey.shade200,
-
-        ),
+        decoration: BoxDecoration(color: Colors.grey.shade200),
         child: Container(
-          color: Colors.white.withValues(alpha:0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
@@ -2685,14 +2706,14 @@ class SuccessScreen extends StatelessWidget {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFBFD633).withValues(alpha:0.1),
+                      color: const Color(0xFFBFD633).withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
                           color: Color(0xFFBFD633).withOpacity(0.1),
                           blurRadius: 50,
                           offset: const Offset(0, 4),
-                        )
+                        ),
                       ],
                     ),
                     child: const Icon(
