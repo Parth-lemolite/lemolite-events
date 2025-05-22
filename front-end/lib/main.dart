@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -1121,26 +1122,52 @@ class _LandingScreenState extends State<LandingScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 16),
+                    Center(child: SvgPicture.asset("assets/banner.svg")),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.08),
-                                blurRadius: 24,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.auto_awesome,
-                            size: 24,
-                            color: Color(0xFF2EC4F3),
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Lemolite Technologies LLP'),
+                                  content: const Text(
+                                    'Lemolite Technologies LLP is engaged in the development and sale of cloud-based enterprise software solutions. We offer Applicant Tracking Systems (ATS), Human Resource and Employee Management Systems (HREMS), Customer Relationship Management (CRM) platforms, and Inventory Management Systems (IMS).\n\n'
+                                        'Our services are delivered under a subscription-based and white-label model, enabling businesses to use or resell our solutions under their own brand name. The products are accessible through secure web portals and are primarily used by SMEs and enterprises to streamline operations in hiring, HR management, sales and customer service, and inventory control.',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Close'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.08),
+                                  blurRadius: 24,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: SvgPicture.asset(
+                              "assets/lemologo.svg",
+                              width: 30,
+                              height: 30,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -1420,7 +1447,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           },
                           child: Text(
                             'Privacy Policy',
-                            style: TextStyle(fontSize: 10),
+                            style: TextStyle(fontSize: 10.5),
                           ),
                         ),
 
@@ -1430,7 +1457,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           },
                           child: Text(
                             'Terms and Conditions',
-                            style: TextStyle(fontSize: 10),
+                            style: TextStyle(fontSize: 10.5),
                           ),
                         ),
 
@@ -1440,7 +1467,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           },
                           child: Text(
                             'Shipping Policy',
-                            style: TextStyle(fontSize: 10),
+                            style: TextStyle(fontSize: 10.5),
                           ),
                         ),
                       ],
