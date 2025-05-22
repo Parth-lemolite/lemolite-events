@@ -19,7 +19,7 @@ class CheckoutStep extends StatelessWidget {
 
       return SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(24),
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
