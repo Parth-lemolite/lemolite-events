@@ -9,7 +9,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:nairobi_app/service/api_service.dart';
-import 'package:nairobi_app/widgets/policy_pages.dart';
+import 'package:nairobi_app/view/screens/check_out.dart';
+import 'package:nairobi_app/view/widgets/policy_pages.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -165,18 +166,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Enums
 enum FlowType { service, product }
 
 enum EngagementModel { saas, reseller, partner, whitelabel }
 
-// ProductInfo class
 class ProductInfo {
   final String name;
   final String description;
   final IconData icon;
   final Color color;
-  final double pricePerUser; // Price in INR per user per month
+  final double pricePerUser;
 
   ProductInfo({
     required this.name,
@@ -187,9 +186,9 @@ class ProductInfo {
   });
 }
 
-// Controller
+
 class AppController extends GetxController {
-  // final RxDouble totalPrice = 0.0.obs;
+  final RxDouble totalPrice = 0.0.obs;
   final Rx<FlowType?> selectedFlowType = Rx<FlowType?>(null);
   final Rx<EngagementModel?> engagementModel = Rx<EngagementModel?>(null);
   final RxMap<String, String> productUserRanges = <String, String>{}.obs;
@@ -199,6 +198,7 @@ class AppController extends GetxController {
   final RxBool hasError = false.obs;
   final RxInt activeStep = 0.obs;
   final RxBool isLoading = false.obs;
+  final RxList<Map<String, String>> savedCards = <Map<String, String>>[].obs;
 
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -206,7 +206,6 @@ class AppController extends GetxController {
   final phoneController = TextEditingController();
   final messageController = TextEditingController();
 
-  // Separate GlobalKeys for each form
   final landingFormKey = GlobalKey<FormState>();
   final serviceFormKey = GlobalKey<FormState>();
   final pricingFormKey = GlobalKey<FormState>();
@@ -224,18 +223,8 @@ class AppController extends GetxController {
       case EngagementModel.whitelabel:
         return 'Whitelabel';
       default:
-        return ''; // Handle null case
+        return '';
     }
-  }
-
-  double get totalPrice {
-    double total = 0.0;
-    for (var productName in selectedProducts) {
-      final product = productsList.firstWhere((p) => p.name == productName);
-      final userCount = productUserCounts[productName] ?? 1;
-      total += product.pricePerUser * userCount;
-    }
-    return total;
   }
 
   List<ProductInfo> get productsList => [
@@ -283,39 +272,34 @@ class AppController extends GetxController {
     ),
   ];
 
-  // void calculateTotalPrice() {
-  //   double total = 0.0;
-  //   for (var productName in selectedProducts) {
-  //     final product = productsList.firstWhere((p) => p.name == productName);
-  //     final userCount = productUserCounts[productName] ?? 1;
-  //     total += product.pricePerUser * userCount;
-  //   }
-  //   totalPrice.value = total;
-  //   debugPrint('Calculated totalPrice: ${totalPrice.value}');
-  // }
-
-  // New method to update user range
   void updateUserRange(String productName, String range) {
     productUserRanges[productName] = range;
-    // Update user count based on the range
     final minUsers = int.parse(range.split('-')[0]);
     productUserCounts[productName] = minUsers;
     userCountControllers[productName]!.text = minUsers.toString();
+    totalPrice; // Update total
     debugPrint('Updated user range for $productName: $range, users: $minUsers');
-    // calculateTotalPrice(); // Update totalPrice after changing user range
   }
 
-  int get totalSteps => engagementModel.value == EngagementModel.saas ? 4 : 3;
+  void addCard(Map<String, String> card) {
+    savedCards.add(card);
+    debugPrint('Added card: ${card['cardNumber']}');
+  }
+
+  void removeCard(int index) {
+    savedCards.removeAt(index);
+    debugPrint('Removed card at index: $index');
+  }
+
+  int get totalSteps => engagementModel.value == EngagementModel.saas ? 5 : 3;
 
   @override
   void onInit() {
     super.onInit();
     for (var product in productsList) {
       userCountControllers[product.name] = TextEditingController(text: '1');
-      // Initialize default range
       productUserRanges[product.name] = '1-10';
     }
-    // calculateTotalPrice();
   }
 
   @override
@@ -334,7 +318,8 @@ class AppController extends GetxController {
     engagementModel.value = null;
     selectedProducts.clear();
     productUserCounts.clear();
-    productUserRanges.clear(); // Clear ranges
+    productUserRanges.clear();
+    savedCards.clear();
     nameController.clear();
     emailController.clear();
     companyController.clear();
@@ -345,9 +330,8 @@ class AppController extends GetxController {
     hasError.value = false;
     activeStep.value = 0;
     isLoading.value = false;
-    // totalPrice.value = 0.0;
     for (var product in productsList) {
-      productUserRanges[product.name] = '1-10'; // Reset ranges
+      productUserRanges[product.name] = '1-10';
     }
     debugPrint('Flow reset');
   }
@@ -364,7 +348,6 @@ class AppController extends GetxController {
       }
       EasyLoading.dismiss();
       return true;
-      // Get.snackbar('Success', 'response.data['success']');
     } else {
       EasyLoading.dismiss();
       return false;
@@ -373,12 +356,12 @@ class AppController extends GetxController {
 
   void goToNextStep() {
     if (activeStep.value < totalSteps - 1) {
-      if (activeStep.value == 1 &&
-          engagementModel.value != EngagementModel.saas) {
-        activeStep.value = 3; // Skip to ContactDetailsStep for non-saas
-        debugPrint(
-          'Navigated to step ${activeStep.value} (skipped Pricing for non-saas)',
-        );
+      if (activeStep.value == 1 && engagementModel.value != EngagementModel.saas) {
+        activeStep.value = 2;
+        debugPrint('Navigated to step ${activeStep.value} (skipped Pricing for non-SaaS)');
+      } else if (activeStep.value == 2 && engagementModel.value == EngagementModel.saas) {
+        activeStep.value = 3;
+        debugPrint('Navigated to step ${activeStep.value} (Checkout for SaaS)');
       } else {
         activeStep.value++;
         debugPrint('Navigated to step ${activeStep.value}');
@@ -386,18 +369,14 @@ class AppController extends GetxController {
     }
   }
 
-  // void updateUserRange(String productName, String range) {
-  //   productUserRanges[productName] = range;
-  //   debugPrint('Updated user range for $productName: $range');
-  // }
   void goToPreviousStep() {
     if (activeStep.value > 0) {
-      if (activeStep.value == 3 &&
-          engagementModel.value != EngagementModel.saas) {
-        activeStep.value = 1; // Go back to ProductSelectionStep for non-saas
-        debugPrint(
-          'Navigated back to step ${activeStep.value} (from Details for non-saas)',
-        );
+      if (activeStep.value == 2 && engagementModel.value != EngagementModel.saas) {
+        activeStep.value = 1;
+        debugPrint('Navigated back to step ${activeStep.value} (from Details for non-SaaS)');
+      } else if (activeStep.value == 3 && engagementModel.value == EngagementModel.saas) {
+        activeStep.value = 2;
+        debugPrint('Navigated back to step ${activeStep.value} (from Checkout for SaaS)');
       } else {
         activeStep.value--;
         debugPrint('Navigated back to step ${activeStep.value}');
@@ -439,7 +418,7 @@ class AppController extends GetxController {
       debugPrint('Added product: $productName');
     }
     selectedProducts.refresh();
-    // calculateTotalPrice();
+    totalPrice; // Update total
     debugPrint(
       'Toggled product: $productName, Selected: $selectedProducts, Length: ${selectedProducts.length}',
     );
@@ -454,32 +433,30 @@ class AppController extends GetxController {
       productUserCounts.remove(productName);
       selectedProducts.remove(productName);
       userCountControllers[productName]!.text = '1';
-      // calculateTotalPrice();
       debugPrint('Removed $productName due to invalid user count');
     }
+    totalPrice; // Update total
   }
 
   Future<void> processPayment() async {
     try {
       final paymentData = {
         'email': emailController.text,
-        'amount': totalPrice * 100,
+        'amount': totalPrice * 100, // Convert to paise for INR
         'currency': 'INR',
-        'products':
-            selectedProducts
-                .map(
-                  (p) => {
-                    'name': p,
-                    'users': productUserCounts[p] ?? 1,
-                    'pricePerUser':
-                        productsList
-                            .firstWhere((prod) => prod.name == p)
-                            .pricePerUser,
-                  },
-                )
-                .toList(),
+        'products': selectedProducts
+            .map(
+              (p) => {
+            'name': p,
+            'users': productUserCounts[p] ?? 1,
+            'pricePerUser':
+            productsList.firstWhere((prod) => prod.name == p).pricePerUser,
+          },
+        )
+            .toList(),
         'referenceNumber':
-            'LL${DateTime.now().millisecondsSinceEpoch.toString().substring(5, 13)}',
+        'LL${DateTime.now().millisecondsSinceEpoch.toString().substring(5, 13)}',
+        'card': savedCards.isNotEmpty ? savedCards.first : null,
       };
 
       debugPrint('Processing payment: $paymentData');
@@ -513,9 +490,7 @@ class AppController extends GetxController {
     bool isAgreement = false,
   }) async {
     final String flow =
-        selectedFlowType.value == FlowType.service
-            ? 'Service Request'
-            : 'Product Inquiry';
+    selectedFlowType.value == FlowType.service ? 'Service Request' : 'Product Inquiry';
     final String referenceNumber =
         'LL${DateTime.now().millisecondsSinceEpoch.toString().substring(5, 13)}';
     final Map<String, dynamic> formData = {
@@ -526,21 +501,18 @@ class AppController extends GetxController {
       'phone': phoneController.text,
       'message': messageController.text,
       'engagementModel': engagementModel.value?.toString().split('.').last,
-      'selectedProducts':
-          selectedProducts
-              .map(
-                (p) => {
-                  'name': p,
-                  if (engagementModel.value == EngagementModel.saas)
-                    'users': productUserCounts[p] ?? 1,
-                  if (engagementModel.value == EngagementModel.saas)
-                    'pricePerUser':
-                        productsList
-                            .firstWhere((prod) => prod.name == p)
-                            .pricePerUser,
-                },
-              )
-              .toList(),
+      'selectedProducts': selectedProducts
+          .map(
+            (p) => {
+          'name': p,
+          if (engagementModel.value == EngagementModel.saas)
+            'users': productUserCounts[p] ?? 1,
+          if (engagementModel.value == EngagementModel.saas)
+            'pricePerUser':
+            productsList.firstWhere((prod) => prod.name == p).pricePerUser,
+        },
+      )
+          .toList(),
       'totalPrice': isPayment ? totalPrice : null,
       'referenceNumber': referenceNumber,
       'timestamp': DateTime.now().toIso8601String(),
@@ -559,11 +531,7 @@ Company: ${formData['company']}
 Phone: ${formData['phone']}
 Message: ${formData['message']}
 ${flow == 'Product Inquiry' ? 'Engagement Model: ${formData['engagementModel']}\nProducts: ${formData['selectedProducts'].map((p) => '${p['name']} ${p['users'] != null ? '(${p['users']} users @ ₹${p['pricePerUser']}/user/month)' : ''}').join(', ')}' : ''}
-${isPayment
-            ? 'Total Paid: ₹${formData['totalPrice']}'
-            : isAgreement
-            ? 'Service Agreement Requested'
-            : ''}
+${isPayment ? 'Total Paid: ₹${formData['totalPrice']}' : isAgreement ? 'Service Agreement Requested' : ''}
 Submitted: ${formData['timestamp']}
         ''',
       };
@@ -624,13 +592,12 @@ nAIrobi Team
   }) async {
     debugPrint(
       'submitForm called: step=${activeStep.value}, '
-      'isPayment=$isPayment, isAgreement=$isAgreement, '
-      'flowType=${selectedFlowType.value}, '
-      'selectedProducts=$selectedProducts, '
-      'engagementModel=${engagementModel.value}',
+          'isPayment=$isPayment, isAgreement=$isAgreement, '
+          'flowType=${selectedFlowType.value}, '
+          'selectedProducts=$selectedProducts, '
+          'engagementModel=${engagementModel.value}',
     );
 
-    // Validate forms based on the current step and flow
     if (selectedFlowType.value == FlowType.product) {
       if (activeStep.value == 0 && engagementModel.value == null) {
         Get.snackbar(
@@ -658,14 +625,11 @@ nAIrobi Team
         debugPrint('No products selected in step 1');
         return;
       }
-      if (activeStep.value == 2 &&
-          engagementModel.value == EngagementModel.saas) {
+      if (activeStep.value == 2 && engagementModel.value == EngagementModel.saas) {
         if (pricingFormKey.currentState != null &&
             !pricingFormKey.currentState!.validate()) {
           hasError.value = true;
-          debugPrint(
-            'Form validation failed at step ${activeStep.value} (pricing)',
-          );
+          debugPrint('Form validation failed at step ${activeStep.value} (pricing)');
           Get.snackbar(
             'Error',
             'Please fill all required fields correctly',
@@ -692,15 +656,27 @@ nAIrobi Team
           return;
         }
       }
-      if (activeStep.value == 3 ||
-          (activeStep.value == 2 &&
-              engagementModel.value != EngagementModel.saas)) {
+      if (activeStep.value == 3 && engagementModel.value == EngagementModel.saas) {
+        if (savedCards.isEmpty) {
+          Get.snackbar(
+            'Payment Method Required',
+            'Please add at least one payment card to proceed',
+            backgroundColor: Colors.red.shade50,
+            colorText: Colors.red.shade900,
+            margin: const EdgeInsets.all(16),
+            borderRadius: 10,
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          debugPrint('No payment cards added in checkout step');
+          return;
+        }
+      }
+      if (activeStep.value == 4 ||
+          (activeStep.value == 2 && engagementModel.value != EngagementModel.saas)) {
         if (contactFormKey.currentState != null &&
             !contactFormKey.currentState!.validate()) {
           hasError.value = true;
-          debugPrint(
-            'Form validation failed at step ${activeStep.value} (contact)',
-          );
+          debugPrint('Form validation failed at step ${activeStep.value} (contact)');
           Get.snackbar(
             'Error',
             'Please fill all required fields correctly',
@@ -739,25 +715,97 @@ nAIrobi Team
         showSuccessDialog(context);
         debugPrint('Service flow submitted');
       } else if (selectedFlowType.value == FlowType.product) {
-        if (activeStep.value == 0 || activeStep.value == 1) {
+        // Prepare form data for API call
+        final formData = {
+          'companyName': companyController.text,
+          'fullName': nameController.text,
+          'email': emailController.text,
+          'phoneNumber': phoneController.text,
+          'interestedIn': 'Product',
+          'engagementModel': getApiEngagementModel(engagementModel.value),
+          'selectedProducts': selectedProducts
+              .map(
+                (productName) => {
+              'productName': productName,
+              if (engagementModel.value == EngagementModel.saas)
+                'userCountRange':
+                productUserRanges[productName] ?? '1-10',
+              if (engagementModel.value == EngagementModel.saas)
+                'totalPrice': productsList
+                    .firstWhere((p) => p.name == productName)
+                    .pricePerUser *
+                    (productUserCounts[productName] ?? 1),
+            },
+          )
+              .toList(),
+          if (engagementModel.value == EngagementModel.saas)
+            'totalAmount': totalPrice,
+        };
+        if (kDebugMode) {
+          print('data====>$formData');
+        }
+
+        if (activeStep.value == 0 || activeStep.value == 1 || activeStep.value == 2) {
           goToNextStep();
           debugPrint('Proceeding to next step: ${activeStep.value}');
-        } else if (activeStep.value == 2 &&
+        } else if (activeStep.value == 3 &&
             engagementModel.value == EngagementModel.saas &&
             isPayment) {
           await processPayment();
           await sendEmails(isPayment: true);
+          // Send API data after successful payment
+          final isSuccess = await sendUserData(formData);
+          if (!isSuccess) {
+            Get.snackbar(
+              'Error',
+              'Failed to submit data. Please try again.',
+              backgroundColor: Colors.red.shade50,
+              colorText: Colors.red.shade900,
+              margin: const EdgeInsets.all(16),
+              borderRadius: 10,
+              snackPosition: SnackPosition.BOTTOM,
+            );
+            return;
+          }
           isSubmitted.value = true;
           showSuccessDialog(context);
           debugPrint('SaaS payment flow submitted');
-        } else if ((activeStep.value == 1 || activeStep.value == 2) &&
+        } else if ((activeStep.value == 2 &&
+            engagementModel.value != EngagementModel.saas) &&
             isAgreement) {
           await sendEmails(isAgreement: true);
+          // Send API data for non-SaaS agreement
+          final isSuccess = await sendUserData(formData);
+          if (!isSuccess) {
+            Get.snackbar(
+              'Error',
+              'Failed to submit data. Please try again.',
+              backgroundColor: Colors.red.shade50,
+              colorText: Colors.red.shade900,
+              margin: const EdgeInsets.all(16),
+              borderRadius: 10,
+              snackPosition: SnackPosition.BOTTOM,
+            );
+            return;
+          }
           isSubmitted.value = true;
           showSuccessDialog(context);
           debugPrint('Non-SaaS agreement flow submitted');
-        } else if (activeStep.value == 3) {
-          await sendEmails();
+        } else if (activeStep.value == 4) {
+          // Send API data for SaaS final step
+          final isSuccess = await sendUserData(formData);
+          if (!isSuccess) {
+            Get.snackbar(
+              'Error',
+              'Failed to submit data. Please try again.',
+              backgroundColor: Colors.red.shade50,
+              colorText: Colors.red.shade900,
+              margin: const EdgeInsets.all(16),
+              borderRadius: 10,
+              snackPosition: SnackPosition.BOTTOM,
+            );
+            return;
+          }
           isSubmitted.value = true;
           showSuccessDialog(context);
           debugPrint('Product flow final step submitted');
@@ -779,8 +827,7 @@ nAIrobi Team
     } finally {
       isLoading.value = false;
       debugPrint(
-        'submitForm completed: step=${activeStep.value}, selectedProducts=$selectedProducts',
-      );
+          'submitForm completed: step=${activeStep.value}, selectedProducts=$selectedProducts');
     }
   }
 
@@ -1619,30 +1666,24 @@ class ProductInquiryFlow extends StatelessWidget {
           child: SafeArea(
             child: Obx(() {
               final int activeStep = controller.activeStep.value;
-              final bool isSaaS =
-                  controller.engagementModel.value == EngagementModel.saas;
-              final int totalSteps = isSaaS ? 4 : 3;
-              final List<String> labels =
-                  isSaaS
-                      ? const ['Model', 'Products', 'Pricing', 'Details']
-                      : const ['Model', 'Products', 'Details'];
-              final int uiStep =
-                  isSaaS ? activeStep : (activeStep == 3 ? 2 : activeStep);
+              final bool isSaaS = controller.engagementModel.value == EngagementModel.saas;
+              final int totalSteps = isSaaS ? 5 : 3;
+              final List<String> labels = isSaaS
+                  ? const ['Model', 'Products', 'Pricing', 'Checkout', 'Details']
+                  : const ['Model', 'Products', 'Details'];
+              final int uiStep = isSaaS ? activeStep : (activeStep == 3 ? 2 : activeStep);
 
               debugPrint(
                 'ProductInquiryFlow rebuilt: activeStep=$activeStep, '
-                'uiStep=$uiStep, isSaaS=$isSaaS, '
-                'selectedProducts=${controller.selectedProducts}, '
-                'engagementModel=${controller.engagementModel.value}',
+                    'uiStep=$uiStep, isSaaS=$isSaaS, '
+                    'selectedProducts=${controller.selectedProducts}, '
+                    'engagementModel=${controller.engagementModel.value}',
               );
 
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 16,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                     child: StepProgressIndicator(
                       currentStep: uiStep,
                       totalSteps: totalSteps,
@@ -1657,10 +1698,7 @@ class ProductInquiryFlow extends StatelessWidget {
                         duration: const Duration(milliseconds: 300),
                         switchInCurve: Curves.easeOut,
                         switchOutCurve: Curves.easeIn,
-                        transitionBuilder: (
-                          Widget child,
-                          Animation<double> animation,
-                        ) {
+                        transitionBuilder: (Widget child, Animation<double> animation) {
                           return SlideTransition(
                             position: Tween<Offset>(
                               begin: const Offset(1.0, 0.0),
@@ -1676,84 +1714,9 @@ class ProductInquiryFlow extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: Obx(() {
-                      void showSuccessDialog(BuildContext context) {
-                        showGeneralDialog(
-                          context: context,
-                          barrierDismissible: true,
-                          barrierLabel: '',
-                          barrierColor: Colors.black.withValues(alpha: 0.2),
-                          pageBuilder: (context, animation1, animation2) {
-                            return BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                              child: Center(
-                                child: AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  backgroundColor: Colors.white.withValues(
-                                    alpha: 0.9,
-                                  ),
-                                  title: Text(
-                                    'Thank You!',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF0F1C35),
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.check_circle_outline,
-                                        size: 48,
-                                        color: Colors.green,
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        'Our team will contact you shortly.',
-                                        style: GoogleFonts.inter(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color(0xFF404B69),
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                  actions: [
-                                    Center(
-                                      child: TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-
-                                          Get.offAll(
-                                            () => const SuccessScreen(),
-                                          );
-                                        },
-                                        child: Text(
-                                          'OK',
-                                          style: GoogleFonts.inter(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF2EC4F3),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }
-
                       bool canProceed = true;
                       String buttonText = 'Continue';
                       VoidCallback? onPressed;
@@ -1770,139 +1733,95 @@ class ProductInquiryFlow extends StatelessWidget {
                         }
                         debugPrint(
                           'Step 1 Button: canProceed=$canProceed, '
-                          'selectedProducts=${controller.selectedProducts}, '
-                          'length=${controller.selectedProducts.length}',
+                              'selectedProducts=${controller.selectedProducts}, '
+                              'length=${controller.selectedProducts.length}',
                         );
                       } else if (activeStep == 2 && isSaaS) {
-                        canProceed =
-                            controller.productUserCounts.isNotEmpty &&
-                            controller.productUserCounts.values.every(
-                              (count) => count > 0,
-                            );
-
+                        canProceed = controller.productUserCounts.isNotEmpty &&
+                            controller.productUserCounts.values.every((count) => count > 0);
+                      } else if (activeStep == 3 && isSaaS) {
+                        canProceed = controller.productUserCounts.isNotEmpty &&
+                            controller.productUserCounts.values.every((count) => count > 0);
                         buttonText = 'Proceed to Payment';
                         isPayment = true;
-                      } else if (activeStep == 3 ||
-                          (activeStep == 2 && !isSaaS)) {
+                      } else if (activeStep == 4 || (activeStep == 2 && !isSaaS)) {
                         buttonText = 'Submit Inquiry';
                       }
 
-                      // onPressed =
-                      //     canProceed && !controller.isLoading.value
-                      //         ? () {
-                      //           showSuccessDialog(context);
-                      //         }
-                      //         : null;
-                      onPressed =
-                          canProceed && !controller.isLoading.value
-                              ? () async {
-                                controller.isLoading.value = true;
-                                if (buttonText == 'Proceed to Payment') {
-                                  final formData = {
-                                    'companyName':
-                                        controller.companyController.text,
-                                    'fullName': controller.nameController.text,
-                                    'email': controller.emailController.text,
-                                    'phoneNumber':
-                                        controller.phoneController.text,
-                                    'interestedIn': 'Product',
-                                    'engagementModel': controller
-                                        .getApiEngagementModel(
-                                          controller.engagementModel.value,
-                                        ),
-                                    'selectedProducts':
-                                        controller.selectedProducts
-                                            .map(
-                                              (productName) => {
-                                                'productName': productName,
-                                                'userCountRange':
-                                                    controller
-                                                        .productUserRanges[productName] ??
-                                                    '1-10',
-                                                'totalPrice':
-                                                    controller.productsList
-                                                        .firstWhere(
-                                                          (p) =>
-                                                              p.name ==
-                                                              productName,
-                                                        )
-                                                        .pricePerUser *
-                                                    (controller
-                                                            .productUserCounts[productName] ??
-                                                        1),
-                                              },
-                                            )
-                                            .toList(),
-                                    'totalAmount': controller.totalPrice,
-                                  };
-                                  if (kDebugMode) {
-                                    print('data====>$formData');
-                                  }
-                                  final isSuccess = await controller
-                                      .sendUserData(formData);
-                                  if (isSuccess) {
-                                    showSuccessDialog(context);
-                                  }
-                                } else {
-                                  HapticFeedback.lightImpact();
-                                  debugPrint(
-                                    'Button pressed: activeStep=$activeStep, '
-                                    'uiStep=$uiStep, canProceed=$canProceed, '
-                                    'selectedProducts=${controller.selectedProducts}, '
-                                    'isPayment=$isPayment, isAgreement=$isAgreement',
-                                  );
-                                  controller.submitForm(
-                                    isPayment: isPayment,
-                                    isAgreement: isAgreement,
-                                    context: context,
-                                  );
-                                  final formData = {
-                                    'companyName':
-                                        controller.companyController.text,
-                                    'fullName': controller.nameController.text,
-                                    'email': controller.emailController.text,
-                                    'phoneNumber':
-                                        controller.phoneController.text,
-                                    'interestedIn': 'Product',
-                                    'engagementModel': controller
-                                        .getApiEngagementModel(
-                                          controller.engagementModel.value,
-                                        ),
-                                    'selectedProducts':
-                                        controller.selectedProducts
-                                            .map(
-                                              (productName) => {
-                                                'productName': productName,
-                                              },
-                                            )
-                                            .toList(),
-                                  };
-                                  if (kDebugMode) {
-                                    print('data====>$formData');
-                                  }
-                                  final isSuccess = await controller
-                                      .sendUserData(formData);
-                                  if (isSuccess) {
-                                    showSuccessDialog(context);
-                                  }
-                                }
-                                // controller.engagementModel.value = null;
-                                // controller.productUserCounts.value = {};
-                                // controller.selectedProducts.value = [];
-                                // controller.selectedFlowType.value = null;
+                      onPressed = canProceed && !controller.isLoading.value
+                          ? () async {
+                        controller.isLoading.value = true;
+                        HapticFeedback.lightImpact();
+                        debugPrint(
+                          'Button pressed: activeStep=$activeStep, '
+                              'uiStep=$uiStep, canProceed=$canProceed, '
+                              'selectedProducts=${controller.selectedProducts}, '
+                              'isPayment=$isPayment, isAgreement=$isAgreement',
+                        );
 
-                                controller.isLoading.value = false;
-                              }
-                              : null;
+                        // Prepare form data
+                        final formData = {
+                          'companyName': controller.companyController.text,
+                          'fullName': controller.nameController.text,
+                          'email': controller.emailController.text,
+                          'phoneNumber': controller.phoneController.text,
+                          'interestedIn': 'Product',
+                          'engagementModel': controller.getApiEngagementModel(
+                            controller.engagementModel.value,
+                          ),
+                          'selectedProducts': controller.selectedProducts
+                              .map(
+                                (productName) => {
+                              'productName': productName,
+                              if (isSaaS)
+                                'userCountRange':
+                                controller.productUserRanges[productName] ?? '1-10',
+                              if (isSaaS)
+                                'totalPrice': controller.productsList
+                                    .firstWhere((p) => p.name == productName)
+                                    .pricePerUser *
+                                    (controller.productUserCounts[productName] ?? 1),
+                            },
+                          )
+                              .toList(),
+                          if (isSaaS) 'totalAmount': controller.totalPrice,
+                        };
+                        if (kDebugMode) {
+                          print('data====>$formData');
+                        }
+
+                        // Send data to API
+                        final isSuccess = await controller.sendUserData(formData);
+                        if (!isSuccess) {
+                          Get.snackbar(
+                            'Error',
+                            'Failed to submit data. Please try again.',
+                            backgroundColor: Colors.red.shade50,
+                            colorText: Colors.red.shade900,
+                            margin: const EdgeInsets.all(16),
+                            borderRadius: 10,
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                        }
+
+                        // Call submitForm to handle navigation and dialog
+                        await controller.submitForm(
+                          isPayment: isPayment,
+                          isAgreement: isAgreement,
+                          context: context,
+                        );
+
+                        controller.isLoading.value = false;
+                      }
+                          : null;
 
                       return GradientButton(
                         onPressed: onPressed,
                         isLoading: controller.isLoading.value,
                         text: buttonText,
-                        gradientColors:
-                            canProceed && !controller.isLoading.value
-                                ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
-                                : const [Color(0xFFB0BEC5), Color(0xFFCFD8DC)],
+                        gradientColors: canProceed && !controller.isLoading.value
+                            ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
+                            : const [Color(0xFFB0BEC5), Color(0xFFCFD8DC)],
                       );
                     }),
                   ),
@@ -1916,25 +1835,23 @@ class ProductInquiryFlow extends StatelessWidget {
   }
 
   Widget _buildActiveStep(int step, AppController controller) {
-    final bool isSaaS =
-        controller.engagementModel.value == EngagementModel.saas;
+    final bool isSaaS = controller.engagementModel.value == EngagementModel.saas;
     switch (step) {
       case 0:
         return EngagementModelStep(key: const ValueKey('step1'));
       case 1:
         return ProductSelectionStep(key: const ValueKey('step2'));
       case 2:
-        return isSaaS
-            ? PlanPricingStep(key: const ValueKey('step3'))
-            : ContactDetailsStep(key: const ValueKey('step4'));
+        return isSaaS ? PlanPricingStep(key: const ValueKey('step3')) : ContactDetailsStep(key: const ValueKey('step4'));
       case 3:
-        return ContactDetailsStep(key: const ValueKey('step4'));
+        return isSaaS ? CheckoutStep(key: const ValueKey('step4')) : ContactDetailsStep(key: const ValueKey('step4'));
+      case 4:
+        return ContactDetailsStep(key: const ValueKey('step5'));
       default:
         return const SizedBox();
     }
   }
 }
-
 class StepProgressIndicator extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
