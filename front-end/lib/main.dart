@@ -1799,208 +1799,213 @@ class ProductInquiryFlow extends StatelessWidget {
           },
         ),
       ),
-      body: Container(
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+      body: GestureDetector(
+        onTap: (){
+          FocusScope.of(context).unfocus();
+        },
         child: Container(
-          color: Colors.white.withValues(alpha: 0.1),
-          child: SafeArea(
-            child: Obx(() {
-              final int activeStep = controller.activeStep.value;
-              final bool isSaaS =
-                  controller.engagementModel.value == EngagementModel.saas;
-              final int totalSteps = isSaaS ? 4 : 2;
-              final List<String> labels =
-              isSaaS
-                  ? const ['Model', 'Products', 'Pricing', 'Checkout']
-                  : const ['Model', 'Products'];
-              final int uiStep =
-              isSaaS ? activeStep : (activeStep == 3 ? 2 : activeStep);
+          decoration: BoxDecoration(color: Colors.grey.shade200),
+          child: Container(
+            color: Colors.white.withValues(alpha: 0.1),
+            child: SafeArea(
+              child: Obx(() {
+                final int activeStep = controller.activeStep.value;
+                final bool isSaaS =
+                    controller.engagementModel.value == EngagementModel.saas;
+                final int totalSteps = isSaaS ? 4 : 2;
+                final List<String> labels =
+                isSaaS
+                    ? const ['Model', 'Products', 'Pricing', 'Checkout']
+                    : const ['Model', 'Products'];
+                final int uiStep =
+                isSaaS ? activeStep : (activeStep == 3 ? 2 : activeStep);
 
-              debugPrint(
-                'ProductInquiryFlow rebuilt: activeStep=$activeStep, '
-                    'uiStep=$uiStep, isSaaS=$isSaaS, '
-                    'selectedProducts=${controller.selectedProducts}, '
-                    'engagementModel=${controller.engagementModel.value}',
-              );
+                debugPrint(
+                  'ProductInquiryFlow rebuilt: activeStep=$activeStep, '
+                      'uiStep=$uiStep, isSaaS=$isSaaS, '
+                      'selectedProducts=${controller.selectedProducts}, '
+                      'engagementModel=${controller.engagementModel.value}',
+                );
 
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 16,
-                    ),
-                    child: StepProgressIndicator(
-                      currentStep: uiStep,
-                      totalSteps: totalSteps,
-                      labels: labels,
-                    ),
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.all(24),
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        switchInCurve: Curves.easeOut,
-                        switchOutCurve: Curves.easeIn,
-                        transitionBuilder: (
-                            Widget child,
-                            Animation<double> animation,
-                            ) {
-                          return SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(1.0, 0.0),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: FadeTransition(
-                              opacity: animation,
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: _buildActiveStep(activeStep, controller),
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 16,
+                      ),
+                      child: StepProgressIndicator(
+                        currentStep: uiStep,
+                        totalSteps: totalSteps,
+                        labels: labels,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Obx(() {
-                      bool canProceed = true;
-                      String buttonText = 'Continue';
-                      VoidCallback? onPressed;
-                      bool isPayment = false;
-                      bool isAgreement = false;
-
-                      if (activeStep == 0) {
-                        canProceed = controller.engagementModel.value != null;
-                      } else if (activeStep == 1) {
-                        canProceed = controller.selectedProducts.isNotEmpty;
-                        if (!isSaaS) {
-                          buttonText = 'Submit for Service Agreement';
-                          isAgreement = true;
-                        }
-                        debugPrint(
-                          'Step 1 Button: canProceed=$canProceed, '
-                              'selectedProducts=${controller.selectedProducts}, '
-                              'length=${controller.selectedProducts.length}',
-                        );
-                      } else if (activeStep == 2 && isSaaS) {
-                        canProceed =
-                            controller.productUserCounts.isNotEmpty &&
-                                controller.productUserCounts.values.every(
-                                      (count) => count > 0,
-                                );
-                      } else if (activeStep == 3 && isSaaS) {
-                        canProceed =
-                            controller.productUserCounts.isNotEmpty &&
-                                controller.productUserCounts.values.every(
-                                      (count) => count > 0,
-                                );
-                        buttonText = 'Pay Now';
-                        isPayment = true;
-                      } else if (activeStep == 4 ||
-                          (activeStep == 2 && !isSaaS)) {
-                        buttonText = 'Submit Inquiry';
-                      }
-
-                      onPressed =
-                      canProceed && !controller.isLoading.value
-                          ? () async {
-                        controller.isLoading.value = true;
-                        HapticFeedback.lightImpact();
-                        debugPrint(
-                          'Button pressed: activeStep=$activeStep, '
-                              'uiStep=$uiStep, canProceed=$canProceed, '
-                              'selectedProducts=${controller.selectedProducts}, '
-                              'isPayment=$isPayment, isAgreement=$isAgreement',
-                        );
-                        await controller.submitForm(
-                          isPayment: isPayment,
-                          isAgreement: isAgreement,
-                          context: context,
-                        );
-                        if (buttonText == 'Pay Now') {
-                          // Prepare form data
-                          final formData = {
-                            'companyName':
-                            controller.companyController.text,
-                            'fullName': controller.nameController.text,
-                            'email': controller.emailController.text,
-                            'phoneNumber':
-                            controller.phoneController.text,
-                            'interestedIn': 'Product',
-                            'engagementModel': controller
-                                .getApiEngagementModel(
-                              controller.engagementModel.value,
-                            ),
-                            'selectedProducts':
-                            controller.selectedProducts
-                                .map(
-                                  (productName) => {
-                                'productName': productName,
-                                if (isSaaS)
-                                  'userCountRange':
-                                  controller
-                                      .productUserRanges[productName] ??
-                                      '1-10',
-                                if (isSaaS)
-                                  'totalPrice':
-                                  controller.productsList
-                                      .firstWhere(
-                                        (p) =>
-                                    p.name ==
-                                        productName,
-                                  )
-                                      .pricePerUser *
-                                      (controller
-                                          .productUserCounts[productName] ??
-                                          1),
-                              },
-                            )
-                                .toList(),
-                            if (isSaaS)
-                              'totalAmount': controller.totalPrice,
-                          };
-                          if (kDebugMode) {
-                            print('data====>$formData');
-                          }
-
-                          // Send data to API
-                          final isSuccess = await controller
-                              .sendUserData(formData);
-                          if (!isSuccess) {
-                            Get.snackbar(
-                              'Error',
-                              'Failed to submit data. Please try again.',
-                              backgroundColor: Colors.red.shade50,
-                              colorText: Colors.red.shade900,
-                              margin: const EdgeInsets.all(16),
-                              borderRadius: 10,
-                              snackPosition: SnackPosition.BOTTOM,
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.all(24),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          switchInCurve: Curves.easeOut,
+                          switchOutCurve: Curves.easeIn,
+                          transitionBuilder: (
+                              Widget child,
+                              Animation<double> animation,
+                              ) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(1.0, 0.0),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
                             );
+                          },
+                          child: _buildActiveStep(activeStep, controller),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Obx(() {
+                        bool canProceed = true;
+                        String buttonText = 'Continue';
+                        VoidCallback? onPressed;
+                        bool isPayment = false;
+                        bool isAgreement = false;
+
+                        if (activeStep == 0) {
+                          canProceed = controller.engagementModel.value != null;
+                        } else if (activeStep == 1) {
+                          canProceed = controller.selectedProducts.isNotEmpty;
+                          if (!isSaaS) {
+                            buttonText = 'Submit for Service Agreement';
+                            isAgreement = true;
                           }
-
-                          // Call submitForm to handle navigation and dialog
+                          debugPrint(
+                            'Step 1 Button: canProceed=$canProceed, '
+                                'selectedProducts=${controller.selectedProducts}, '
+                                'length=${controller.selectedProducts.length}',
+                          );
+                        } else if (activeStep == 2 && isSaaS) {
+                          canProceed =
+                              controller.productUserCounts.isNotEmpty &&
+                                  controller.productUserCounts.values.every(
+                                        (count) => count > 0,
+                                  );
+                        } else if (activeStep == 3 && isSaaS) {
+                          canProceed =
+                              controller.productUserCounts.isNotEmpty &&
+                                  controller.productUserCounts.values.every(
+                                        (count) => count > 0,
+                                  );
+                          buttonText = 'Pay Now';
+                          isPayment = true;
+                        } else if (activeStep == 4 ||
+                            (activeStep == 2 && !isSaaS)) {
+                          buttonText = 'Submit Inquiry';
                         }
-                        controller.isLoading.value = false;
-                      }
-                          : null;
 
-                      return GradientButton(
-                        onPressed: onPressed,
-                        isLoading: controller.isLoading.value,
-                        text: buttonText,
-                        gradientColors:
+                        onPressed =
                         canProceed && !controller.isLoading.value
-                            ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
-                            : const [Color(0xFFB0BEC5), Color(0xFFCFD8DC)],
-                      );
-                    }),
-                  ),
-                ],
-              );
-            }),
+                            ? () async {
+                          controller.isLoading.value = true;
+                          HapticFeedback.lightImpact();
+                          debugPrint(
+                            'Button pressed: activeStep=$activeStep, '
+                                'uiStep=$uiStep, canProceed=$canProceed, '
+                                'selectedProducts=${controller.selectedProducts}, '
+                                'isPayment=$isPayment, isAgreement=$isAgreement',
+                          );
+                          await controller.submitForm(
+                            isPayment: isPayment,
+                            isAgreement: isAgreement,
+                            context: context,
+                          );
+                          if (buttonText == 'Pay Now') {
+                            // Prepare form data
+                            final formData = {
+                              'companyName':
+                              controller.companyController.text,
+                              'fullName': controller.nameController.text,
+                              'email': controller.emailController.text,
+                              'phoneNumber':
+                              controller.phoneController.text,
+                              'interestedIn': 'Product',
+                              'engagementModel': controller
+                                  .getApiEngagementModel(
+                                controller.engagementModel.value,
+                              ),
+                              'selectedProducts':
+                              controller.selectedProducts
+                                  .map(
+                                    (productName) => {
+                                  'productName': productName,
+                                  if (isSaaS)
+                                    'userCountRange':
+                                    controller
+                                        .productUserRanges[productName] ??
+                                        '1-10',
+                                  if (isSaaS)
+                                    'totalPrice':
+                                    controller.productsList
+                                        .firstWhere(
+                                          (p) =>
+                                      p.name ==
+                                          productName,
+                                    )
+                                        .pricePerUser *
+                                        (controller
+                                            .productUserCounts[productName] ??
+                                            1),
+                                },
+                              )
+                                  .toList(),
+                              if (isSaaS)
+                                'totalAmount': controller.totalPrice,
+                            };
+                            if (kDebugMode) {
+                              print('data====>$formData');
+                            }
+
+                            // Send data to API
+                            final isSuccess = await controller
+                                .sendUserData(formData);
+                            if (!isSuccess) {
+                              Get.snackbar(
+                                'Error',
+                                'Failed to submit data. Please try again.',
+                                backgroundColor: Colors.red.shade50,
+                                colorText: Colors.red.shade900,
+                                margin: const EdgeInsets.all(16),
+                                borderRadius: 10,
+                                snackPosition: SnackPosition.BOTTOM,
+                              );
+                            }
+
+                            // Call submitForm to handle navigation and dialog
+                          }
+                          controller.isLoading.value = false;
+                        }
+                            : null;
+
+                        return GradientButton(
+                          onPressed: onPressed,
+                          isLoading: controller.isLoading.value,
+                          text: buttonText,
+                          gradientColors:
+                          canProceed && !controller.isLoading.value
+                              ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
+                              : const [Color(0xFFB0BEC5), Color(0xFFCFD8DC)],
+                        );
+                      }),
+                    ),
+                  ],
+                );
+              }),
+            ),
           ),
         ),
       ),
@@ -2456,7 +2461,7 @@ class PlanPricingStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AppController>();
-    final plans = ['Free', 'Essential', 'Enterprise'];
+    final allPlans = ['Free', 'Enterprise'];
 
     return Obx(() {
       final isSaaS = controller.engagementModel.value == EngagementModel.saas;
@@ -2504,19 +2509,13 @@ class PlanPricingStep extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          // Obx(() {
-                          //   final selectedPlan =
-                          //       controller.productPlans[productName] ?? 'Free';
-                          //   return Text(
-                          //     'Price: ₹${controller.getPriceForPlan(productName, selectedPlan)}/user/month',
-                          //     style: Theme.of(context).textTheme.bodyMedium,
-                          //   );
-                          // }),
-                          const SizedBox(height: 16),
                           Obx(() {
+                            final selectedPlan = controller.productPlans[productName] ?? 'Free';
+                            final availablePlans = allPlans; // Always show both plans
+
                             return DropdownButtonFormField<String>(
                               dropdownColor: Colors.white,
-                              value: controller.productPlans[productName] ?? plans[0],
+                              value: selectedPlan,
                               decoration: InputDecoration(
                                 labelText: 'Plan',
                                 prefixIcon: Icon(
@@ -2533,7 +2532,7 @@ class PlanPricingStep extends StatelessWidget {
                                   vertical: 12,
                                 ),
                               ),
-                              items: plans.map((plan) {
+                              items: availablePlans.map((plan) {
                                 return DropdownMenuItem<String>(
                                   value: plan,
                                   child: Text(plan),
@@ -2549,84 +2548,87 @@ class PlanPricingStep extends StatelessWidget {
                               value == null ? 'Please select a plan' : null,
                             );
                           }),
-                          // const SizedBox(height: 16),
-                          // Obx(() {
-                          //   final selectedPlan =
-                          //       controller.productPlans[productName] ?? 'Free';
-                          //   return TextFormField(
-                          //     controller: controller.userCountControllers[productName],
-                          //     keyboardType: TextInputType.number,
-                          //     decoration: InputDecoration(
-                          //       labelText: 'No. of Users',
-                          //       prefixIcon: Icon(
-                          //         Icons.group_outlined,
-                          //         color: selectedProducts.indexOf(productName) % 2 == 0
-                          //             ? const Color(0xFFBFD633)
-                          //             : const Color(0xFF2EC4F3),
-                          //       ),
-                          //       border: OutlineInputBorder(
-                          //         borderRadius: BorderRadius.circular(12),
-                          //       ),
-                          //       contentPadding: const EdgeInsets.symmetric(
-                          //         horizontal: 16,
-                          //         vertical: 12,
-                          //       ),
-                          //     ),
-                          //     enabled: selectedPlan != 'Free',
-                          //     validator: (value) {
-                          //       if (selectedPlan == 'Free' && (value == null || value.isEmpty)) {
-                          //         return null;
-                          //       }
-                          //       if (value == null || value.isEmpty) {
-                          //         return 'Please enter the number of users';
-                          //       }
-                          //       final count = int.tryParse(value);
-                          //       if (count == null || count <= 0) {
-                          //         return 'Please enter a valid number';
-                          //       }
-                          //       if (selectedPlan == 'Essential' && count > 50) {
-                          //         return 'Essential plan supports up to 50 users';
-                          //       }
-                          //       if (selectedPlan == 'Enterprise' && count < 51) {
-                          //         return 'Enterprise plan requires 51+ users';
-                          //       }
-                          //       return null;
-                          //     },
-                          //     onChanged: (value) {
-                          //       controller.updateUserCount(productName, value);
-                          //       debugPrint('Updated user count for $productName: $value');
-                          //     },
-                          //   );
-                          // }),
                           const SizedBox(height: 16),
-                          // Obx(() {
-                          //   final selectedPlan =
-                          //       controller.productPlans[productName] ?? 'Free';
-                          //   final userCount =
-                          //       controller.productUserCounts[productName] ?? 1;
-                          //   final price = controller.getPriceForPlan(
-                          //     productName,
-                          //     selectedPlan,
-                          //   ) *
-                          //       userCount;
-                          //   return Text(
-                          //     'Total: ₹${price.toStringAsFixed(2)}/month',
-                          //     style: GoogleFonts.inter(
-                          //       fontSize: 16,
-                          //       fontWeight: FontWeight.w600,
-                          //       color: selectedProducts.indexOf(productName) % 2 == 0
-                          //           ? const Color(0xFFBFD633)
-                          //           : const Color(0xFF2EC4F3),
-                          //     ),
-                          //   );
-                          // }),
+                          Obx(() {
+                            final selectedPlan = controller.productPlans[productName] ?? 'Free';
+                            if (selectedPlan != 'Free') {
+                              return TextFormField(
+                                controller: controller.userCountControllers[productName],
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: 'No. of Users',
+                                  prefixIcon: Icon(
+                                    Icons.group_outlined,
+                                    color: selectedProducts.indexOf(productName) % 2 == 0
+                                        ? const Color(0xFFBFD633)
+                                        : const Color(0xFF2EC4F3),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                ),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(5),
+                                ],
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter the number of users';
+                                  }
+                                  final count = int.tryParse(value);
+                                  if (count == null || count <= 0) {
+                                    return 'Please enter a valid number';
+                                  }
+                                  if (count > 99999) {
+                                    return 'Number of users cannot exceed 99999';
+                                  }
+                                  if (selectedPlan == 'Essential' && count > 50) {
+                                    return 'Essential plan supports up to 50 users';
+                                  }
+                                  if (selectedPlan == 'Enterprise' && count < 51) {
+                                    return 'Enterprise plan requires 51+ users';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  controller.updateUserCount(productName, value);
+                                  debugPrint('Updated user count for $productName: $value');
+                                },
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }),
+                          const SizedBox(height: 16),
+                          Obx(() {
+                            final selectedPlan = controller.productPlans[productName] ?? 'Free';
+                            final userCount = selectedPlan == 'Free'
+                                ? 1
+                                : controller.productUserCounts[productName] ?? 1;
+                            final pricePerUser = selectedPlan == 'Free' ? 0.0 : product.pricePerUser;
+                            final price = pricePerUser * userCount;
+                            return Text(
+                              'Total: ₹${price.toStringAsFixed(2)}/month',
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: selectedProducts.indexOf(productName) % 2 == 0
+                                    ? const Color(0xFFBFD633)
+                                    : const Color(0xFF2EC4F3),
+                              ),
+                            );
+                          }),
                           const SizedBox(height: 16),
                           Align(
                             alignment: Alignment.centerRight,
                             child: GestureDetector(
                               onTap: () {
-                                Get.to(() => PlanFeaturesScreen(
-                                  productName: productName,
+                                Get.to(() => EnhancedPricingScreen(
+                                  plan1Name: productName,
+                                  plan2Name: productName,
                                 ));
                               },
                               child: Text(
@@ -2662,16 +2664,29 @@ class PlanPricingStep extends StatelessWidget {
                           color: const Color(0xFF0F1C35),
                         ),
                       ),
-                      Obx(
-                            () => Text(
-                          '₹${controller.totalPrice.toStringAsFixed(2)}/month',
+                      Obx(() {
+                        double total = 0.0;
+                        for (var productName in selectedProducts) {
+                          final product = controller.productsList.firstWhere(
+                                (p) => p.name == productName,
+                          );
+                          final selectedPlan = controller.productPlans[productName] ?? 'Free';
+                          final userCount = selectedPlan == 'Free'
+                              ? 1
+                              : controller.productUserCounts[productName] ?? 1;
+                          final pricePerUser = selectedPlan == 'Free' ? 0.0 : product.pricePerUser;
+                          total += pricePerUser * userCount;
+                        }
+                        controller.totalPrice.value = total;
+                        return Text(
+                          '₹${total.toStringAsFixed(2)}/month',
                           style: GoogleFonts.inter(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF2EC4F3),
                           ),
-                        ),
-                      ),
+                        );
+                      }),
                     ],
                   ),
                 ),
