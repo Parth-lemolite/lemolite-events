@@ -13,7 +13,6 @@ import 'package:nairobi_app/view/screens/plan_feature_screen.dart';
 import 'package:nairobi_app/view/widgets/policy_pages.dart';
 
 void main() {
-
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -218,7 +217,7 @@ class AppController extends GetxController {
   void updatePlan(String productName, String plan) {
     productPlans[productName] = plan;
     // Set default user count based on plan
-    int minUsers = plan == 'Free' ? 1 : (plan == 'Essential' ? 1 : 51);
+    int minUsers = plan == 'Free' ? 1 : (plan == 'Essential' ? 1 : 1);
     productUserCounts[productName] = minUsers;
     userCountControllers[productName]!.text = minUsers.toString();
     debugPrint('Updated plan for $productName: $plan, users: $minUsers');
@@ -680,10 +679,10 @@ class AppController extends GetxController {
   }) async {
     debugPrint(
       'submitForm called: step=${activeStep.value}, '
-          'isPayment=$isPayment, isAgreement=$isAgreement, '
-          'flowType=${selectedFlowType.value}, '
-          'selectedProducts=$selectedProducts, '
-          'engagementModel=${engagementModel.value}',
+      'isPayment=$isPayment, isAgreement=$isAgreement, '
+      'flowType=${selectedFlowType.value}, '
+      'selectedProducts=$selectedProducts, '
+      'engagementModel=${engagementModel.value}',
     );
 
     if (selectedFlowType.value == FlowType.product) {
@@ -819,22 +818,22 @@ class AppController extends GetxController {
           'interestedIn': 'Product',
           'engagementModel': getApiEngagementModel(engagementModel.value),
           'selectedProducts':
-          selectedProducts
-              .map(
-                (productName) => {
-              'productName': productName,
-              if (engagementModel.value == EngagementModel.saas)
-                'userCountRange':
-                productUserRanges[productName] ?? '1-10',
-              if (engagementModel.value == EngagementModel.saas)
-                'totalPrice':
-                productsList
-                    .firstWhere((p) => p.name == productName)
-                    .pricePerUser *
-                    (productUserCounts[productName] ?? 1),
-            },
-          )
-              .toList(),
+              selectedProducts
+                  .map(
+                    (productName) => {
+                      'productName': productName,
+                      if (engagementModel.value == EngagementModel.saas)
+                        'userCountRange':
+                            productUserRanges[productName] ?? '1-10',
+                      if (engagementModel.value == EngagementModel.saas)
+                        'totalPrice':
+                            productsList
+                                .firstWhere((p) => p.name == productName)
+                                .pricePerUser *
+                            (productUserCounts[productName] ?? 1),
+                    },
+                  )
+                  .toList(),
           if (engagementModel.value == EngagementModel.saas)
             'totalAmount': totalPrice,
         };
@@ -870,7 +869,7 @@ class AppController extends GetxController {
           showSuccessDialog(context);
           debugPrint('SaaS payment flow submitted');
         } else if ((activeStep.value == 2 &&
-            engagementModel.value != EngagementModel.saas) &&
+                engagementModel.value != EngagementModel.saas) &&
             isAgreement) {
           // await sendEmails(isAgreement: true);
           // Send API data for non-SaaS agreement
@@ -1012,14 +1011,14 @@ class MainScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(color: Colors.grey.shade200),
         child: Obx(
-              () =>
-          controller.isSubmitted.value
-              ? const SuccessScreen()
-              : controller.selectedFlowType.value == null
-              ? const LandingScreen()
-              : controller.selectedFlowType.value == FlowType.service
-              ? const ServiceRequestFlow()
-              : const ProductInquiryFlow(),
+          () =>
+              controller.isSubmitted.value
+                  ? const SuccessScreen()
+                  : controller.selectedFlowType.value == null
+                  ? const LandingScreen()
+                  : controller.selectedFlowType.value == FlowType.service
+                  ? const ServiceRequestFlow()
+                  : const ProductInquiryFlow(),
         ),
       ),
     );
@@ -1057,9 +1056,9 @@ class GradientButton extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors:
-                isLoading
-                    ? [Colors.grey.shade300, Colors.grey.shade400]
-                    : gradientColors,
+                    isLoading
+                        ? [Colors.grey.shade300, Colors.grey.shade400]
+                        : gradientColors,
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -1067,23 +1066,23 @@ class GradientButton extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child:
-            isLoading
-                ? const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            )
-                : Text(
-              text,
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
+                isLoading
+                    ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                    : Text(
+                      text,
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
           ),
         ),
       ),
@@ -1133,10 +1132,12 @@ class _LandingScreenState extends State<LandingScreen> {
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: const Text('Lemolite Technologies LLP'),
+                                  title: const Text(
+                                    'Lemolite Technologies LLP',
+                                  ),
                                   content: const Text(
                                     'Lemolite Technologies LLP is engaged in the development and sale of cloud-based enterprise software solutions. We offer Applicant Tracking Systems (ATS), Human Resource and Employee Management Systems (HREMS), Customer Relationship Management (CRM) platforms, and Inventory Management Systems (IMS).\n\n'
-                                        'Our services are delivered under a subscription-based and white-label model, enabling businesses to use or resell our solutions under their own brand name. The products are accessible through secure web portals and are primarily used by SMEs and enterprises to streamline operations in hiring, HR management, sales and customer service, and inventory control.',
+                                    'Our services are delivered under a subscription-based and white-label model, enabling businesses to use or resell our solutions under their own brand name. The products are accessible through secure web portals and are primarily used by SMEs and enterprises to streamline operations in hiring, HR management, sales and customer service, and inventory control.',
                                   ),
                                   actions: [
                                     TextButton(
@@ -1201,9 +1202,9 @@ class _LandingScreenState extends State<LandingScreen> {
                       ),
                       validator:
                           (value) =>
-                      value == null || value.isEmpty
-                          ? 'Please enter your name'
-                          : null,
+                              value == null || value.isEmpty
+                                  ? 'Please enter your name'
+                                  : null,
                       textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 16),
@@ -1216,9 +1217,9 @@ class _LandingScreenState extends State<LandingScreen> {
                       ),
                       validator:
                           (value) =>
-                      value == null || value.isEmpty
-                          ? 'Please enter your company name'
-                          : null,
+                              value == null || value.isEmpty
+                                  ? 'Please enter your company name'
+                                  : null,
                       textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 16),
@@ -1232,11 +1233,11 @@ class _LandingScreenState extends State<LandingScreen> {
                       ),
                       validator:
                           (value) =>
-                      value == null || value.isEmpty
-                          ? 'Please enter your email'
-                          : !value.contains('@') || !value.contains('.')
-                          ? 'Please enter a valid email'
-                          : null,
+                              value == null || value.isEmpty
+                                  ? 'Please enter your email'
+                                  : !value.contains('@') || !value.contains('.')
+                                  ? 'Please enter a valid email'
+                                  : null,
                       textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 16),
@@ -1250,9 +1251,9 @@ class _LandingScreenState extends State<LandingScreen> {
                       ),
                       validator:
                           (value) =>
-                      value == null || value.isEmpty
-                          ? 'Please enter your phone number'
-                          : null,
+                              value == null || value.isEmpty
+                                  ? 'Please enter your phone number'
+                                  : null,
                       textInputAction: TextInputAction.done,
                     ),
                     const SizedBox(height: 24),
@@ -1262,7 +1263,7 @@ class _LandingScreenState extends State<LandingScreen> {
                     ),
                     const SizedBox(height: 16),
                     Obx(
-                          () => Column(
+                      () => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ListTile(
@@ -1298,7 +1299,7 @@ class _LandingScreenState extends State<LandingScreen> {
                             if (selectedOption.value == 'Service') {
                               final formData = {
                                 'companyName':
-                                controller.companyController.text,
+                                    controller.companyController.text,
                                 'fullName': controller.nameController.text,
                                 'email': controller.emailController.text,
                                 'phoneNumber': controller.phoneController.text,
@@ -1319,10 +1320,10 @@ class _LandingScreenState extends State<LandingScreen> {
                                     alpha: 0.2,
                                   ),
                                   pageBuilder: (
-                                      context,
-                                      animation1,
-                                      animation2,
-                                      ) {
+                                    context,
+                                    animation1,
+                                    animation2,
+                                  ) {
                                     return BackdropFilter(
                                       filter: ImageFilter.blur(
                                         sigmaX: 5,
@@ -1427,9 +1428,9 @@ class _LandingScreenState extends State<LandingScreen> {
                         },
                         isLoading: controller.isLoading.value,
                         text:
-                        selectedOption.value == 'Service'
-                            ? 'Submit Request'
-                            : 'Next',
+                            selectedOption.value == 'Service'
+                                ? 'Submit Request'
+                                : 'Next',
                         gradientColors: const [
                           Color(0xFFBFD633),
                           Color(0xFF2EC4F3),
@@ -1541,121 +1542,121 @@ class ServiceRequestFlow extends StatelessWidget {
                       messageController: controller.messageController,
                       messageLabel: 'Service Requirements',
                       messagePlaceholder:
-                      'Tell us about your specific service needs...',
+                          'Tell us about your specific service needs...',
                     ),
                     const SizedBox(height: 32),
                     Obx(
-                          () => GradientButton(
+                      () => GradientButton(
                         onPressed:
-                        controller.isLoading.value
-                            ? null
-                            : () {
-                          if (controller.contactFormKey.currentState !=
-                              null &&
-                              controller.contactFormKey.currentState!
-                                  .validate()) {
-                            controller.submitForm(context: context);
-                            showGeneralDialog(
-                              context: context,
-                              barrierDismissible: true,
-                              barrierLabel: '',
-                              barrierColor: Colors.black.withValues(
-                                alpha: 0.2,
-                              ),
-                              pageBuilder: (
-                                  context,
-                                  animation1,
-                                  animation2,
-                                  ) {
-                                return BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                    sigmaX: 5,
-                                    sigmaY: 5,
-                                  ),
-                                  child: Center(
-                                    child: AlertDialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(16),
+                            controller.isLoading.value
+                                ? null
+                                : () {
+                                  if (controller.contactFormKey.currentState !=
+                                          null &&
+                                      controller.contactFormKey.currentState!
+                                          .validate()) {
+                                    controller.submitForm(context: context);
+                                    showGeneralDialog(
+                                      context: context,
+                                      barrierDismissible: true,
+                                      barrierLabel: '',
+                                      barrierColor: Colors.black.withValues(
+                                        alpha: 0.2,
                                       ),
-                                      backgroundColor: Colors.white
-                                          .withValues(alpha: 0.9),
-                                      title: Text(
-                                        'Thank You!!',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(
-                                            0xFF0F1C35,
+                                      pageBuilder: (
+                                        context,
+                                        animation1,
+                                        animation2,
+                                      ) {
+                                        return BackdropFilter(
+                                          filter: ImageFilter.blur(
+                                            sigmaX: 5,
+                                            sigmaY: 5,
                                           ),
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(
-                                            Icons.check_circle_outline,
-                                            size: 48,
-                                            color: Colors.green,
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Text(
-                                            'Our team will contact you shortly.',
-                                            style: GoogleFonts.inter(
-                                              fontSize: 16,
-                                              fontWeight:
-                                              FontWeight.w400,
-                                              color: const Color(
-                                                0xFF404B69,
+                                          child: Center(
+                                            child: AlertDialog(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
                                               ),
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ],
-                                      ),
-                                      actions: [
-                                        Center(
-                                          child: TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                              controller.resetFlow();
-                                              Get.offAll(
-                                                    () =>
-                                                const MainScreen(),
-                                              ); // Changed: Reset navigation stack
-                                            },
-                                            child: Text(
-                                              'OK',
-                                              style: GoogleFonts.inter(
-                                                fontSize: 16,
-                                                fontWeight:
-                                                FontWeight.w600,
-                                                color: const Color(
-                                                  0xFF2EC4F3,
+                                              backgroundColor: Colors.white
+                                                  .withValues(alpha: 0.9),
+                                              title: Text(
+                                                'Thank You!!',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: const Color(
+                                                    0xFF0F1C35,
+                                                  ),
                                                 ),
+                                                textAlign: TextAlign.center,
                                               ),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  const Icon(
+                                                    Icons.check_circle_outline,
+                                                    size: 48,
+                                                    color: Colors.green,
+                                                  ),
+                                                  const SizedBox(height: 16),
+                                                  Text(
+                                                    'Our team will contact you shortly.',
+                                                    style: GoogleFonts.inter(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: const Color(
+                                                        0xFF404B69,
+                                                      ),
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ],
+                                              ),
+                                              actions: [
+                                                Center(
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                      controller.resetFlow();
+                                                      Get.offAll(
+                                                        () =>
+                                                            const MainScreen(),
+                                                      ); // Changed: Reset navigation stack
+                                                    },
+                                                    child: Text(
+                                                      'OK',
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: const Color(
+                                                          0xFF2EC4F3,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          } else {
-                            Get.snackbar(
-                              'Error',
-                              'Please fill all required fields correctly',
-                              backgroundColor: Colors.red.shade50,
-                              colorText: Colors.red.shade900,
-                              margin: const EdgeInsets.all(16),
-                              borderRadius: 10,
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
-                          }
-                        },
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    Get.snackbar(
+                                      'Error',
+                                      'Please fill all required fields correctly',
+                                      backgroundColor: Colors.red.shade50,
+                                      colorText: Colors.red.shade900,
+                                      margin: const EdgeInsets.all(16),
+                                      borderRadius: 10,
+                                      snackPosition: SnackPosition.BOTTOM,
+                                    );
+                                  }
+                                },
                         isLoading: controller.isLoading.value,
                         text: 'Submit Service Request',
                         gradientColors: const [
@@ -1719,61 +1720,61 @@ class _ServiceTypeSelectorState extends State<ServiceTypeSelector> {
           spacing: 12,
           runSpacing: 12,
           children:
-          serviceTypes.map((service) {
-            final bool isSelected = selectedService == service['title'];
-            return GestureDetector(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                setState(() => selectedService = service['title']);
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color:
-                  isSelected
-                      ? service['color'].withValues(alpha: 0.1)
-                      : Colors.white.withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color:
-                    isSelected
-                        ? service['color']
-                        : const Color(0xFFEAEEF5),
-                    width: 1.5,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      service['icon'],
-                      color:
-                      isSelected
-                          ? service['color']
-                          : const Color(0xFF404B69),
+              serviceTypes.map((service) {
+                final bool isSelected = selectedService == service['title'];
+                return GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    setState(() => selectedService = service['title']);
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      service['title'],
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                    decoration: BoxDecoration(
+                      color:
+                          isSelected
+                              ? service['color'].withValues(alpha: 0.1)
+                              : Colors.white.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
                         color:
-                        isSelected
-                            ? service['color']
-                            : const Color(0xFF404B69),
+                            isSelected
+                                ? service['color']
+                                : const Color(0xFFEAEEF5),
+                        width: 1.5,
                       ),
                     ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          service['icon'],
+                          color:
+                              isSelected
+                                  ? service['color']
+                                  : const Color(0xFF404B69),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          service['title'],
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color:
+                                isSelected
+                                    ? service['color']
+                                    : const Color(0xFF404B69),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
         ),
       ],
     );
@@ -1800,7 +1801,7 @@ class ProductInquiryFlow extends StatelessWidget {
         ),
       ),
       body: GestureDetector(
-        onTap: (){
+        onTap: () {
           FocusScope.of(context).unfocus();
         },
         child: Container(
@@ -1814,17 +1815,17 @@ class ProductInquiryFlow extends StatelessWidget {
                     controller.engagementModel.value == EngagementModel.saas;
                 final int totalSteps = isSaaS ? 4 : 2;
                 final List<String> labels =
-                isSaaS
-                    ? const ['Model', 'Products', 'Pricing', 'Checkout']
-                    : const ['Model', 'Products'];
+                    isSaaS
+                        ? const ['Model', 'Products', 'Pricing', 'Checkout']
+                        : const ['Model', 'Products'];
                 final int uiStep =
-                isSaaS ? activeStep : (activeStep == 3 ? 2 : activeStep);
+                    isSaaS ? activeStep : (activeStep == 3 ? 2 : activeStep);
 
                 debugPrint(
                   'ProductInquiryFlow rebuilt: activeStep=$activeStep, '
-                      'uiStep=$uiStep, isSaaS=$isSaaS, '
-                      'selectedProducts=${controller.selectedProducts}, '
-                      'engagementModel=${controller.engagementModel.value}',
+                  'uiStep=$uiStep, isSaaS=$isSaaS, '
+                  'selectedProducts=${controller.selectedProducts}, '
+                  'engagementModel=${controller.engagementModel.value}',
                 );
 
                 return Column(
@@ -1849,9 +1850,9 @@ class ProductInquiryFlow extends StatelessWidget {
                           switchInCurve: Curves.easeOut,
                           switchOutCurve: Curves.easeIn,
                           transitionBuilder: (
-                              Widget child,
-                              Animation<double> animation,
-                              ) {
+                            Widget child,
+                            Animation<double> animation,
+                          ) {
                             return SlideTransition(
                               position: Tween<Offset>(
                                 begin: const Offset(1.0, 0.0),
@@ -1886,21 +1887,21 @@ class ProductInquiryFlow extends StatelessWidget {
                           }
                           debugPrint(
                             'Step 1 Button: canProceed=$canProceed, '
-                                'selectedProducts=${controller.selectedProducts}, '
-                                'length=${controller.selectedProducts.length}',
+                            'selectedProducts=${controller.selectedProducts}, '
+                            'length=${controller.selectedProducts.length}',
                           );
                         } else if (activeStep == 2 && isSaaS) {
                           canProceed =
                               controller.productUserCounts.isNotEmpty &&
-                                  controller.productUserCounts.values.every(
-                                        (count) => count > 0,
-                                  );
+                              controller.productUserCounts.values.every(
+                                (count) => count > 0,
+                              );
                         } else if (activeStep == 3 && isSaaS) {
                           canProceed =
                               controller.productUserCounts.isNotEmpty &&
-                                  controller.productUserCounts.values.every(
-                                        (count) => count > 0,
-                                  );
+                              controller.productUserCounts.values.every(
+                                (count) => count > 0,
+                              );
                           buttonText = 'Pay Now';
                           isPayment = true;
                         } else if (activeStep == 4 ||
@@ -1909,96 +1910,100 @@ class ProductInquiryFlow extends StatelessWidget {
                         }
 
                         onPressed =
-                        canProceed && !controller.isLoading.value
-                            ? () async {
-                          controller.isLoading.value = true;
-                          HapticFeedback.lightImpact();
-                          debugPrint(
-                            'Button pressed: activeStep=$activeStep, '
-                                'uiStep=$uiStep, canProceed=$canProceed, '
-                                'selectedProducts=${controller.selectedProducts}, '
-                                'isPayment=$isPayment, isAgreement=$isAgreement',
-                          );
-                          await controller.submitForm(
-                            isPayment: isPayment,
-                            isAgreement: isAgreement,
-                            context: context,
-                          );
-                          if (buttonText == 'Pay Now') {
-                            // Prepare form data
-                            final formData = {
-                              'companyName':
-                              controller.companyController.text,
-                              'fullName': controller.nameController.text,
-                              'email': controller.emailController.text,
-                              'phoneNumber':
-                              controller.phoneController.text,
-                              'interestedIn': 'Product',
-                              'engagementModel': controller
-                                  .getApiEngagementModel(
-                                controller.engagementModel.value,
-                              ),
-                              'selectedProducts':
-                              controller.selectedProducts
-                                  .map(
-                                    (productName) => {
-                                  'productName': productName,
-                                  if (isSaaS)
-                                    'userCountRange':
-                                    controller
-                                        .productUserRanges[productName] ??
-                                        '1-10',
-                                  if (isSaaS)
-                                    'totalPrice':
-                                    controller.productsList
-                                        .firstWhere(
-                                          (p) =>
-                                      p.name ==
-                                          productName,
-                                    )
-                                        .pricePerUser *
-                                        (controller
-                                            .productUserCounts[productName] ??
-                                            1),
-                                },
-                              )
-                                  .toList(),
-                              if (isSaaS)
-                                'totalAmount': controller.totalPrice,
-                            };
-                            if (kDebugMode) {
-                              print('data====>$formData');
-                            }
+                            canProceed && !controller.isLoading.value
+                                ? () async {
+                                  controller.isLoading.value = true;
+                                  HapticFeedback.lightImpact();
+                                  debugPrint(
+                                    'Button pressed: activeStep=$activeStep, '
+                                    'uiStep=$uiStep, canProceed=$canProceed, '
+                                    'selectedProducts=${controller.selectedProducts}, '
+                                    'isPayment=$isPayment, isAgreement=$isAgreement',
+                                  );
+                                  await controller.submitForm(
+                                    isPayment: isPayment,
+                                    isAgreement: isAgreement,
+                                    context: context,
+                                  );
+                                  if (buttonText == 'Pay Now') {
+                                    // Prepare form data
+                                    final formData = {
+                                      'companyName':
+                                          controller.companyController.text,
+                                      'fullName':
+                                          controller.nameController.text,
+                                      'email': controller.emailController.text,
+                                      'phoneNumber':
+                                          controller.phoneController.text,
+                                      'interestedIn': 'Product',
+                                      'engagementModel': controller
+                                          .getApiEngagementModel(
+                                            controller.engagementModel.value,
+                                          ),
+                                      'selectedProducts':
+                                          controller.selectedProducts
+                                              .map(
+                                                (productName) => {
+                                                  'productName': productName,
+                                                  if (isSaaS)
+                                                    'userCountRange':
+                                                        controller
+                                                            .productUserRanges[productName] ??
+                                                        '1-10',
+                                                  if (isSaaS)
+                                                    'totalPrice':
+                                                        controller.productsList
+                                                            .firstWhere(
+                                                              (p) =>
+                                                                  p.name ==
+                                                                  productName,
+                                                            )
+                                                            .pricePerUser *
+                                                        (controller
+                                                                .productUserCounts[productName] ??
+                                                            1),
+                                                },
+                                              )
+                                              .toList(),
+                                      if (isSaaS)
+                                        'totalAmount': controller.totalPrice,
+                                    };
+                                    if (kDebugMode) {
+                                      print('data====>$formData');
+                                    }
 
-                            // Send data to API
-                            final isSuccess = await controller
-                                .sendUserData(formData);
-                            if (!isSuccess) {
-                              Get.snackbar(
-                                'Error',
-                                'Failed to submit data. Please try again.',
-                                backgroundColor: Colors.red.shade50,
-                                colorText: Colors.red.shade900,
-                                margin: const EdgeInsets.all(16),
-                                borderRadius: 10,
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            }
+                                    // Send data to API
+                                    final isSuccess = await controller
+                                        .sendUserData(formData);
+                                    if (!isSuccess) {
+                                      Get.snackbar(
+                                        'Error',
+                                        'Failed to submit data. Please try again.',
+                                        backgroundColor: Colors.red.shade50,
+                                        colorText: Colors.red.shade900,
+                                        margin: const EdgeInsets.all(16),
+                                        borderRadius: 10,
+                                        snackPosition: SnackPosition.BOTTOM,
+                                      );
+                                    }
 
-                            // Call submitForm to handle navigation and dialog
-                          }
-                          controller.isLoading.value = false;
-                        }
-                            : null;
+                                    // Call submitForm to handle navigation and dialog
+                                  }
+                                  controller.isLoading.value = false;
+                                }
+                                : null;
 
                         return GradientButton(
                           onPressed: onPressed,
                           isLoading: controller.isLoading.value,
                           text: buttonText,
                           gradientColors:
-                          canProceed && !controller.isLoading.value
-                              ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
-                              : const [Color(0xFFB0BEC5), Color(0xFFCFD8DC)],
+                              canProceed && !controller.isLoading.value
+                                  ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
+                                  : const [
+                                    Color(0xFFB0BEC5),
+                                    Color(0xFFCFD8DC),
+                                  ],
                         );
                       }),
                     ),
@@ -2054,14 +2059,16 @@ class StepProgressIndicator extends StatelessWidget {
       children: List.generate(totalSteps, (index) {
         final bool isActive = index == currentStep;
         final bool isCompleted = index < currentStep;
-        final Color circleColor = isCompleted
-            ? const Color(0xFF2EC4F3)
-            : isActive
-            ? const Color(0xFFBFD633)
-            : const Color(0xFFEAEEF5);
-        final Color textColor = isCompleted || isActive
-            ? const Color(0xFF0F1C35)
-            : const Color(0xFF8E99B7);
+        final Color circleColor =
+            isCompleted
+                ? const Color(0xFF2EC4F3)
+                : isActive
+                ? const Color(0xFFBFD633)
+                : const Color(0xFFEAEEF5);
+        final Color textColor =
+            isCompleted || isActive
+                ? const Color(0xFF0F1C35)
+                : const Color(0xFF8E99B7);
 
         return Expanded(
           child: Column(
@@ -2075,9 +2082,10 @@ class StepProgressIndicator extends StatelessWidget {
                     Expanded(
                       child: Container(
                         height: 2,
-                        color: index <= currentStep
-                            ? const Color(0xFF2EC4F3)
-                            : const Color(0xFFEAEEF5),
+                        color:
+                            index <= currentStep
+                                ? const Color(0xFF2EC4F3)
+                                : const Color(0xFFEAEEF5),
                       ),
                     ),
                   // Step circle
@@ -2089,22 +2097,24 @@ class StepProgressIndicator extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: Center(
-                      child: isCompleted
-                          ? const Icon(
-                        Icons.check,
-                        size: 16,
-                        color: Colors.white,
-                      )
-                          : Text(
-                        '${index + 1}',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: isActive
-                              ? Colors.white
-                              : const Color(0xFF8E99B7),
-                        ),
-                      ),
+                      child:
+                          isCompleted
+                              ? const Icon(
+                                Icons.check,
+                                size: 16,
+                                color: Colors.white,
+                              )
+                              : Text(
+                                '${index + 1}',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      isActive
+                                          ? Colors.white
+                                          : const Color(0xFF8E99B7),
+                                ),
+                              ),
                     ),
                   ),
                   // Right connecting line (except for last step)
@@ -2112,9 +2122,10 @@ class StepProgressIndicator extends StatelessWidget {
                     Expanded(
                       child: Container(
                         height: 2,
-                        color: index < currentStep
-                            ? const Color(0xFF2EC4F3)
-                            : const Color(0xFFEAEEF5),
+                        color:
+                            index < currentStep
+                                ? const Color(0xFF2EC4F3)
+                                : const Color(0xFFEAEEF5),
                       ),
                     ),
                 ],
@@ -2161,13 +2172,13 @@ class EngagementModelStep extends StatelessWidget {
         ),
         const SizedBox(height: 32),
         Obx(
-              () => _buildEngagementOption(
+          () => _buildEngagementOption(
             title: 'SaaS-Based Subscription',
             description: 'Cloud-based subscription with seamless updates',
             icon: Icons.cloud_outlined,
             color: const Color(0xFF2EC4F3),
             isSelected:
-            controller.engagementModel.value == EngagementModel.saas,
+                controller.engagementModel.value == EngagementModel.saas,
             onTap: () {
               HapticFeedback.lightImpact();
               controller.selectEngagementModel(EngagementModel.saas, context);
@@ -2176,13 +2187,13 @@ class EngagementModelStep extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Obx(
-              () => _buildEngagementOption(
+          () => _buildEngagementOption(
             title: 'Reseller',
             description: 'Distribute our products under your brand',
             icon: Icons.store_outlined,
             color: const Color(0xFFBFD633),
             isSelected:
-            controller.engagementModel.value == EngagementModel.reseller,
+                controller.engagementModel.value == EngagementModel.reseller,
             onTap: () {
               HapticFeedback.lightImpact();
               controller.selectEngagementModel(
@@ -2194,13 +2205,13 @@ class EngagementModelStep extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Obx(
-              () => _buildEngagementOption(
+          () => _buildEngagementOption(
             title: 'Partner',
             description: 'Collaborate to integrate solutions',
             icon: Icons.handshake_outlined,
             color: const Color(0xFF2EC4B6),
             isSelected:
-            controller.engagementModel.value == EngagementModel.partner,
+                controller.engagementModel.value == EngagementModel.partner,
             onTap: () {
               HapticFeedback.lightImpact();
               controller.selectEngagementModel(
@@ -2212,13 +2223,13 @@ class EngagementModelStep extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Obx(
-              () => _buildEngagementOption(
+          () => _buildEngagementOption(
             title: 'Whitelabel',
             description: 'Customize and brand our solutions as your own',
             icon: Icons.branding_watermark_outlined,
             color: const Color(0xFF2EC4F3),
             isSelected:
-            controller.engagementModel.value == EngagementModel.whitelabel,
+                controller.engagementModel.value == EngagementModel.whitelabel,
             onTap: () {
               HapticFeedback.lightImpact();
               controller.selectEngagementModel(
@@ -2249,15 +2260,15 @@ class EngagementModelStep extends StatelessWidget {
           width: isSelected ? 2 : 1,
         ),
         boxShadow:
-        isSelected
-            ? [
-          BoxShadow(
-            color: color.withValues(alpha: 0.12),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ]
-            : [],
+            isSelected
+                ? [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.12),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+                : [],
       ),
       child: Material(
         color: Colors.transparent,
@@ -2368,19 +2379,19 @@ class ProductSelectionStep extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color:
-                      isSelected ? product.color : const Color(0xFFEAEEF5),
+                          isSelected ? product.color : const Color(0xFFEAEEF5),
                       width: isSelected ? 2 : 1,
                     ),
                     boxShadow:
-                    isSelected
-                        ? [
-                      BoxShadow(
-                        color: product.color.withValues(alpha: 0.1),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
-                      ),
-                    ]
-                        : [],
+                        isSelected
+                            ? [
+                              BoxShadow(
+                                color: product.color.withValues(alpha: 0.1),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                            : [],
                   ),
                   child: Stack(
                     children: [
@@ -2458,10 +2469,70 @@ class ProductSelectionStep extends StatelessWidget {
 class PlanPricingStep extends StatelessWidget {
   const PlanPricingStep({super.key});
 
+  // Helper method to get available plans and prices for a product
+  Map<String, dynamic> getProductPlansAndPrices(String productName) {
+    productName = productName.toLowerCase().trim();
+
+    if (productName.contains('integrated') ||
+        productName.contains('s2h + nexstaff')) {
+      return {
+        'plans': ['SaaS Based', 'One Time Cost'],
+        'prices': {
+          'SaaS Based': 89.0, // $ per user per month
+          'One Time Cost': 56500.0, // $ one time payment
+        },
+      };
+    }
+
+    if (productName.contains('scan2hire') || productName.contains('s2h')) {
+      return {
+        'plans': ['Freemium', 'Enterprise'],
+        'prices': {
+          'Freemium': 0.0,
+          'Enterprise': 79.0, // $ per user per month
+        },
+      };
+    }
+
+    if (productName.contains('nexstaff')) {
+      return {
+        'plans': ['Freemium', 'Enterprise'],
+        'prices': {
+          'Freemium': 0.0,
+          'Enterprise': 69.0, // $ per user per month
+        },
+      };
+    }
+
+    if (productName == 'crm') {
+      return {
+        'plans': ['Growth', 'Enterprise'],
+        'prices': {
+          'Growth': 19.0, // $ per user per month
+          'Enterprise': 29.0, // $ per user per month
+        },
+      };
+    }
+
+    if (productName == 'ims') {
+      return {
+        'plans': ['Enterprise'],
+        'prices': {
+          'Enterprise': 19.0, // $ per user per month
+        },
+      };
+    }
+
+    // Default return for unknown products
+    return {
+      'plans': ['Freemium'],
+      'prices': {'Freemium': 0.0},
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AppController>();
-    final allPlans = ['Free', 'Enterprise'];
 
     return Obx(() {
       final isSaaS = controller.engagementModel.value == EngagementModel.saas;
@@ -2490,8 +2561,11 @@ class PlanPricingStep extends StatelessWidget {
             if (isSaaS) ...[
               ...selectedProducts.map((productName) {
                 final product = controller.productsList.firstWhere(
-                      (p) => p.name == productName,
+                  (p) => p.name == productName,
                 );
+                final plansAndPrices = getProductPlansAndPrices(productName);
+                final availablePlans = plansAndPrices['plans'] as List<String>;
+
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Card(
@@ -2510,8 +2584,35 @@ class PlanPricingStep extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Obx(() {
-                            final selectedPlan = controller.productPlans[productName] ?? 'Free';
-                            final availablePlans = allPlans; // Always show both plans
+                            // Set default plan based on product
+                            String defaultPlan;
+                            if (productName.toLowerCase().contains(
+                                  'integrated',
+                                ) ||
+                                productName.toLowerCase().contains(
+                                  's2h + nexstaff',
+                                )) {
+                              defaultPlan = 'SaaS Based';
+                            } else if (productName.toLowerCase() == 'ims') {
+                              defaultPlan = 'Enterprise';
+                            } else if (productName.toLowerCase() == 'crm') {
+                              defaultPlan = 'Growth';
+                            } else if (productName.toLowerCase().contains(
+                                  'scan2hire',
+                                ) ||
+                                productName.toLowerCase().contains('s2h')) {
+                              defaultPlan = 'Freemium';
+                            } else if (productName.toLowerCase().contains(
+                              'nexstaff',
+                            )) {
+                              defaultPlan = 'Freemium';
+                            } else {
+                              defaultPlan = 'Freemium';
+                            }
+
+                            final selectedPlan =
+                                controller.productPlans[productName] ??
+                                defaultPlan;
 
                             return DropdownButtonFormField<String>(
                               dropdownColor: Colors.white,
@@ -2520,9 +2621,12 @@ class PlanPricingStep extends StatelessWidget {
                                 labelText: 'Plan',
                                 prefixIcon: Icon(
                                   Icons.card_membership_outlined,
-                                  color: selectedProducts.indexOf(productName) % 2 == 0
-                                      ? const Color(0xFFBFD633)
-                                      : const Color(0xFF2EC4F3),
+                                  color:
+                                      selectedProducts.indexOf(productName) %
+                                                  2 ==
+                                              0
+                                          ? const Color(0xFFBFD633)
+                                          : const Color(0xFF2EC4F3),
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -2532,36 +2636,49 @@ class PlanPricingStep extends StatelessWidget {
                                   vertical: 12,
                                 ),
                               ),
-                              items: availablePlans.map((plan) {
-                                return DropdownMenuItem<String>(
-                                  value: plan,
-                                  child: Text(plan),
-                                );
-                              }).toList(),
+                              items:
+                                  availablePlans.map((plan) {
+                                    return DropdownMenuItem<String>(
+                                      value: plan,
+                                      child: Text(plan),
+                                    );
+                                  }).toList(),
                               onChanged: (String? value) {
                                 if (value != null) {
                                   controller.updatePlan(productName, value);
-                                  debugPrint('Selected plan for $productName: $value');
+                                  debugPrint(
+                                    'Selected plan for $productName: $value',
+                                  );
                                 }
                               },
-                              validator: (value) =>
-                              value == null ? 'Please select a plan' : null,
+                              validator:
+                                  (value) =>
+                                      value == null
+                                          ? 'Please select a plan'
+                                          : null,
                             );
                           }),
                           const SizedBox(height: 16),
                           Obx(() {
-                            final selectedPlan = controller.productPlans[productName] ?? 'Free';
-                            if (selectedPlan != 'Free') {
+                            final selectedPlan =
+                                controller.productPlans[productName] ?? 'Free';
+                            if (selectedPlan != 'Free' &&
+                                !selectedPlan.contains('One Time')) {
                               return TextFormField(
-                                controller: controller.userCountControllers[productName],
+                                controller:
+                                    controller
+                                        .userCountControllers[productName],
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   labelText: 'No. of Users',
                                   prefixIcon: Icon(
                                     Icons.group_outlined,
-                                    color: selectedProducts.indexOf(productName) % 2 == 0
-                                        ? const Color(0xFFBFD633)
-                                        : const Color(0xFF2EC4F3),
+                                    color:
+                                        selectedProducts.indexOf(productName) %
+                                                    2 ==
+                                                0
+                                            ? const Color(0xFFBFD633)
+                                            : const Color(0xFF2EC4F3),
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
@@ -2586,17 +2703,21 @@ class PlanPricingStep extends StatelessWidget {
                                   if (count > 99999) {
                                     return 'Number of users cannot exceed 99999';
                                   }
-                                  if (selectedPlan == 'Essential' && count > 50) {
-                                    return 'Essential plan supports up to 50 users';
-                                  }
-                                  if (selectedPlan == 'Enterprise' && count < 51) {
-                                    return 'Enterprise plan requires 51+ users';
+                                  // Add specific validation for Enterprise plans
+                                  if (selectedPlan == 'Enterprise' &&
+                                      count < 1) {
+                                    return 'Enterprise plan requires 1+ users';
                                   }
                                   return null;
                                 },
                                 onChanged: (value) {
-                                  controller.updateUserCount(productName, value);
-                                  debugPrint('Updated user count for $productName: $value');
+                                  controller.updateUserCount(
+                                    productName,
+                                    value,
+                                  );
+                                  debugPrint(
+                                    'Updated user count for $productName: $value',
+                                  );
                                 },
                               );
                             }
@@ -2604,21 +2725,54 @@ class PlanPricingStep extends StatelessWidget {
                           }),
                           const SizedBox(height: 16),
                           Obx(() {
-                            final selectedPlan = controller.productPlans[productName] ?? 'Free';
-                            final userCount = selectedPlan == 'Free'
-                                ? 1
-                                : controller.productUserCounts[productName] ?? 1;
-                            final pricePerUser = selectedPlan == 'Free' ? 0.0 : product.pricePerUser;
-                            final price = pricePerUser * userCount;
-                            return Text(
-                              'Total: ₹${price.toStringAsFixed(2)}/month',
-                              style: GoogleFonts.inter(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: selectedProducts.indexOf(productName) % 2 == 0
-                                    ? const Color(0xFFBFD633)
-                                    : const Color(0xFF2EC4F3),
-                              ),
+                            final selectedPlan =
+                                controller.productPlans[productName] ?? 'Free';
+                            final userCount =
+                                selectedPlan == 'Free' ||
+                                        selectedPlan.contains('One Time')
+                                    ? 1
+                                    : controller
+                                            .productUserCounts[productName] ??
+                                        1;
+
+                            // Get price per user for the selected plan
+                            final pricePerUser =
+                                (plansAndPrices['prices']?[selectedPlan] ?? 0.0)
+                                    as double;
+                            final price =
+                                selectedPlan.contains('One Time')
+                                    ? pricePerUser
+                                    : pricePerUser * userCount;
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (selectedPlan != 'Free' &&
+                                    !selectedPlan.contains('One Time'))
+                                  Text(
+                                    '\$${pricePerUser.toStringAsFixed(2)} /User /Month',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      color: const Color(0xFF64748B),
+                                    ),
+                                  ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  selectedPlan.contains('One Time')
+                                      ? 'Total: \$${price.toStringAsFixed(2)} (One-time payment)'
+                                      : 'Total: \$${price.toStringAsFixed(2)} /Month',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color:
+                                        selectedProducts.indexOf(productName) %
+                                                    2 ==
+                                                0
+                                            ? const Color(0xFFBFD633)
+                                            : const Color(0xFF2EC4F3),
+                                  ),
+                                ),
+                              ],
                             );
                           }),
                           const SizedBox(height: 16),
@@ -2626,10 +2780,12 @@ class PlanPricingStep extends StatelessWidget {
                             alignment: Alignment.centerRight,
                             child: GestureDetector(
                               onTap: () {
-                                Get.to(() => EnhancedPricingScreen(
-                                  plan1Name: productName,
-                                  plan2Name: productName,
-                                ));
+                                Get.to(
+                                  () => EnhancedPricingScreen(
+                                    plan1Name: productName,
+                                    plan2Name: productName,
+                                  ),
+                                );
                               },
                               child: Text(
                                 'See Features',
@@ -2667,21 +2823,26 @@ class PlanPricingStep extends StatelessWidget {
                       Obx(() {
                         double total = 0.0;
                         for (var productName in selectedProducts) {
-                          final product = controller.productsList.firstWhere(
-                                (p) => p.name == productName,
+                          final selectedPlan =
+                              controller.productPlans[productName] ?? 'Free';
+                          final userCount =
+                              selectedPlan == 'Free'
+                                  ? 1
+                                  : controller.productUserCounts[productName] ??
+                                      1;
+                          final plansAndPrices = getProductPlansAndPrices(
+                            productName,
                           );
-                          final selectedPlan = controller.productPlans[productName] ?? 'Free';
-                          final userCount = selectedPlan == 'Free'
-                              ? 1
-                              : controller.productUserCounts[productName] ?? 1;
-                          final pricePerUser = selectedPlan == 'Free' ? 0.0 : product.pricePerUser;
+                          final pricePerUser =
+                              (plansAndPrices['prices']?[selectedPlan] ?? 0.0)
+                                  as double;
                           total += pricePerUser * userCount;
                         }
                         controller.totalPrice.value = total;
                         return Text(
-                          '₹${total.toStringAsFixed(2)}/month',
+                          '\$${total.toStringAsFixed(2)} /Month',
                           style: GoogleFonts.inter(
-                            fontSize: 18,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF2EC4F3),
                           ),
@@ -2759,7 +2920,7 @@ class ContactDetailsStep extends StatelessWidget {
             messageController: controller.messageController,
             messageLabel: 'Additional Comments',
             messagePlaceholder:
-            'Share any specific requirements or questions...',
+                'Share any specific requirements or questions...',
           ),
         ],
       ),
@@ -2803,9 +2964,9 @@ class ContactForm extends StatelessWidget {
           ),
           validator:
               (value) =>
-          value == null || value.isEmpty
-              ? 'Please enter your name'
-              : null,
+                  value == null || value.isEmpty
+                      ? 'Please enter your name'
+                      : null,
           textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
@@ -2818,9 +2979,9 @@ class ContactForm extends StatelessWidget {
           ),
           validator:
               (value) =>
-          value == null || value.isEmpty
-              ? 'Please enter your company name'
-              : null,
+                  value == null || value.isEmpty
+                      ? 'Please enter your company name'
+                      : null,
           textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
@@ -2834,11 +2995,11 @@ class ContactForm extends StatelessWidget {
           ),
           validator:
               (value) =>
-          value == null || value.isEmpty
-              ? 'Please enter your email'
-              : !value.contains('@') || !value.contains('.')
-              ? 'Please enter a valid email'
-              : null,
+                  value == null || value.isEmpty
+                      ? 'Please enter your email'
+                      : !value.contains('@') || !value.contains('.')
+                      ? 'Please enter a valid email'
+                      : null,
           textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
@@ -2852,9 +3013,9 @@ class ContactForm extends StatelessWidget {
           ),
           validator:
               (value) =>
-          value == null || value.isEmpty
-              ? 'Please enter your phone number'
-              : null,
+                  value == null || value.isEmpty
+                      ? 'Please enter your phone number'
+                      : null,
           textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
@@ -2922,7 +3083,7 @@ class SuccessScreen extends StatelessWidget {
                     controller.selectedFlowType.value == FlowType.service
                         ? 'Your service request has been submitted successfully.'
                         : controller.engagementModel.value ==
-                        EngagementModel.saas
+                            EngagementModel.saas
                         ? 'Your payment has been processed successfully.'
                         : 'Your request for a service agreement has been submitted.',
                     style: Theme.of(context).textTheme.bodyLarge,
@@ -2931,10 +3092,10 @@ class SuccessScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     controller.engagementModel.value == EngagementModel.saas ||
-                        controller.selectedFlowType.value ==
-                            FlowType.service
+                            controller.selectedFlowType.value ==
+                                FlowType.service
                         ? 'Our team will contact you soon at ${controller.emailController.text}'
-                        : 'We’ll get in touch with the agreement details at ${controller.emailController.text}',
+                        : "We'll get in touch with the agreement details at ${controller.emailController.text}",
                     style: Theme.of(context).textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -2978,7 +3139,7 @@ class SuccessScreen extends StatelessWidget {
                       HapticFeedback.lightImpact();
                       controller.resetFlow();
                       Get.offAll(
-                            () => const MainScreen(),
+                        () => const MainScreen(),
                       ); // Changed: Reset navigation stack
                     },
                     isLoading: false,
