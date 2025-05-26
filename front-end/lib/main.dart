@@ -11,6 +11,7 @@ import 'package:nairobi_app/service/api_service.dart';
 import 'package:nairobi_app/view/screens/check_out.dart';
 import 'package:nairobi_app/view/screens/plan_feature_screen.dart';
 import 'package:nairobi_app/view/widgets/policy_pages.dart';
+import 'package:nairobi_app/screens/secret_page.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -30,6 +31,15 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'n"AI"robi BizTech',
       debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      getPages: [
+        GetPage(name: '/', page: () => const MainScreen()),
+        GetPage(
+          name: '/secret/',
+          page: () => const SecretPage(),
+          transition: Transition.fadeIn,
+        ),
+      ],
       theme: ThemeData(
         primaryColor: const Color(0xFF2EC4F3),
         scaffoldBackgroundColor: Colors.transparent,

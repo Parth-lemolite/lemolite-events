@@ -98,6 +98,12 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "flutter_cashfree_pg_sdk",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/flutter_cashfree_pg_sdk-2.2.7+45",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "flutter_easyloading",
       "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/flutter_easyloading-3.0.5",
       "packageUri": "lib/",
@@ -134,6 +140,12 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "flutter_web_plugins",
+      "rootUri": "file:///Users/dharmikjoshi/Documents/flutter/packages/flutter_web_plugins",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "get",
       "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/get-4.7.2",
       "packageUri": "lib/",
@@ -162,6 +174,12 @@
       "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/image-4.5.4",
       "packageUri": "lib/",
       "languageVersion": "3.0"
+    },
+    {
+      "name": "js",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/js-0.6.7",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
     },
     {
       "name": "json_annotation",
@@ -332,6 +350,54 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "url_launcher",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/url_launcher-6.3.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "url_launcher_android",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.16",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "url_launcher_ios",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "url_launcher_linux",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/url_launcher_linux-3.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "url_launcher_macos",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "url_launcher_platform_interface",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/url_launcher_platform_interface-2.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
+      "name": "url_launcher_web",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/url_launcher_web-2.4.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "url_launcher_windows",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/url_launcher_windows-3.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "vector_graphics",
       "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/vector_graphics-1.1.18",
       "packageUri": "lib/",
@@ -366,6 +432,30 @@
       "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/web-1.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "webview_flutter",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/webview_flutter-4.9.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
+      "name": "webview_flutter_android",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/webview_flutter_android-3.16.9",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
+      "name": "webview_flutter_platform_interface",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/webview_flutter_platform_interface-2.13.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "webview_flutter_wkwebview",
+      "rootUri": "file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.22.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
     },
     {
       "name": "xdg_directories",
