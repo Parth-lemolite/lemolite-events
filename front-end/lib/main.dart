@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nairobi_app/view/leads_screen/view.dart';
 
 import 'package:nairobi_app/view/screens/landing_screen.dart';
+import 'package:nairobi_app/view/screens/login_leads_page.dart';
 import 'package:nairobi_app/view/screens/product_inquiry_flow.dart';
 import 'package:nairobi_app/view/screens/service_request_flow.dart';
 import 'package:nairobi_app/view/screens/success_screen.dart';
@@ -39,8 +41,13 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: '/', page: () => const MainScreen()),
         GetPage(
-          name: '/secret',
-          page: () => const SecretPage(),
+          name: '/leadLogin',
+          page: () => LoginPage(),
+          transition: Transition.fadeIn,
+        ),
+        GetPage(
+          name: '/getLeads',
+          page: () => LeadsScreenPage(),
           transition: Transition.fadeIn,
         ),
       ],
