@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nairobi_app/controllers/payment_controller.dart';
 
-import '../../main.dart';
 
 class CheckoutStep extends StatelessWidget {
   const CheckoutStep({super.key});

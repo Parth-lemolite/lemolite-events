@@ -31,7 +31,8 @@ class GradientButton extends StatelessWidget {
             height: 54,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: isLoading
+                colors:
+                isLoading
                     ? [Colors.grey.shade300, Colors.grey.shade400]
                     : gradientColors,
                 begin: Alignment.topLeft,
@@ -40,7 +41,8 @@ class GradientButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(borderRadius),
             ),
             alignment: Alignment.center,
-            child: isLoading
+            child:
+            isLoading
                 ? const SizedBox(
               width: 24,
               height: 24,

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../models/product_info.dart';
 import '../models/enums.dart';
 import '../view/screens/main_screen.dart';
@@ -33,7 +31,41 @@ class ProductInquiryController extends GetxController {
       color: const Color(0xFF2EC4F3),
       pricePerUser: 500.0,
     ),
-    // ... other products as in original code
+    ProductInfo(
+      name: 'Nexstaff',
+      description: 'Comprehensive workforce management platform',
+      icon: Icons.people_outline,
+      color: const Color(0xFFBFD633),
+      pricePerUser: 300.0,
+    ),
+    ProductInfo(
+      name: 'Integrated (S2H + Nexstaff)',
+      description: 'Seamless staffing and document solution',
+      icon: Icons.integration_instructions_outlined,
+      color: const Color(0xFF2EC4B6),
+      pricePerUser: 700.0,
+    ),
+    ProductInfo(
+      name: 'CRM',
+      description: 'Customer relationship management ecosystem',
+      icon: Icons.handshake_outlined,
+      color: const Color(0xFFBFD633),
+      pricePerUser: 400.0,
+    ),
+    ProductInfo(
+      name: 'IMS',
+      description: 'Precision inventory management system',
+      icon: Icons.inventory_2_outlined,
+      color: const Color(0xFF2EC4F3),
+      pricePerUser: 350.0,
+    ),
+    ProductInfo(
+      name: 'Dukadin',
+      description: 'Enterprise resource planning solution',
+      icon: Icons.business_outlined,
+      color: const Color(0xFF2EC4B6),
+      pricePerUser: 600.0,
+    ),
   ];
 
   double get totalPrice {

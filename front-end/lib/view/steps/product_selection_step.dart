@@ -3,14 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../controller/product_inquiry_controller.dart';
+import '../../controller/app_controller.dart';
 
 class ProductSelectionStep extends StatelessWidget {
   const ProductSelectionStep({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ProductInquiryController>();
+    final controller = Get.find<AppController>();
     final products = controller.productsList;
 
     return Column(

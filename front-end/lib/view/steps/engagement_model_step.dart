@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../controller/product_inquiry_controller.dart';
+import '../../controller/app_controller.dart';
 import '../../models/enums.dart';
 
 class EngagementModelStep extends StatelessWidget {
@@ -11,7 +11,8 @@ class EngagementModelStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ProductInquiryController>();
+    final controller = Get.find<AppController>();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -35,7 +36,7 @@ class EngagementModelStep extends StatelessWidget {
             controller.engagementModel.value == EngagementModel.saas,
             onTap: () {
               HapticFeedback.lightImpact();
-              controller.selectEngagementModel(EngagementModel.saas);
+              controller.selectEngagementModel(EngagementModel.saas, context);
             },
           ),
         ),
@@ -50,7 +51,10 @@ class EngagementModelStep extends StatelessWidget {
             controller.engagementModel.value == EngagementModel.reseller,
             onTap: () {
               HapticFeedback.lightImpact();
-              controller.selectEngagementModel(EngagementModel.reseller);
+              controller.selectEngagementModel(
+                EngagementModel.reseller,
+                context,
+              );
             },
           ),
         ),
@@ -65,7 +69,10 @@ class EngagementModelStep extends StatelessWidget {
             controller.engagementModel.value == EngagementModel.partner,
             onTap: () {
               HapticFeedback.lightImpact();
-              controller.selectEngagementModel(EngagementModel.partner);
+              controller.selectEngagementModel(
+                EngagementModel.partner,
+                context,
+              );
             },
           ),
         ),
@@ -80,7 +87,10 @@ class EngagementModelStep extends StatelessWidget {
             controller.engagementModel.value == EngagementModel.whitelabel,
             onTap: () {
               HapticFeedback.lightImpact();
-              controller.selectEngagementModel(EngagementModel.whitelabel);
+              controller.selectEngagementModel(
+                EngagementModel.whitelabel,
+                context,
+              );
             },
           ),
         ),

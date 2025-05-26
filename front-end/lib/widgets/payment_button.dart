@@ -8,11 +8,11 @@ class PaymentButton extends StatelessWidget {
   final double amount;
 
   const PaymentButton({
-    Key? key,
+    super.key,
     required this.sessionId,
     required this.amount,
     this.buttonText = 'Pay Now',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

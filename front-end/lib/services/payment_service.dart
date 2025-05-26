@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 class PaymentService {
   static void initializePayment(String sessionId) {
     final String paymentUrl =
-        'https://payments.cashfree.com/order/#${sessionId}';
+        'https://payments.cashfree.com/order/#$sessionId';
     Get.to(() => PaymentScreen(paymentUrl: paymentUrl));
   }
 }
@@ -13,7 +13,7 @@ class PaymentService {
 class PaymentScreen extends StatelessWidget {
   final String paymentUrl;
 
-  const PaymentScreen({Key? key, required this.paymentUrl}) : super(key: key);
+  const PaymentScreen({super.key, required this.paymentUrl});
 
   @override
   Widget build(BuildContext context) {

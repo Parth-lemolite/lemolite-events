@@ -63,7 +63,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'priceKES': '',
         'subtitle': '7 Days Trial',
         'description':
-            'Perfect for getting started with basic recruitment needs',
+        'Perfect for getting started with basic recruitment needs',
         'setupFee': 'No Fee',
         'setupFeeKES': '',
         'customization': 'N/A',
@@ -118,7 +118,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'priceKES': 'KES 10,207',
         'subtitle': 'Per User/Month',
         'description':
-            'Complete solution for large organizations with advanced features',
+        'Complete solution for large organizations with advanced features',
         'setupFee': '\$2,500',
         'setupFeeKES': 'KES 3,23,013',
         'customization': '\$15/hr',
@@ -217,11 +217,11 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'Enterprice',
         'originalName': 'NextStaff Premium',
         'price': '\$69',
-        'priceKES': 'KES 8,915',
+        'priceKES': 'KES 8,913',
         'subtitle': 'Per User/Month',
         'description': 'Advanced HR features for growing businesses',
         'setupFee': '\$1,500',
-        'setupFeeKES': 'KES 3,23,013',
+        'setupFeeKES': 'KES 1,93,770',
         'customization': '\$15/hr',
         'customizationKES': 'KES 1,938/hr',
         'support': 'Premium Support',
@@ -263,7 +263,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'subtitle': 'Per User/Month',
         'description': 'Ideal for small teams starting with CRM features',
         'setupFee': '\$1,500',
-        'setupFeeKES': 'KES 1,93,808',
+        'setupFeeKES': 'KES 1,93,770',
         'customization': '\$15/hr',
         'customizationKES': 'KES 1,938/hr',
         'support': 'Basic Support',
@@ -298,11 +298,11 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'Enterprise',
         'originalName': 'CRM Enterprise',
         'price': '\$29',
-        'priceKES': 'KES 3,747',
+        'priceKES': 'KES 3,746',
         'subtitle': 'Per User/Month',
         'description': 'Advanced CRM features for growing businesses',
         'setupFee': '\$2,500',
-        'setupFeeKES': 'KES 3,23,013',
+        'setupFeeKES': 'KES 3,22,950',
         'customization': '\$15/hr',
         'customizationKES': 'KES 1,938/hr',
         'support': 'Premium Support',
@@ -341,9 +341,9 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'priceKES': 'KES 2,455',
         'subtitle': 'Per User/Month',
         'description':
-            'Comprehensive IMS for efficient inventory and operations',
+        'Comprehensive IMS for efficient inventory and operations',
         'setupFee': '\$2,500',
-        'setupFeeKES': 'KES 3,23,013',
+        'setupFeeKES': 'KES 3,22,950',
         'customization': '\$15/hr',
         'customizationKES': 'KES 1,938/hr',
         'support': 'Premium Support',
@@ -396,7 +396,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'priceKES': '',
         'subtitle': 'Per User/Month',
         'description':
-            'Complete HR & Recruitment solution with SaaS flexibility',
+        'Complete HR & Recruitment solution with SaaS flexibility',
         'setupFee': '\$1,500',
         'setupFeeKES': 'KES 3,23,013',
         'customization': '\$15/hr',
@@ -435,13 +435,13 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
       {
         'name': 'One Time Cost',
         'originalName': 'Integrated One Time',
-        'price': '\$56,500',
+        'price': '\$63,360',
         'priceKES': '',
         'subtitle': 'One-time payment',
         'description':
-            'Complete solution with unlimited users and one-time cost',
-        'setupFee': '\$1,500',
-        'setupFeeKES': 'KES 3,23,013',
+        'Complete solution with unlimited users and one-time cost',
+        'setupFee': '\$2,500',
+        'setupFeeKES': 'KES 3,22,950',
         'customization': '\$15/hr',
         'customizationKES': 'KES 1,938/hr',
         'support': 'Premium Support',
@@ -475,58 +475,16 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'gradient': [const Color(0xFFF3F4F6), const Color(0xFFE5E7EB)],
         'category': 'Integrated',
       },
-      {
-        'name': 'White Label',
-        'originalName': 'Integrated White Label',
-        'price': '\$63,360',
-        'priceKES': 'KES 81,86,429',
-        'subtitle': 'Per Year',
-        'description':
-            'Fully customizable white-label solution with your branding',
-        'setupFee': '\$4,500',
-        'setupFeeKES': 'KES 5,81,423',
-        'customization': '\$15/hr',
-        'customizationKES': 'KES 1,938/hr',
-        'support': 'Premium Support',
-        'supportRate': '20 hrs/month',
-        'contract': 'N/A',
-        'isPopular': false,
-        'limits': {'Users': 'Unlimited'},
-        'features': {
-          'Employee Profile': true,
-          'Attendance Tracking': true,
-          'Leave Management': true,
-          'Payroll Management': true,
-          'Timesheet Tracking': true,
-          'Company Policy': true,
-          'Appraisal Review': true,
-          'TL Dashboard': true,
-          'Hiring Module': true,
-          'Web-Responsive Only': true,
-          'Full Mobile Access': true,
-          'Company Announcements': true,
-          'Asset Management': true,
-          'Expense Management': true,
-          'Employee Self Service Portal': true,
-          'Meeting Room': true,
-          'Holiday Calendar': true,
-          'Activity Log': true,
-          'Role Management': true,
-          'Roles and Permission': true,
-        },
-        'color': const Color(0xFF13477A),
-        'gradient': [const Color(0xFF13477A), const Color(0xFF1E3A8A)],
-        'category': 'Integrated',
-      },
+
     ];
 
     // Get the product type based on the product name
     String? getProductType(String productName) {
       productName = productName.toLowerCase().trim();
-      if (productName.contains('scan2hire') || productName.contains('s2h')) {
+      if (productName.contains('scan2hire') && productName.contains('s2h')) {
         return 'Scan2Hire';
       }
-      if (productName.contains('nexstaff')) {
+      if (productName==('nexstaff')) {
         return 'NextStaff';
       }
       if (productName == 'crm') {
@@ -555,7 +513,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
 
     // Filter plans based on product type
     var filteredPlans =
-        allPlans.where((plan) => plan['category'] == productType).toList();
+    allPlans.where((plan) => plan['category'] == productType).toList();
 
     // Sort plans - Free/Growth first, then Premium/Enterprise
     filteredPlans.sort((a, b) {
@@ -694,91 +652,91 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                     ),
                     child: Row(
                       children:
-                          planData.asMap().entries.map((entry) {
-                            final index = entry.key;
-                            final plan = entry.value;
-                            final isSelected = selectedPlanIndex == index;
+                      planData.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final plan = entry.value;
+                        final isSelected = selectedPlanIndex == index;
 
-                            return Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedPlanIndex = index;
-                                  });
-                                },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                    horizontal: 4,
+                        return Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedPlanIndex = index;
+                              });
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                isSelected
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow:
+                                isSelected
+                                    ? [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(
+                                      0.1,
+                                    ),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
                                   ),
-                                  decoration: BoxDecoration(
-                                    color:
+                                ]
+                                    : null,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      plan['name'],
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color:
                                         isSelected
-                                            ? Colors.white
-                                            : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(8),
-                                    boxShadow:
-                                        isSelected
-                                            ? [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(
-                                                  0.1,
-                                                ),
-                                                blurRadius: 4,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ]
-                                            : null,
+                                            ? const Color(0xFF1E293B)
+                                            : const Color(0xFF6B7280),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Flexible(
-                                        child: Text(
-                                          plan['name'],
-                                          style: GoogleFonts.inter(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color:
-                                                isSelected
-                                                    ? const Color(0xFF1E293B)
-                                                    : const Color(0xFF6B7280),
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
+                                  if (plan['isPopular'])
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                        left: 6,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: plan['color'],
+                                        borderRadius: BorderRadius.circular(
+                                          10,
                                         ),
                                       ),
-                                      if (plan['isPopular'])
-                                        Container(
-                                          margin: const EdgeInsets.only(
-                                            left: 6,
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 6,
-                                            vertical: 2,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: plan['color'],
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: Text(
-                                            'POPULAR',
-                                            style: GoogleFonts.inter(
-                                              fontSize: 8,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white,
-                                            ),
-                                          ),
+                                      child: Text(
+                                        'POPULAR',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
                                         ),
-                                    ],
-                                  ),
-                                ),
+                                      ),
+                                    ),
+                                ],
                               ),
-                            );
-                          }).toList(),
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ),
 
@@ -1183,17 +1141,17 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors:
-                          isPopular
-                              ? planData['gradient']
-                              : [Colors.white, Colors.white],
+                      isPopular
+                          ? planData['gradient']
+                          : [Colors.white, Colors.white],
                     ),
                     border:
-                        isPopular
-                            ? null
-                            : Border.all(
-                              color: const Color(0xFFE2E8F0),
-                              width: 2,
-                            ),
+                    isPopular
+                        ? null
+                        : Border.all(
+                      color: const Color(0xFFE2E8F0),
+                      width: 2,
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(24),
@@ -1214,9 +1172,9 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                                       fontSize: 28,
                                       fontWeight: FontWeight.w700,
                                       color:
-                                          isPopular
-                                              ? Colors.white
-                                              : const Color(0xFF1E293B),
+                                      isPopular
+                                          ? Colors.white
+                                          : const Color(0xFF1E293B),
                                     ),
                                   ),
                                   const SizedBox(height: 8),
@@ -1224,25 +1182,25 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                                     padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
                                       color:
-                                          isPopular
-                                              ? Colors.white.withOpacity(0.2)
-                                              : const Color(
-                                                0xFF13477A,
-                                              ).withOpacity(0.1),
+                                      isPopular
+                                          ? Colors.white.withOpacity(0.2)
+                                          : const Color(
+                                        0xFF13477A,
+                                      ).withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         color:
-                                            isPopular
-                                                ? Colors.white.withOpacity(0.3)
-                                                : const Color(
-                                                  0xFF13477A,
-                                                ).withOpacity(0.2),
+                                        isPopular
+                                            ? Colors.white.withOpacity(0.3)
+                                            : const Color(
+                                          0xFF13477A,
+                                        ).withOpacity(0.2),
                                         width: 2,
                                       ),
                                     ),
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -1253,11 +1211,11 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                                                   fontSize: 36,
                                                   fontWeight: FontWeight.w900,
                                                   color:
-                                                      isPopular
-                                                          ? Colors.white
-                                                          : const Color(
-                                                            0xFF1E293B,
-                                                          ),
+                                                  isPopular
+                                                      ? Colors.white
+                                                      : const Color(
+                                                    0xFF1E293B,
+                                                  ),
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
@@ -1272,17 +1230,17 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w600,
                                                     color:
-                                                        isPopular
-                                                            ? Colors.white
-                                                                .withOpacity(
-                                                                  0.9,
-                                                                )
-                                                            : const Color(
-                                                              0xFF13477A,
-                                                            ),
+                                                    isPopular
+                                                        ? Colors.white
+                                                        .withOpacity(
+                                                      0.9,
+                                                    )
+                                                        : const Color(
+                                                      0xFF13477A,
+                                                    ),
                                                   ),
                                                   overflow:
-                                                      TextOverflow.ellipsis,
+                                                  TextOverflow.ellipsis,
                                                 ),
                                               ),
                                             ],
@@ -1294,11 +1252,11 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
                                             color:
-                                                isPopular
-                                                    ? Colors.white.withOpacity(
-                                                      0.9,
-                                                    )
-                                                    : const Color(0xFF64748B),
+                                            isPopular
+                                                ? Colors.white.withOpacity(
+                                              0.9,
+                                            )
+                                                : const Color(0xFF64748B),
                                           ),
                                         ),
                                       ],
@@ -1338,9 +1296,9 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             color:
-                                isPopular
-                                    ? Colors.white.withOpacity(0.9)
-                                    : const Color(0xFF64748B),
+                            isPopular
+                                ? Colors.white.withOpacity(0.9)
+                                : const Color(0xFF64748B),
                             height: 1.4,
                           ),
                         ),
@@ -1352,16 +1310,16 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color:
-                                isPopular
-                                    ? Colors.white.withOpacity(0.1)
-                                    : const Color(0xFFF8FAFC),
+                            isPopular
+                                ? Colors.white.withOpacity(0.1)
+                                : const Color(0xFFF8FAFC),
                             borderRadius: BorderRadius.circular(12),
                             border:
-                                isPopular
-                                    ? Border.all(
-                                      color: Colors.white.withOpacity(0.2),
-                                    )
-                                    : null,
+                            isPopular
+                                ? Border.all(
+                              color: Colors.white.withOpacity(0.2),
+                            )
+                                : null,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1372,9 +1330,9 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   color:
-                                      isPopular
-                                          ? Colors.white
-                                          : const Color(0xFF1E293B),
+                                  isPopular
+                                      ? Colors.white
+                                      : const Color(0xFF1E293B),
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -1413,16 +1371,16 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color:
-                                isPopular
-                                    ? Colors.white.withOpacity(0.1)
-                                    : const Color(0xFFF8FAFC),
+                            isPopular
+                                ? Colors.white.withOpacity(0.1)
+                                : const Color(0xFFF8FAFC),
                             borderRadius: BorderRadius.circular(12),
                             border:
-                                isPopular
-                                    ? Border.all(
-                                      color: Colors.white.withOpacity(0.2),
-                                    )
-                                    : null,
+                            isPopular
+                                ? Border.all(
+                              color: Colors.white.withOpacity(0.2),
+                            )
+                                : null,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1433,9 +1391,9 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   color:
-                                      isPopular
-                                          ? Colors.white
-                                          : const Color(0xFF1E293B),
+                                  isPopular
+                                      ? Colors.white
+                                      : const Color(0xFF1E293B),
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -1443,56 +1401,56 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                                 spacing: 16,
                                 runSpacing: 8,
                                 children:
-                                    planData['limits'].entries.map<Widget>((
-                                      entry,
+                                planData['limits'].entries.map<Widget>((
+                                    entry,
                                     ) {
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color:
+                                      isPopular
+                                          ? Colors.white.withOpacity(
+                                        0.15,
+                                      )
+                                          : const Color(
+                                        0xFF10B981,
+                                      ).withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(
+                                        20,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle,
+                                          size: 16,
                                           color:
-                                              isPopular
-                                                  ? Colors.white.withOpacity(
-                                                    0.15,
-                                                  )
-                                                  : const Color(
-                                                    0xFF10B981,
-                                                  ).withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(
-                                            20,
+                                          isPopular
+                                              ? Colors.white
+                                              : const Color(0xFF10B981),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          '${entry.value} ${entry.key}',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color:
+                                            isPopular
+                                                ? Colors.white
+                                                : const Color(
+                                              0xFF10B981,
+                                            ),
                                           ),
                                         ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              Icons.check_circle,
-                                              size: 16,
-                                              color:
-                                                  isPopular
-                                                      ? Colors.white
-                                                      : const Color(0xFF10B981),
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Text(
-                                              '${entry.value} ${entry.key}',
-                                              style: GoogleFonts.inter(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color:
-                                                    isPopular
-                                                        ? Colors.white
-                                                        : const Color(
-                                                          0xFF10B981,
-                                                        ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }).toList(),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
                               ),
                             ],
                           ),
@@ -1507,9 +1465,9 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color:
-                                isPopular
-                                    ? Colors.white
-                                    : const Color(0xFF1E293B),
+                            isPopular
+                                ? Colors.white
+                                : const Color(0xFF1E293B),
                           ),
                         ),
 
@@ -1759,22 +1717,22 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors:
-                                  isPopular
-                                      ? [
-                                        Colors.white,
-                                        Colors.white.withOpacity(0.9),
-                                      ]
-                                      : [
-                                        planData['color'],
-                                        planData['color'].withOpacity(0.8),
-                                      ],
+                              isPopular
+                                  ? [
+                                Colors.white,
+                                Colors.white.withOpacity(0.9),
+                              ]
+                                  : [
+                                planData['color'],
+                                planData['color'].withOpacity(0.8),
+                              ],
                             ),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
                                 color: (isPopular
-                                        ? Colors.white
-                                        : planData['color'])
+                                    ? Colors.white
+                                    : planData['color'])
                                     .withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
@@ -1795,7 +1753,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               foregroundColor:
-                                  isPopular ? planData['color'] : Colors.white,
+                              isPopular ? planData['color'] : Colors.white,
                               shadowColor: Colors.transparent,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -1827,11 +1785,11 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
   }
 
   Widget _buildPricingDetail(
-    String label,
-    String value,
-    String kenyaValue,
-    bool isPopular,
-  ) {
+      String label,
+      String value,
+      String kenyaValue,
+      bool isPopular,
+      ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -1845,9 +1803,9 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color:
-                    isPopular
-                        ? Colors.white.withOpacity(0.9)
-                        : const Color(0xFF64748B),
+                isPopular
+                    ? Colors.white.withOpacity(0.9)
+                    : const Color(0xFF64748B),
               ),
               overflow: TextOverflow.ellipsis,
             ),
@@ -1874,9 +1832,9 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                       color:
-                          isPopular
-                              ? Colors.white.withOpacity(0.8)
-                              : const Color(0xFF64748B),
+                      isPopular
+                          ? Colors.white.withOpacity(0.8)
+                          : const Color(0xFF64748B),
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1889,22 +1847,22 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
   }
 
   Widget _buildFeatureCategory(
-    String title,
-    List<String> features,
-    Map<String, dynamic> planData,
-    bool isPopular,
-  ) {
+      String title,
+      List<String> features,
+      Map<String, dynamic> planData,
+      bool isPopular,
+      ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color:
-            isPopular
-                ? Colors.white.withOpacity(0.05)
-                : const Color(0xFFF8FAFC),
+        isPopular
+            ? Colors.white.withOpacity(0.05)
+            : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
         border:
-            isPopular ? Border.all(color: Colors.white.withOpacity(0.1)) : null,
+        isPopular ? Border.all(color: Colors.white.withOpacity(0.1)) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1928,13 +1886,13 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                     isAvailable ? Icons.check_circle : Icons.cancel,
                     size: 16,
                     color:
-                        isAvailable
-                            ? (isPopular
-                                ? Colors.white
-                                : const Color(0xFF10B981))
-                            : (isPopular
-                                ? Colors.white.withOpacity(0.5)
-                                : const Color(0xFFEF4444)),
+                    isAvailable
+                        ? (isPopular
+                        ? Colors.white
+                        : const Color(0xFF10B981))
+                        : (isPopular
+                        ? Colors.white.withOpacity(0.5)
+                        : const Color(0xFFEF4444)),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -1943,34 +1901,34 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         color:
-                            isAvailable
-                                ? (isPopular
-                                    ? Colors.white.withOpacity(0.95)
-                                    : const Color(0xFF374151))
-                                : (isPopular
-                                    ? Colors.white.withOpacity(0.6)
-                                    : const Color(0xFF9CA3AF)),
+                        isAvailable
+                            ? (isPopular
+                            ? Colors.white.withOpacity(0.95)
+                            : const Color(0xFF374151))
+                            : (isPopular
+                            ? Colors.white.withOpacity(0.6)
+                            : const Color(0xFF9CA3AF)),
                         decoration:
-                            isAvailable ? null : TextDecoration.lineThrough,
+                        isAvailable ? null : TextDecoration.lineThrough,
                       ),
                     ),
                   ),
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
   }
 
   Widget _buildHighlightItem(
-    String label,
-    String value,
-    String subValue,
-    bool isPopular,
-    IconData icon,
-  ) {
+      String label,
+      String value,
+      String subValue,
+      bool isPopular,
+      IconData icon,
+      ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -1979,9 +1937,9 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color:
-                  isPopular
-                      ? Colors.white.withOpacity(0.1)
-                      : const Color(0xFF1E40AF).withOpacity(0.1),
+              isPopular
+                  ? Colors.white.withOpacity(0.1)
+                  : const Color(0xFF1E40AF).withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -2001,9 +1959,9 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color:
-                        isPopular
-                            ? Colors.white.withOpacity(0.8)
-                            : const Color(0xFF64748B),
+                    isPopular
+                        ? Colors.white.withOpacity(0.8)
+                        : const Color(0xFF64748B),
                   ),
                 ),
                 Text(
@@ -2020,9 +1978,9 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       color:
-                          isPopular
-                              ? Colors.white.withOpacity(0.7)
-                              : const Color(0xFF64748B),
+                      isPopular
+                          ? Colors.white.withOpacity(0.7)
+                          : const Color(0xFF64748B),
                     ),
                   ),
               ],

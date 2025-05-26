@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../controller/product_inquiry_controller.dart';
-import '../../main.dart';
+import '../../controller/app_controller.dart';
 import '../widgets/contact_form.dart';
 
 class ContactDetailsStep extends StatelessWidget {
@@ -10,7 +9,7 @@ class ContactDetailsStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ProductInquiryController>();
+    final controller = Get.find<AppController>();
 
     return Form(
       key: controller.contactFormKey, // Changed: Use contactFormKey
@@ -27,17 +26,17 @@ class ContactDetailsStep extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
-          // ContactForm(
-          //   formKey: controller.contactFormKey,
-          //   nameController: controller.nameController,
-          //   emailController: controller.emailController,
-          //   companyController: controller.companyController,
-          //   phoneController: controller.phoneController,
-          //   messageController: controller.messageController,
-          //   messageLabel: 'Additional Comments',
-          //   messagePlaceholder:
-          //   'Share any specific requirements or questions...',
-          // ),
+          ContactForm(
+            formKey: controller.contactFormKey,
+            nameController: controller.nameController,
+            emailController: controller.emailController,
+            companyController: controller.companyController,
+            phoneController: controller.phoneController,
+            messageController: controller.messageController,
+            messageLabel: 'Additional Comments',
+            messagePlaceholder:
+            'Share any specific requirements or questions...',
+          ),
         ],
       ),
     );
