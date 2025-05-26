@@ -32,10 +32,14 @@ class MyApp extends StatelessWidget {
       title: 'n"AI"robi BizTech',
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
+      navigatorObservers: [
+        GetObserver(),
+      ],
+      navigatorKey: Get.key,
       getPages: [
         GetPage(name: '/', page: () => const MainScreen()),
         GetPage(
-          name: '/secret/',
+          name: '/secret',
           page: () => const SecretPage(),
           transition: Transition.fadeIn,
         ),
