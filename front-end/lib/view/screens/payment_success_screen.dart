@@ -5,11 +5,11 @@ import '../widgets/gradient_button.dart';
 import 'main_screen.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
-  final String orderId;
+  final String? orderId;
 
   const PaymentSuccessScreen({
     Key? key,
-    required this.orderId,
+     this.orderId,
   }) : super(key: key);
 
   @override

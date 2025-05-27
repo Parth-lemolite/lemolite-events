@@ -5,13 +5,13 @@ import '../widgets/gradient_button.dart';
 import 'main_screen.dart';
 
 class PaymentFailureScreen extends StatelessWidget {
-  final String orderId;
-  final String message;
+  final String? orderId;
+  final String? message;
 
   const PaymentFailureScreen({
     Key? key,
-    required this.orderId,
-    required this.message,
+     this.orderId,
+     this.message,
   }) : super(key: key);
 
   @override
@@ -49,7 +49,7 @@ class PaymentFailureScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                message,
+                message??"An error occurred during payment processing.",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   fontSize: 16,
