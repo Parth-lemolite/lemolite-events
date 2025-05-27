@@ -597,16 +597,10 @@ class AppController extends GetxController {
     totalPrice; // Update total
   }
 
-  void updateUserCount(String productName, String value) {
-    final count = int.tryParse(value) ?? 1;
-    if (count > 0) {
-      productUserCounts[productName] = count;
-    } else {
-      productUserCounts.remove(productName);
-      selectedProducts.remove(productName);
-      userCountControllers[productName]!.text = '1';
-    }
-    totalPrice; // Update total
+  void updateUserCount(String productName, String count) {
+    final intCount = int.tryParse(count) ?? 1;
+    productUserCounts[productName] = intCount;
+    debugPrint('Updated user count for $productName: $intCount');
   }
 
   Future<void> submitForm({
@@ -616,10 +610,10 @@ class AppController extends GetxController {
   }) async {
     debugPrint(
       'submitForm called: step=${activeStep.value}, '
-          'isPayment=$isPayment, isAgreement=$isAgreement, '
-          'flowType=${selectedFlowType.value}, '
-          'selectedProducts=$selectedProducts, '
-          'engagementModel=${engagementModel.value}',
+      'isPayment=$isPayment, isAgreement=$isAgreement, '
+      'flowType=${selectedFlowType.value}, '
+      'selectedProducts=$selectedProducts, '
+      'engagementModel=${engagementModel.value}',
     );
 
     if (selectedFlowType.value == FlowType.product) {
@@ -730,8 +724,7 @@ class AppController extends GetxController {
         isSubmitted.value = true;
         showSuccessDialog(context);
         debugPrint('Service flow submitted');
-      }
-      else if (selectedFlowType.value == FlowType.product) {
+      } else if (selectedFlowType.value == FlowType.product) {
         // Helper to get a valid plan for the product
         String getValidPlan(String productName, String? selectedPlan) {
           final plansAndPrices = getProductPlansAndPrices(productName);
@@ -753,21 +746,24 @@ class AppController extends GetxController {
           'selectedProducts': selectedProducts
               .map(
                 (productName) => {
-              'productName': productName,
-              'planName': getValidPlan(productName, productPlans[productName]),
-              if (engagementModel.value == EngagementModel.saas) ...{
-                'userCountRange': productUserRanges[productName] ?? '1-10',
-                'userCount': productUserCounts[productName] ?? 1,
-                'pricePerUser': getProductPlansAndPrices(productName)['prices']
-                [getValidPlan(productName, productPlans[productName])],
-                'totalPrice':
-                (getProductPlansAndPrices(productName)['prices']
-                [getValidPlan(productName, productPlans[productName])]
-                as double) *
-                    (productUserCounts[productName] ?? 1),
-              },
-            },
-          )
+                  'productName': productName,
+                  'planName':
+                      getValidPlan(productName, productPlans[productName]),
+                  if (engagementModel.value == EngagementModel.saas) ...{
+                    'userCountRange': productUserRanges[productName] ?? '1-10',
+                    'userCount': productUserCounts[productName] ?? 1,
+                    'pricePerUser': getProductPlansAndPrices(
+                            productName)['prices']
+                        [getValidPlan(productName, productPlans[productName])],
+                    'totalPrice':
+                        (getProductPlansAndPrices(productName)['prices'][
+                                    getValidPlan(
+                                        productName, productPlans[productName])]
+                                as double) *
+                            (productUserCounts[productName] ?? 1),
+                  },
+                },
+              )
               .toList(),
           if (engagementModel.value == EngagementModel.saas)
             'totalAmount': totalPrice.value,

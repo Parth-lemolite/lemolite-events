@@ -203,6 +203,69 @@ class PlanPricingStep extends StatelessWidget {
                           final selectedPlan =
                               controller.productPlans[productName] ??
                                   'Freemium';
+                          if (selectedPlan != 'Freemium' &&
+                              !selectedPlan.contains('One Time')) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextFormField(
+                                  decoration: InputDecoration(
+                                    labelText: 'Number of Users',
+                                    prefixIcon: Icon(
+                                      Icons.people_outline,
+                                      color: selectedProducts
+                                                      .indexOf(productName) %
+                                                  2 ==
+                                              0
+                                          ? const Color(0xFFBFD633)
+                                          : const Color(0xFF2EC4F3),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(5),
+                                  ],
+                                  initialValue: (controller
+                                              .productUserCounts[productName] ??
+                                          1)
+                                      .toString(),
+                                  onChanged: (value) {
+                                    if (value.isEmpty) return;
+                                    final count = int.tryParse(value) ?? 1;
+                                    if (count > 99999) return;
+                                    controller.updateUserCount(
+                                        productName, count.toString());
+                                    debugPrint(
+                                        'Updated user count for $productName: $count');
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter number of users';
+                                    }
+                                    final count = int.tryParse(value);
+                                    if (count == null || count < 1) {
+                                      return 'Please enter a valid number';
+                                    }
+                                    if (count > 99999) {
+                                      return 'Maximum 99999 users allowed';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                            );
+                          }
+                          return const SizedBox(height: 16);
+                        }),
+                        Obx(() {
+                          final selectedPlan =
+                              controller.productPlans[productName] ??
+                                  'Freemium';
                           final userCount = selectedPlan == 'Freemium' ||
                                   selectedPlan.contains('One Time')
                               ? 1
@@ -232,7 +295,9 @@ class PlanPricingStep extends StatelessWidget {
                               Text(
                                 selectedPlan.contains('One Time')
                                     ? 'Total: \$${price.toStringAsFixed(2)} (One-time payment)'
-                                    : 'Total: \$${price.toStringAsFixed(2)} /Month',
+                                    : selectedPlan == 'Freemium'
+                                        ? 'Free'
+                                        : 'Total: \$${price.toStringAsFixed(2)} /Month',
                                 style: GoogleFonts.inter(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
