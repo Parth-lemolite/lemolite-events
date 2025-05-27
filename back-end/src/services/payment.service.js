@@ -32,7 +32,7 @@ class PaymentService {
       const orderData = {
         order_id: orderId,
         order_amount: amount,
-        order_currency: "INR",
+        order_currency: process.env.PAYMENT_CURRENCY || "INR",
         customer_details: {
           customer_id: lead._id.toString(),
           customer_name: lead.fullName,
@@ -41,6 +41,7 @@ class PaymentService {
         },
         order_meta: {
           return_url: `${process.env.FRONTEND_URL}/payment/callback?order_id={order_id}`,
+          payment_methods: "cc,dc",
         },
       };
 
@@ -48,16 +49,18 @@ class PaymentService {
 
       const response = await axios.post(`${this.baseUrl}/orders`, orderData, {
         headers: {
-          "x-api-version": "2022-09-01",
+          "x-api-version": "2025-01-01",
           "x-client-id": this.apiKey,
           "x-client-secret": this.secretKey,
           "x-signature": signature,
         },
       });
 
+      const paymentSessionId = response.data.payment_session_id;
+
       return {
         orderId: response.data.order_id,
-        paymentLink: response.data.payment_link,
+        paymentSessionId: paymentSessionId,
         orderData: response.data,
       };
     } catch (error) {
@@ -73,7 +76,7 @@ class PaymentService {
     try {
       const response = await axios.get(`${this.baseUrl}/orders/${orderId}`, {
         headers: {
-          "x-api-version": "2022-09-01",
+          "x-api-version": "2025-01-01",
           "x-client-id": this.apiKey,
           "x-client-secret": this.secretKey,
         },

@@ -5,16 +5,6 @@ const {
 } = require("../utils/emailService");
 const paymentService = require("../services/payment.service");
 
-// Pricing per user per month (in INR)
-const PRODUCT_PRICING = {
-  Scan2Hire: 500,
-  Nexstaff: 400,
-  Integrated: 800,
-  CRM: 300,
-  IMS: 350,
-  Dukadin: 450,
-};
-
 // Create a new lead
 exports.createLead = async (req, res) => {
   try {
@@ -25,43 +15,34 @@ exports.createLead = async (req, res) => {
       // Transform selectedProducts to include pricing details
       leadData.selectedProducts = leadData.selectedProducts.map((product) => ({
         productName: product.productName,
+        planName: product.planName, // Store the plan name as is
         userCountRange: product.userCountRange, // Store the range as is
         totalPrice: product.totalPrice, // Use total price from frontend
       }));
-
-      // Calculate total amount from frontend data
-      leadData.totalAmount = leadData.selectedProducts.reduce(
-        (sum, product) => sum + product.totalPrice,
-        0
-      );
 
       const lead = new Lead(leadData);
       await lead.save();
 
       // Create payment order
-      //   const paymentOrder = await paymentService.createOrder(
-      //     lead,
-      //     leadData.totalAmount
-      //   );
+      const paymentOrder = await paymentService.createOrder(
+        lead,
+        leadData.totalAmount
+      );
 
-      //   // Update lead with payment details
-      //   lead.payment = {
-      //     orderId: paymentOrder.orderId,
-      //     amount: leadData.totalAmount,
-      //     status: "pending",
-      //   };
-      //   await lead.save();
-
-      //   return res.status(201).json({
-      //     success: true,
-      //     data: lead,
-      //     paymentLink: paymentOrder.paymentLink,
-      //     message: "Lead created successfully. Please complete the payment.",
-      //   });
+      // Update lead with payment details
+      lead.payment = {
+        orderId: paymentOrder.orderId,
+        amount: leadData.totalAmount,
+        status: "pending",
+      };
+      await lead.save();
 
       return res.status(201).json({
         success: true,
         data: lead,
+        paymentLink: paymentOrder.paymentLink,
+        paymentSessionId: paymentOrder.paymentSessionId,
+        message: "Lead created successfully. Please complete the payment.",
       });
     }
 
@@ -148,9 +129,9 @@ exports.handlePaymentCallback = async (req, res) => {
     await lead.save();
 
     // Send notifications only after successful payment
-    if (paymentStatus.status === "PAID") {
-      await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
-    }
+    // if (paymentStatus.status === "PAID") {
+    //   await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
+    // }
 
     res.status(200).json({
       success: true,

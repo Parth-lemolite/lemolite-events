@@ -26,16 +26,16 @@ const leadSchema = Joi.object({
             "Dukadin"
           )
           .required(),
-        userCountRange: Joi.string()
-          .pattern(/^\d+-\d+$/)
-          .when("..engagementModel", {
-            is: "SaaS-Based Subscription",
-            then: Joi.required(),
-            otherwise: Joi.optional(),
-          })
-          .messages({
-            "string.pattern.base": 'User count range must be in format "1-10"',
-          }),
+        userCountRange: Joi.string().when("..engagementModel", {
+          is: "SaaS-Based Subscription",
+          then: Joi.required(),
+          otherwise: Joi.optional(),
+        }),
+        planName: Joi.string().when("..engagementModel", {
+          is: "SaaS-Based Subscription",
+          then: Joi.optional(),
+          otherwise: Joi.optional(),
+        }),
         totalPrice: Joi.number().min(0).when("..engagementModel", {
           is: "SaaS-Based Subscription",
           then: Joi.required(),
@@ -56,7 +56,7 @@ const leadSchema = Joi.object({
   payment: Joi.object({
     orderId: Joi.string(),
     amount: Joi.number().min(0),
-    currency: Joi.string().default("INR"),
+    currency: Joi.string(),
     status: Joi.string()
       .valid("pending", "completed", "failed")
       .default("pending"),
@@ -64,11 +64,6 @@ const leadSchema = Joi.object({
     paymentDate: Joi.date(),
     paymentDetails: Joi.object(),
   }).optional(),
-  //   .when("engagementModel", {
-  //     is: "SaaS-Based Subscription",
-  //     then: Joi.required(),
-  //     otherwise: Joi.forbidden(),
-  //   }),
 });
 
 const validateLead = (req, res, next) => {

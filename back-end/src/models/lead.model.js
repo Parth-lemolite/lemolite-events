@@ -53,13 +53,11 @@ const leadSchema = new mongoose.Schema({
         required: function () {
           return this.parent().engagementModel === "SaaS-Based Subscription";
         },
-        validate: {
-          validator: function (v) {
-            // Validate format like "1-10", "11-50", etc.
-            return /^\d+-\d+$/.test(v);
-          },
-          message: (props) =>
-            `${props.value} is not a valid user count range! Use format like "1-10"`,
+      },
+      planName: {
+        type: String,
+        required: function () {
+          return this.parent().engagementModel === "SaaS-Based Subscription";
         },
       },
       totalPrice: {
@@ -83,7 +81,6 @@ const leadSchema = new mongoose.Schema({
     },
     currency: {
       type: String,
-      default: "INR",
     },
     status: {
       type: String,
