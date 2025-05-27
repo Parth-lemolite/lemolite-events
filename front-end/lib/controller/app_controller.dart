@@ -32,7 +32,6 @@ class AppController extends GetxController {
   final RxInt activeStep = 0.obs;
   final RxBool isLoading = false.obs;
   final RxList<Map<String, String>> savedCards = <Map<String, String>>[].obs;
-  RxString selectedPlan = 'Free'.obs;
 
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -47,9 +46,74 @@ class AppController extends GetxController {
   final contactFormKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> userCountControllers = {};
 
+  // Helper method to get plans and prices (duplicated from PlanPricingStep for price calculation)
+  Map<String, dynamic> getProductPlansAndPrices(String productName) {
+    productName = productName.toLowerCase().trim();
+
+    if (productName.contains('integrated') ||
+        productName.contains('s2h + nexstaff')) {
+      return {
+        'plans': ['SaaS Based', 'One Time Cost'],
+        'prices': {
+          'SaaS Based': 89.0,
+          'One Time Cost': 56500.0,
+        },
+      };
+    }
+
+    if (productName.contains('scan2hire') || productName.contains('s2h')) {
+      return {
+        'plans': ['Freemium', 'Premium', 'Enterprise'],
+        'prices': {
+          'Freemium': 0.0,
+          'Premium': 49.0,
+          'Enterprise': 79.0,
+        },
+      };
+    }
+
+    if (productName.contains('nexstaff')) {
+      return {
+        'plans': ['Freemium', 'Enterprise'],
+        'prices': {
+          'Freemium': 0.0,
+          'Enterprise': 69.0,
+        },
+      };
+    }
+
+    if (productName == 'crm') {
+      return {
+        'plans': ['Growth', 'Enterprise'],
+        'prices': {
+          'Growth': 19.0,
+          'Enterprise': 29.0,
+        },
+      };
+    }
+
+    if (productName == 'ims') {
+      return {
+        'plans': ['Enterprise'],
+        'prices': {
+          'Enterprise': 19.0,
+        },
+      };
+    }
+
+    return {
+      'plans': ['Freemium'],
+      'prices': {'Freemium': 0.0},
+    };
+  }
+
   void updatePlan(String productName, String plan) {
     productPlans[productName] = plan;
-    int minUsers = plan == 'Free' ? 1 : (plan == 'Essential' ? 1 : 51);
+    int minUsers = plan == 'Freemium'
+        ? 1
+        : (plan == 'Premium'
+            ? 1
+            : 1); // Adjusted for Freemium/Premium/Enterprise
     productUserCounts[productName] = minUsers;
     userCountControllers[productName]!.text = minUsers.toString();
     debugPrint('Updated plan for $productName: $plan, users: $minUsers');
@@ -76,7 +140,8 @@ class AppController extends GetxController {
           description: 'Advanced document scanning & AI processing for hiring',
           icon: Icons.document_scanner_outlined,
           color: const Color(0xFF2EC4F3),
-          pricePerUser: 500.0,
+          pricePerUser:
+              500.0, // Note: This is overridden by getProductPlansAndPrices
         ),
         ProductInfo(
           name: 'Nexstaff',
@@ -158,14 +223,12 @@ class AppController extends GetxController {
 
   void resetFlow() {
     try {
-      // Clear all form data
       nameController.clear();
       emailController.clear();
       companyController.clear();
       phoneController.clear();
       messageController.clear();
 
-      // Reset all state variables
       selectedFlowType.value = null;
       engagementModel.value = null;
       selectedProducts.clear();
@@ -173,19 +236,16 @@ class AppController extends GetxController {
       productUserRanges.clear();
       savedCards.clear();
       productPlans.clear();
-      selectedPlan.value = 'Free';
       totalPrice.value = 0.0;
       isSubmitted.value = false;
       hasError.value = false;
       activeStep.value = 0;
       isLoading.value = false;
 
-      // Reset user count controllers
       for (var controller in userCountControllers.values) {
         controller.text = '1';
       }
 
-      // Reset product ranges
       for (var product in productsList) {
         productUserRanges[product.name] = '1-10';
       }
@@ -239,7 +299,7 @@ class AppController extends GetxController {
 
       final response = await ApiService.post(
         convertedData,
-        'http://192.168.29.171:3001/api/leads',
+        'https://events.lemolite360.in/api/leads',
       );
 
       if (response != null && response.statusCode == 201) {
@@ -304,13 +364,11 @@ class AppController extends GetxController {
 
       EasyLoading.dismiss();
 
-      // Store current state before navigation
       final currentProducts = [...selectedProducts];
       final currentEngagementModel = engagementModel.value;
       final currentPlans = Map<String, String>.from(productPlans);
       final currentUserCounts = Map<String, int>.from(productUserCounts);
 
-      // Reset state before navigation to prevent widget rebuild errors
       selectedProducts.clear();
       engagementModel.value = null;
       productPlans.clear();
@@ -318,7 +376,6 @@ class AppController extends GetxController {
       activeStep.value = 0;
 
       if (success && paymentStatus == 'completed') {
-        // Payment successful
         await Get.offAll(
           () => PaymentSuccessScreen(orderId: orderId),
           predicate: (route) => false,
@@ -334,7 +391,6 @@ class AppController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
         );
       } else {
-        // Payment failed
         await Get.offAll(
           () => PaymentFailureScreen(
             orderId: orderId,
@@ -353,14 +409,12 @@ class AppController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
         );
 
-        // In case of failure, restore the previous state
         selectedProducts.addAll(currentProducts);
         engagementModel.value = currentEngagementModel;
         productPlans.addAll(currentPlans);
         productUserCounts.addAll(currentUserCounts);
       }
 
-      // Complete reset only after successful navigation and state update
       Future.delayed(const Duration(milliseconds: 300), () {
         if (success && paymentStatus == 'completed') {
           resetFlow();
@@ -418,7 +472,6 @@ class AppController extends GetxController {
         throw CFException("Failed to create payment session");
       }
 
-      // Set up payment callbacks before initiating payment
       final cfPaymentGatewayService = CFPaymentGatewayService();
       cfPaymentGatewayService.setCallback(
         (orderId) => onPaymentVerify(orderId),
@@ -563,10 +616,10 @@ class AppController extends GetxController {
   }) async {
     debugPrint(
       'submitForm called: step=${activeStep.value}, '
-      'isPayment=$isPayment, isAgreement=$isAgreement, '
-      'flowType=${selectedFlowType.value}, '
-      'selectedProducts=$selectedProducts, '
-      'engagementModel=${engagementModel.value}',
+          'isPayment=$isPayment, isAgreement=$isAgreement, '
+          'flowType=${selectedFlowType.value}, '
+          'selectedProducts=$selectedProducts, '
+          'engagementModel=${engagementModel.value}',
     );
 
     if (selectedFlowType.value == FlowType.product) {
@@ -677,7 +730,19 @@ class AppController extends GetxController {
         isSubmitted.value = true;
         showSuccessDialog(context);
         debugPrint('Service flow submitted');
-      } else if (selectedFlowType.value == FlowType.product) {
+      }
+      else if (selectedFlowType.value == FlowType.product) {
+        // Helper to get a valid plan for the product
+        String getValidPlan(String productName, String? selectedPlan) {
+          final plansAndPrices = getProductPlansAndPrices(productName);
+          final availablePlans = plansAndPrices['plans'] as List<String>;
+          if (selectedPlan == null || !availablePlans.contains(selectedPlan)) {
+            // Return the first available plan as default
+            return availablePlans.first;
+          }
+          return selectedPlan;
+        }
+
         final formData = {
           'companyName': companyController.text,
           'fullName': nameController.text,
@@ -685,23 +750,27 @@ class AppController extends GetxController {
           'phoneNumber': phoneController.text,
           'interestedIn': 'Product',
           'engagementModel': getApiEngagementModel(engagementModel.value),
-          'selectedPlan': selectedPlan.value, // Added selectedPlan
           'selectedProducts': selectedProducts
               .map(
                 (productName) => {
-                  'productName': productName,
-                  if (engagementModel.value == EngagementModel.saas)
-                    'userCountRange': productUserRanges[productName] ?? '1-10',
-                  if (engagementModel.value == EngagementModel.saas)
-                    'totalPrice': productsList
-                            .firstWhere((p) => p.name == productName)
-                            .pricePerUser *
-                        (productUserCounts[productName] ?? 1),
-                },
-              )
+              'productName': productName,
+              'planName': getValidPlan(productName, productPlans[productName]),
+              if (engagementModel.value == EngagementModel.saas) ...{
+                'userCountRange': productUserRanges[productName] ?? '1-10',
+                'userCount': productUserCounts[productName] ?? 1,
+                'pricePerUser': getProductPlansAndPrices(productName)['prices']
+                [getValidPlan(productName, productPlans[productName])],
+                'totalPrice':
+                (getProductPlansAndPrices(productName)['prices']
+                [getValidPlan(productName, productPlans[productName])]
+                as double) *
+                    (productUserCounts[productName] ?? 1),
+              },
+            },
+          )
               .toList(),
           if (engagementModel.value == EngagementModel.saas)
-            'totalAmount': totalPrice,
+            'totalAmount': totalPrice.value,
         };
         if (kDebugMode) {
           print('data====>$formData');

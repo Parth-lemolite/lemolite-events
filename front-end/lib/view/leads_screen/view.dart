@@ -8,7 +8,6 @@ import 'logic.dart';
 import 'state.dart';
 
 class LeadsScreenPage extends StatelessWidget {
-
   LeadsScreenPage({super.key});
 
   final Leads_screenLogic logic = Get.put(Leads_screenLogic());
@@ -57,7 +56,7 @@ class LeadsScreenPage extends StatelessWidget {
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
                                       color:
-                                          Colors.white.withValues(alpha: 0.9),
+                                      Colors.white.withValues(alpha: 0.9),
                                       borderRadius: BorderRadius.circular(16),
                                       boxShadow: [
                                         BoxShadow(
@@ -78,7 +77,7 @@ class LeadsScreenPage extends StatelessWidget {
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Leads Dashboard',
@@ -106,7 +105,7 @@ class LeadsScreenPage extends StatelessWidget {
                                         horizontal: 16, vertical: 10),
                                     decoration: BoxDecoration(
                                       color:
-                                          Colors.white.withValues(alpha: 0.9),
+                                      Colors.white.withValues(alpha: 0.9),
                                       borderRadius: BorderRadius.circular(16),
                                       boxShadow: [
                                         BoxShadow(
@@ -162,15 +161,15 @@ class LeadsScreenPage extends StatelessWidget {
                             Expanded(
                               flex: 2,
                               child: Obx(() => _buildQuickStatsCard(
-                                    state.leads,
-                                  )),
+                                state.leads,
+                              )),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
                               flex: 1,
                               child: Obx(() => _buildCategoryDistributionCard(
-                                    state.leads,
-                                  )),
+                                state.leads,
+                              )),
                             ),
                           ],
                         ),
@@ -196,47 +195,47 @@ class LeadsScreenPage extends StatelessWidget {
                             children: [
                               // Search Bar
                               Obx(() => TextField(
-                                    onChanged: (value) =>
-                                        state.searchQuery.value = value,
-                                    decoration: InputDecoration(
-                                      hintText: 'Search leads...',
-                                      hintStyle: GoogleFonts.inter(
-                                        color: const Color(0xFF4A5568),
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                      prefixIcon: const Icon(
-                                        Icons.search,
-                                        color: Color(0xFF2EC4F3),
-                                      ),
-                                      suffixIcon: state
-                                              .searchQuery.value.isNotEmpty
-                                          ? IconButton(
-                                              icon: const Icon(
-                                                Icons.clear,
-                                                color: Color(0xFF4A5568),
-                                              ),
-                                              onPressed: () {
-                                                state.searchQuery.value = '';
-                                                FocusScope.of(context)
-                                                    .unfocus();
-                                              },
-                                            )
-                                          : null,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                      filled: true,
-                                      fillColor: Colors.grey.shade100,
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 14, horizontal: 16),
+                                onChanged: (value) =>
+                                state.searchQuery.value = value,
+                                decoration: InputDecoration(
+                                  hintText: 'Search leads...',
+                                  hintStyle: GoogleFonts.inter(
+                                    color: const Color(0xFF4A5568),
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.search,
+                                    color: Color(0xFF2EC4F3),
+                                  ),
+                                  suffixIcon: state
+                                      .searchQuery.value.isNotEmpty
+                                      ? IconButton(
+                                    icon: const Icon(
+                                      Icons.clear,
+                                      color: Color(0xFF4A5568),
                                     ),
-                                    style: GoogleFonts.inter(
-                                      color: const Color(0xFF0F1C35),
-                                      fontSize: 14,
-                                    ),
-                                  )),
+                                    onPressed: () {
+                                      state.searchQuery.value = '';
+                                      FocusScope.of(context)
+                                          .unfocus();
+                                    },
+                                  )
+                                      : null,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey.shade100,
+                                  contentPadding:
+                                  const EdgeInsets.symmetric(
+                                      vertical: 14, horizontal: 16),
+                                ),
+                                style: GoogleFonts.inter(
+                                  color: const Color(0xFF0F1C35),
+                                  fontSize: 14,
+                                ),
+                              )),
                               const SizedBox(height: 16),
                               // Filter Chips
                               SingleChildScrollView(
@@ -244,30 +243,30 @@ class LeadsScreenPage extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Obx(() => _buildModernFilterChip(
-                                          'All Leads',
-                                          state.selectedCategory.value == null,
-                                          Icons.filter_list,
+                                      'All Leads',
+                                      state.selectedCategory.value == null,
+                                      Icons.filter_list,
                                           () => state.selectedCategory.value =
-                                              null,
-                                        )),
+                                      null,
+                                    )),
                                     const SizedBox(width: 12),
                                     Obx(() => _buildModernFilterChip(
-                                          'Products',
-                                          state.selectedCategory.value ==
-                                              InterestedIn.PRODUCT,
-                                          Icons.shopping_cart_outlined,
+                                      'Products',
+                                      state.selectedCategory.value ==
+                                          InterestedIn.PRODUCT,
+                                      Icons.shopping_cart_outlined,
                                           () => state.selectedCategory.value =
-                                              InterestedIn.PRODUCT,
-                                        )),
+                                          InterestedIn.PRODUCT,
+                                    )),
                                     const SizedBox(width: 12),
                                     Obx(() => _buildModernFilterChip(
-                                          'Services',
-                                          state.selectedCategory.value ==
-                                              InterestedIn.SERVICE,
-                                          Icons.miscellaneous_services_outlined,
+                                      'Services',
+                                      state.selectedCategory.value ==
+                                          InterestedIn.SERVICE,
+                                      Icons.miscellaneous_services_outlined,
                                           () => state.selectedCategory.value =
-                                              InterestedIn.SERVICE,
-                                        )),
+                                          InterestedIn.SERVICE,
+                                    )),
                                   ],
                                 ),
                               ),
@@ -307,87 +306,87 @@ class LeadsScreenPage extends StatelessWidget {
                                     ),
                                     const Spacer(),
                                     Obx(() => Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.shade100,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Text(
-                                            '${state.leads.where((lead) {
-                                              final categoryMatch = state
-                                                          .selectedCategory
-                                                          .value ==
-                                                      null ||
-                                                  lead.interestedIn ==
-                                                      state.selectedCategory
-                                                          .value;
-                                              final query = state
-                                                  .searchQuery.value
-                                                  .toLowerCase();
-                                              final searchMatch = query
-                                                      .isEmpty ||
-                                                  (lead.companyName
-                                                          ?.toLowerCase()
-                                                          .contains(query) ??
-                                                      false) ||
-                                                  (lead.fullName
-                                                          ?.toLowerCase()
-                                                          .contains(query) ??
-                                                      false) ||
-                                                  (lead.email
-                                                          ?.toLowerCase()
-                                                          .contains(query) ??
-                                                      false) ||
-                                                  (lead.phoneNumber
-                                                          ?.toLowerCase()
-                                                          .contains(query) ??
-                                                      false);
-                                              return categoryMatch &&
-                                                  searchMatch;
-                                            }).length} Leads',
-                                            style: GoogleFonts.inter(
-                                              color: const Color(0xFF2EC4F3),
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        )),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade100,
+                                        borderRadius:
+                                        BorderRadius.circular(10),
+                                      ),
+                                      child: Text(
+                                        '${state.leads.where((lead) {
+                                          final categoryMatch = state
+                                              .selectedCategory
+                                              .value ==
+                                              null ||
+                                              lead.interestedIn ==
+                                                  state.selectedCategory
+                                                      .value;
+                                          final query = state
+                                              .searchQuery.value
+                                              .toLowerCase();
+                                          final searchMatch = query
+                                              .isEmpty ||
+                                              (lead.companyName
+                                                  ?.toLowerCase()
+                                                  .contains(query) ??
+                                                  false) ||
+                                              (lead.fullName
+                                                  ?.toLowerCase()
+                                                  .contains(query) ??
+                                                  false) ||
+                                              (lead.email
+                                                  ?.toLowerCase()
+                                                  .contains(query) ??
+                                                  false) ||
+                                              (lead.phoneNumber
+                                                  ?.toLowerCase()
+                                                  .contains(query) ??
+                                                  false);
+                                          return categoryMatch &&
+                                              searchMatch;
+                                        }).length} Leads',
+                                        style: GoogleFonts.inter(
+                                          color: const Color(0xFF2EC4F3),
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    )),
                                   ],
                                 ),
                               ),
                               const Divider(
                                   height: 1, color: Color(0xFFE5E7EB)),
                               Obx(() => _buildLeadsCardList(
-                                    state.leads.where((lead) {
-                                      final categoryMatch =
-                                          state.selectedCategory.value ==
-                                                  null ||
-                                              lead.interestedIn ==
-                                                  state.selectedCategory.value;
-                                      final query =
-                                          state.searchQuery.value.toLowerCase();
-                                      final searchMatch = query.isEmpty ||
-                                          (lead.companyName
-                                                  ?.toLowerCase()
-                                                  .contains(query) ??
-                                              false) ||
-                                          (lead.fullName
-                                                  ?.toLowerCase()
-                                                  .contains(query) ??
-                                              false) ||
-                                          (lead.email
-                                                  ?.toLowerCase()
-                                                  .contains(query) ??
-                                              false) ||
-                                          (lead.phoneNumber
-                                                  ?.toLowerCase()
-                                                  .contains(query) ??
-                                              false);
-                                      return categoryMatch && searchMatch;
-                                    }).toList(),
-                                  )),
+                                state.leads.where((lead) {
+                                  final categoryMatch =
+                                      state.selectedCategory.value ==
+                                          null ||
+                                          lead.interestedIn ==
+                                              state.selectedCategory.value;
+                                  final query =
+                                  state.searchQuery.value.toLowerCase();
+                                  final searchMatch = query.isEmpty ||
+                                      (lead.companyName
+                                          ?.toLowerCase()
+                                          .contains(query) ??
+                                          false) ||
+                                      (lead.fullName
+                                          ?.toLowerCase()
+                                          .contains(query) ??
+                                          false) ||
+                                      (lead.email
+                                          ?.toLowerCase()
+                                          .contains(query) ??
+                                          false) ||
+                                      (lead.phoneNumber
+                                          ?.toLowerCase()
+                                          .contains(query) ??
+                                          false);
+                                  return categoryMatch && searchMatch;
+                                }).toList(),
+                              )),
                             ],
                           ),
                         ),
@@ -502,7 +501,7 @@ class LeadsScreenPage extends StatelessWidget {
                 children: [
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -528,7 +527,7 @@ class LeadsScreenPage extends StatelessWidget {
                   const SizedBox(width: 8),
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(12),
@@ -578,7 +577,7 @@ class LeadsScreenPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Name : ${lead.fullName}',
+                      'Name: ${lead.fullName}',
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -587,16 +586,15 @@ class LeadsScreenPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Email : ${lead.email}',
+                      'Email: ${lead.email}',
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         color: const Color(0xFF4A5568),
-
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Phone : ${lead.phoneNumber}',
+                      'Phone: ${lead.phoneNumber}',
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         color: const Color(0xFF4A5568),
@@ -633,7 +631,7 @@ class LeadsScreenPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '₹${_formatAmount(lead.totalAmount?.toDouble() ?? 0)}',
+                      '\$${_formatAmount(lead.totalAmount?.toDouble() ?? 0)}', // Changed ₹ to $
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -705,7 +703,7 @@ class LeadsScreenPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '₹${_formatAmount(product.totalPrice?.toDouble() ?? 0)}',
+                            '\$${_formatAmount(product.totalPrice?.toDouble() ?? 0)}', // Changed ₹ to $
                             style: GoogleFonts.inter(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -735,7 +733,7 @@ class LeadsScreenPage extends StatelessWidget {
 
   Widget _buildQuickStatsCard(List<Datum> leads) {
     final totalAmount =
-        leads.fold<double>(0, (sum, lead) => sum + (lead.totalAmount ?? 0));
+    leads.fold<double>(0, (sum, lead) => sum + (lead.totalAmount ?? 0));
     final productLeads =
         leads.where((lead) => lead.interestedIn == InterestedIn.PRODUCT).length;
     final serviceLeads =
@@ -753,7 +751,6 @@ class LeadsScreenPage extends StatelessWidget {
             offset: const Offset(0, 8),
           ),
         ],
-
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -835,7 +832,7 @@ class LeadsScreenPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '₹${_formatAmount(totalAmount)}',
+                        '\$${_formatAmount(totalAmount)}', // Changed ₹ to $
                         style: GoogleFonts.inter(
                           color: const Color(0xFF0F1C35),
                           fontSize: 20,
@@ -1016,8 +1013,8 @@ class LeadsScreenPage extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: isSelected
                 ? const LinearGradient(
-                    colors: [Color(0xFFBFD633), Color(0xFF2EC4F3)],
-                  )
+              colors: [Color(0xFFBFD633), Color(0xFF2EC4F3)],
+            )
                 : null,
             color: isSelected ? null : Colors.grey.shade100,
             borderRadius: BorderRadius.circular(12),
@@ -1050,14 +1047,12 @@ class LeadsScreenPage extends StatelessWidget {
   }
 
   String _formatAmount(double amount) {
-    if (amount >= 10000000) {
-      return '${(amount / 10000000).toStringAsFixed(1)}Cr';
-    } else if (amount >= 100000) {
-      return '${(amount / 100000).toStringAsFixed(1)}L';
+    if (amount >= 1000000) {
+      return '${(amount / 1000000).toStringAsFixed(1)}M'; // Changed Cr to M for millions
     } else if (amount >= 1000) {
-      return '${(amount / 1000).toStringAsFixed(1)}K';
+      return '${(amount / 1000).toStringAsFixed(1)}K'; // Thousands
     } else {
-      return amount.toStringAsFixed(0);
+      return amount.toStringAsFixed(0); // No suffix for amounts less than 1000
     }
   }
 }

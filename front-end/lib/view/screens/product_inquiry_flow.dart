@@ -20,6 +20,7 @@ class ProductInquiryFlow extends StatelessWidget {
     final controller = Get.find<AppController>();
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text('Product Inquiry'),
@@ -132,28 +133,57 @@ class ProductInquiryFlow extends StatelessWidget {
                                 if (isPayment) {
                                   // Prepare form data for payment
                                   final formData = {
-                                    'companyName': controller.companyController.text,
+                                    'companyName':
+                                        controller.companyController.text,
                                     'fullName': controller.nameController.text,
                                     'email': controller.emailController.text,
-                                    'phoneNumber': controller.phoneController.text,
+                                    'phoneNumber':
+                                        controller.phoneController.text,
                                     'interestedIn': 'Product',
                                     'engagementModel':
                                         controller.getApiEngagementModel(
                                       controller.engagementModel.value,
                                     ),
-                                    'selectedProducts': controller.selectedProducts.map(
-                                          (productName) => {
-                                            'productName': productName,
-                                            'userCountRange': controller.productUserRanges[productName] ?? '1-10',
-                                            'planName': controller.selectedPlan.value,
-                                            'totalPrice': controller.productsList.firstWhere((p) => p.name == productName).pricePerUser * (controller.productUserCounts[productName] ?? 1),
-                                          },
-                                        )
-                                        .toList(),
-                                    'totalAmount': controller.totalPrice,
+                                    'selectedProducts':
+                                        controller.selectedProducts.map(
+                                      (productName) {
+                                        final selectedPlan = controller
+                                                .productPlans[productName] ??
+                                            'Freemium';
+                                        final userCount =
+                                            selectedPlan == 'Freemium' ||
+                                                    selectedPlan
+                                                        .contains('One Time')
+                                                ? 1
+                                                : controller.productUserCounts[
+                                                        productName] ??
+                                                    1;
+                                        final plansAndPrices =
+                                            controller.getProductPlansAndPrices(
+                                                productName);
+                                        final pricePerUser =
+                                            plansAndPrices['prices']
+                                                [selectedPlan] as double;
+                                        final totalPrice =
+                                            selectedPlan.contains('One Time')
+                                                ? pricePerUser
+                                                : pricePerUser * userCount;
+
+                                        return {
+                                          'productName': productName,
+                                          'planName': selectedPlan,
+                                          'userCountRange':
+                                              controller.productUserRanges[
+                                                      productName] ??
+                                                  '1-10',
+                                          'totalPrice': totalPrice,
+                                        };
+                                      },
+                                    ).toList(),
+                                    'totalAmount': controller.totalPrice.value,
                                   };
                                   // Send data to API and get payment session
-                                    await controller.sendUserData(formData);
+                                  await controller.sendUserData(formData);
                                 } else if (isAgreement) {
                                   // Handle service agreement submission
                                   await controller.submitForm(

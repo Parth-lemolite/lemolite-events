@@ -27,9 +27,15 @@ class PlanPricingStep extends StatelessWidget {
 
     if (productName.contains('scan2hire') || productName.contains('s2h')) {
       return {
-        'plans': ['Freemium', 'Enterprise'],
+        'plans': [
+          'Freemium',
+          'Premium',
+          'Enterprise'
+        ], // Updated to include Premium
         'prices': {
           'Freemium': 0.0,
+          'Premium':
+              49.0, // Example price for Premium plan ($ per user per month)
           'Enterprise': 79.0, // $ per user per month
         },
       };
@@ -157,6 +163,7 @@ class PlanPricingStep extends StatelessWidget {
                                   defaultPlan;
 
                           return DropdownButtonFormField<String>(
+                            dropdownColor: Colors.white,
                             value: selectedPlan,
                             decoration: InputDecoration(
                               labelText: 'Plan',
@@ -194,65 +201,9 @@ class PlanPricingStep extends StatelessWidget {
                         const SizedBox(height: 16),
                         Obx(() {
                           final selectedPlan =
-                              controller.productPlans[productName] ?? 'Free';
-                          if (selectedPlan != 'Free' &&
-                              !selectedPlan.contains('One Time')) {
-                            return TextFormField(
-                              controller:
-                                  controller.userCountControllers[productName],
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: 'No. of Users',
-                                prefixIcon: Icon(
-                                  Icons.group_outlined,
-                                  color: selectedProducts.indexOf(productName) %
-                                              2 ==
-                                          0
-                                      ? const Color(0xFFBFD633)
-                                      : const Color(0xFF2EC4F3),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(5),
-                              ],
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter the number of users';
-                                }
-                                final count = int.tryParse(value);
-                                if (count == null || count <= 0) {
-                                  return 'Please enter a valid number';
-                                }
-                                if (count > 99999) {
-                                  return 'Number of users cannot exceed 99999';
-                                }
-                                if (selectedPlan == 'Enterprise' && count < 1) {
-                                  return 'Enterprise plan requires 1+ users';
-                                }
-                                return null;
-                              },
-                              onChanged: (value) {
-                                controller.updateUserCount(productName, value);
-                                debugPrint(
-                                    'Updated user count for $productName: $value');
-                              },
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        }),
-                        const SizedBox(height: 16),
-                        Obx(() {
-                          final selectedPlan =
-                              controller.productPlans[productName] ?? 'Free';
-                          final userCount = selectedPlan == 'Free' ||
+                              controller.productPlans[productName] ??
+                                  'Freemium';
+                          final userCount = selectedPlan == 'Freemium' ||
                                   selectedPlan.contains('One Time')
                               ? 1
                               : controller.productUserCounts[productName] ?? 1;
@@ -268,7 +219,7 @@ class PlanPricingStep extends StatelessWidget {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (selectedPlan != 'Free' &&
+                              if (selectedPlan != 'Freemium' &&
                                   !selectedPlan.contains('One Time'))
                                 Text(
                                   '\$${pricePerUser.toStringAsFixed(2)} /User /Month',
@@ -344,8 +295,9 @@ class PlanPricingStep extends StatelessWidget {
                       double total = 0.0;
                       for (var productName in selectedProducts) {
                         final selectedPlan =
-                            controller.productPlans[productName] ?? 'Free';
-                        final userCount = selectedPlan == 'Free'
+                            controller.productPlans[productName] ?? 'Freemium';
+                        final userCount = selectedPlan == 'Freemium' ||
+                                selectedPlan.contains('One Time')
                             ? 1
                             : controller.productUserCounts[productName] ?? 1;
                         final plansAndPrices =
@@ -353,7 +305,10 @@ class PlanPricingStep extends StatelessWidget {
                         final pricePerUser =
                             (plansAndPrices['prices']?[selectedPlan] ?? 0.0)
                                 as double;
-                        total += pricePerUser * userCount;
+                        final productTotal = selectedPlan.contains('One Time')
+                            ? pricePerUser
+                            : pricePerUser * userCount;
+                        total += productTotal;
                       }
                       controller.totalPrice.value = total;
                       return Text(

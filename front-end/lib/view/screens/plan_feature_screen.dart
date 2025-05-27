@@ -57,13 +57,12 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
     final allPlans = [
       // Scan2Hire Plans
       {
-        'name': 'Freemium',
+        'name': 'Free',
         'originalName': 'Scan2Hire Free',
         'price': 'FREE',
         'priceKES': '',
         'subtitle': '7 Days Trial',
-        'description':
-        'Perfect for getting started with basic recruitment needs',
+        'description': 'Perfect for getting started with basic recruitment needs',
         'setupFee': 'No Fee',
         'setupFeeKES': '',
         'customization': 'N/A',
@@ -112,26 +111,85 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'category': 'Scan2Hire',
       },
       {
+        'name': 'Premium',
+        'originalName': 'Scan2Hire Premium',
+        'price': '\$49',
+        'priceKES': 'KES 6,400',
+        'subtitle': 'Per User/Month',
+        'description': 'Advanced features for growing recruitment needs',
+        'setupFee': '\$1,000',
+        'setupFeeKES': 'KES 130,000',
+        'customization': '\$15/hr',
+        'customizationKES': 'KES 2,000/hr',
+        'support': 'Standard Support',
+        'supportRate': '10 hrs/month',
+        'contract': '3 Months',
+        'isPopular': true,
+        'limits': {
+          'Jobs': '100',
+          'Resume': '2000',
+          'Users': '10',
+          'Credits': '500',
+        },
+        'features': {
+          'Time to fill': false,
+          'Total Jobs': true,
+          'Total Candidates': true,
+          'Total Credits': true,
+          'Time to Hire': false,
+          'Activity Log': false,
+          'Recruiter Activity': false,
+          'Credit Usage': true,
+          'Candidates Overview': true,
+          'Candidate Pipeline History': false,
+          'Employee Performance': false,
+          'Notifications': true,
+          'Add users': true,
+          'Current plans': true,
+          'Add Credits': true,
+          'FAQ and ticket support': true,
+          'Recruiter Targets': true,
+          'Google Calendar Integration': true,
+          'Upcoming Events': true,
+          'User Management': true,
+          'Add a new job': true,
+          'View Job Analytics': true,
+          'Job Data Parsing': true,
+          'Score Weight & Graph': true,
+          'Rank and Analyze': true,
+          'Direct Recruiter Application': false,
+          'Reassign Job': false,
+          'Add Candidates': true,
+          'Candidate Analytics': true,
+          'Candidate Data Parsing': true,
+          'Interview Management': true,
+          'My Target': true,
+          'View Assigned Job': true,
+        },
+        'color': const Color(0xFF1E40AF),
+        'gradient': [const Color(0xFF1E40AF), const Color(0xFF3B82F6)],
+        'category': 'Scan2Hire',
+      },
+      {
         'name': 'Enterprise',
         'originalName': 'Scan2Hire Enterprise',
         'price': '\$79',
-        'priceKES': 'KES 10,207',
+        'priceKES': 'KES 10,220',
         'subtitle': 'Per User/Month',
-        'description':
-        'Complete solution for large organizations with advanced features',
+        'description': 'Complete solution for large organizations with advanced features',
         'setupFee': '\$2,500',
-        'setupFeeKES': 'KES 3,23,013',
+        'setupFeeKES': 'KES 323,448',
         'customization': '\$15/hr',
-        'customizationKES': 'KES 1,938/hr',
+        'customizationKES': 'KES 1,940/hr',
         'support': 'Premium Support',
         'supportRate': '15 hrs/month',
         'contract': '3 Months',
-        'isPopular': true,
+        'isPopular': false,
         'limits': {
           'Jobs': '1,000',
           'Resume': '5,000',
           'Users': '50',
-          'Credits': '5,000',
+          'Credits': '2,500',
         },
         'features': {
           'Time to fill': true,
@@ -172,7 +230,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'gradient': [const Color(0xFF13477A), const Color(0xFF13477A)],
         'category': 'Scan2Hire',
       },
-      // NextStaff Plans
+      // Other plans (NextStaff, CRM, IMS, Integrated) remain unchanged
       {
         'name': 'Freemium',
         'originalName': 'NextStaff Growth',
@@ -214,7 +272,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'category': 'NextStaff',
       },
       {
-        'name': 'Enterprice',
+        'name': 'Enterprise',
         'originalName': 'NextStaff Premium',
         'price': '\$69',
         'priceKES': 'KES 8,913',
@@ -254,9 +312,8 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'gradient': [const Color(0xFF13477A), const Color(0xFF13477A)],
         'category': 'NextStaff',
       },
-      // CRM Plans
       {
-        'name': 'Freemimum',
+        'name': 'Freemium',
         'originalName': 'CRM Growth',
         'price': '\$19',
         'priceKES': 'KES 2,455',
@@ -333,15 +390,13 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'gradient': [const Color(0xFF13477A), const Color(0xFF13477A)],
         'category': 'CRM',
       },
-      // IMS Plans
       {
         'name': 'Enterprise',
         'originalName': 'IMS Enterprise',
         'price': '\$19',
         'priceKES': 'KES 2,455',
         'subtitle': 'Per User/Month',
-        'description':
-        'Comprehensive IMS for efficient inventory and operations',
+        'description': 'Comprehensive IMS for efficient inventory and operations',
         'setupFee': '\$2,500',
         'setupFeeKES': 'KES 3,22,950',
         'customization': '\$15/hr',
@@ -388,15 +443,13 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'gradient': [const Color(0xFF13477A), const Color(0xFF13477A)],
         'category': 'IMS',
       },
-      // Integrated Plans (S2H + NextStaff)
       {
         'name': 'SaaS Based',
         'originalName': 'Integrated SaaS',
         'price': '\$89',
         'priceKES': '',
         'subtitle': 'Per User/Month',
-        'description':
-        'Complete HR & Recruitment solution with SaaS flexibility',
+        'description': 'Complete HR & Recruitment solution with SaaS flexibility',
         'setupFee': '\$1,500',
         'setupFeeKES': 'KES 3,23,013',
         'customization': '\$15/hr',
@@ -438,8 +491,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'price': '\$63,360',
         'priceKES': '',
         'subtitle': 'One-time payment',
-        'description':
-        'Complete solution with unlimited users and one-time cost',
+        'description': 'Complete solution with unlimited users and one-time cost',
         'setupFee': '\$2,500',
         'setupFeeKES': 'KES 3,22,950',
         'customization': '\$15/hr',
@@ -475,29 +527,27 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'gradient': [const Color(0xFFF3F4F6), const Color(0xFFE5E7EB)],
         'category': 'Integrated',
       },
-
     ];
 
     // Get the product type based on the product name
     String? getProductType(String productName) {
       productName = productName.toLowerCase().trim();
-      if (productName.contains('scan2hire') && productName.contains('s2h')) {
+      if (productName.contains('scan2hire') || productName.contains('s2h')) {
         return 'Scan2Hire';
       }
-      if (productName==('nexstaff')) {
+      if (productName.contains('nexstaff')) {
         return 'NextStaff';
       }
-      if (productName == 'crm') {
+      if (productName.contains('crm')) {
         return 'CRM';
       }
-      if (productName == 'ims') {
+      if (productName.contains('ims')) {
         return 'IMS';
       }
-      if (productName == 'dukadin') {
+      if (productName.contains('dukadin')) {
         return null; // No plans for Dukadin
       }
-      if (productName.contains('Integrated (S2H + Nexstaff)') ||
-          productName.contains('s2h + nexstaff')) {
+      if (productName.contains('integrated') || productName.contains('s2h + nextstaff')) {
         return 'Integrated'; // Show Integrated plans for integrated product
       }
       return null;
@@ -512,21 +562,21 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
     }
 
     // Filter plans based on product type
-    var filteredPlans =
-    allPlans.where((plan) => plan['category'] == productType).toList();
+    var filteredPlans = allPlans.where((plan) => plan['category'] == productType).toList();
 
-    // Sort plans - Free/Growth first, then Premium/Enterprise
+    // Sort plans - Free first, then Premium, then Enterprise
     filteredPlans.sort((a, b) {
       final aName = a['name'] as String;
       final bName = b['name'] as String;
-      if (aName.contains('Free') || aName.contains('Growth')) return -1;
-      if (bName.contains('Free') || bName.contains('Growth')) return 1;
+      if (aName.contains('Free')) return -1;
+      if (bName.contains('Free')) return 1;
+      if (aName.contains('Premium')) return -1;
+      if (bName.contains('Premium')) return 1;
       return 0;
     });
 
     return filteredPlans;
   }
-
   @override
   Widget build(BuildContext context) {
     final planData = getPlanData();
