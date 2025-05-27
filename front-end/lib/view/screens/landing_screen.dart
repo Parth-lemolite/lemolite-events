@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nairobi_app/view/screens/product_inquiry_flow.dart';
+import 'package:lemolite_events/view/screens/product_inquiry_flow.dart';
 import '../../controller/app_controller.dart';
 // import '../../models/enums.dart';
 // import '../../main.dart';
@@ -60,7 +60,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                   ),
                                   content: const Text(
                                     'Lemolite Technologies LLP is engaged in the development and sale of cloud-based enterprise software solutions. We offer Applicant Tracking Systems (ATS), Human Resource and Employee Management Systems (HREMS), Customer Relationship Management (CRM) platforms, and Inventory Management Systems (IMS).\n\n'
-                                        'Our services are delivered under a subscription-based and white-label model, enabling businesses to use or resell our solutions under their own brand name. The products are accessible through secure web portals and are primarily used by SMEs and enterprises to streamline operations in hiring, HR management, sales and customer service, and inventory control.',
+                                    'Our services are delivered under a subscription-based and white-label model, enabling businesses to use or resell our solutions under their own brand name. The products are accessible through secure web portals and are primarily used by SMEs and enterprises to streamline operations in hiring, HR management, sales and customer service, and inventory control.',
                                   ),
                                   actions: [
                                     TextButton(
@@ -123,9 +123,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         hintText: 'Enter your full name',
                         prefixIcon: Icon(Icons.person_outline),
                       ),
-                      validator:
-                          (value) =>
-                      value == null || value.isEmpty
+                      validator: (value) => value == null || value.isEmpty
                           ? 'Please enter your name'
                           : null,
                       textInputAction: TextInputAction.next,
@@ -138,9 +136,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         hintText: 'Enter your company name',
                         prefixIcon: Icon(Icons.business_outlined),
                       ),
-                      validator:
-                          (value) =>
-                      value == null || value.isEmpty
+                      validator: (value) => value == null || value.isEmpty
                           ? 'Please enter your company name'
                           : null,
                       textInputAction: TextInputAction.next,
@@ -154,13 +150,11 @@ class _LandingScreenState extends State<LandingScreen> {
                         hintText: 'Enter your email address',
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
-                      validator:
-                          (value) =>
-                      value == null || value.isEmpty
+                      validator: (value) => value == null || value.isEmpty
                           ? 'Please enter your email'
                           : !value.contains('@') || !value.contains('.')
-                          ? 'Please enter a valid email'
-                          : null,
+                              ? 'Please enter a valid email'
+                              : null,
                       textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 16),
@@ -172,9 +166,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         hintText: 'Enter your phone number',
                         prefixIcon: Icon(Icons.phone_outlined),
                       ),
-                      validator:
-                          (value) =>
-                      value == null || value.isEmpty
+                      validator: (value) => value == null || value.isEmpty
                           ? 'Please enter your phone number'
                           : null,
                       textInputAction: TextInputAction.done,
@@ -186,7 +178,7 @@ class _LandingScreenState extends State<LandingScreen> {
                     ),
                     const SizedBox(height: 16),
                     Obx(
-                          () => Column(
+                      () => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ListTile(
@@ -222,7 +214,7 @@ class _LandingScreenState extends State<LandingScreen> {
                             if (selectedOption.value == 'Service') {
                               final formData = {
                                 'companyName':
-                                controller.companyController.text,
+                                    controller.companyController.text,
                                 'fullName': controller.nameController.text,
                                 'email': controller.emailController.text,
                                 'phoneNumber': controller.phoneController.text,
@@ -243,10 +235,10 @@ class _LandingScreenState extends State<LandingScreen> {
                                     alpha: 0.2,
                                   ),
                                   pageBuilder: (
-                                      context,
-                                      animation1,
-                                      animation2,
-                                      ) {
+                                    context,
+                                    animation1,
+                                    animation2,
+                                  ) {
                                     return BackdropFilter(
                                       filter: ImageFilter.blur(
                                         sigmaX: 5,
@@ -350,8 +342,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           }
                         },
                         isLoading: controller.isLoading.value,
-                        text:
-                        selectedOption.value == 'Service'
+                        text: selectedOption.value == 'Service'
                             ? 'Submit Request'
                             : 'Next',
                         gradientColors: const [
@@ -374,7 +365,6 @@ class _LandingScreenState extends State<LandingScreen> {
                             style: TextStyle(fontSize: 10.5),
                           ),
                         ),
-
                         TextButton(
                           onPressed: () {
                             Get.to(() => const TermsConditionsPage());
@@ -384,7 +374,6 @@ class _LandingScreenState extends State<LandingScreen> {
                             style: TextStyle(fontSize: 10.5),
                           ),
                         ),
-
                         TextButton(
                           onPressed: () {
                             Get.to(() => const ShippingPolicyPage());

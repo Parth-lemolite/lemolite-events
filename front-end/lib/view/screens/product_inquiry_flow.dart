@@ -10,7 +10,7 @@ import '../steps/product_selection_step.dart';
 import '../steps/plan_pricing_step.dart';
 import '../steps/contact_details_step.dart';
 import '../widgets/step_progress_indicator.dart';
-import 'check_out.dart';
+import '../../services/payment_service.dart';
 
 class ProductInquiryFlow extends StatelessWidget {
   const ProductInquiryFlow({super.key});
@@ -44,19 +44,17 @@ class ProductInquiryFlow extends StatelessWidget {
                 final int activeStep = controller.activeStep.value;
                 final bool isSaaS =
                     controller.engagementModel.value == EngagementModel.saas;
-                final int totalSteps = isSaaS ? 4 : 2;
-                final List<String> labels =
-                isSaaS
-                    ? const ['Model', 'Products', 'Pricing', 'Checkout']
+                final int totalSteps = isSaaS ? 3 : 2;
+                final List<String> labels = isSaaS
+                    ? const ['Model', 'Products', 'Pricing']
                     : const ['Model', 'Products'];
-                final int uiStep =
-                isSaaS ? activeStep : (activeStep == 3 ? 2 : activeStep);
+                final int uiStep = activeStep;
 
                 debugPrint(
                   'ProductInquiryFlow rebuilt: activeStep=$activeStep, '
-                      'uiStep=$uiStep, isSaaS=$isSaaS, '
-                      'selectedProducts=${controller.selectedProducts}, '
-                      'engagementModel=${controller.engagementModel.value}',
+                  'uiStep=$uiStep, isSaaS=$isSaaS, '
+                  'selectedProducts=${controller.selectedProducts}, '
+                  'engagementModel=${controller.engagementModel.value}',
                 );
 
                 return Column(
@@ -81,9 +79,9 @@ class ProductInquiryFlow extends StatelessWidget {
                           switchInCurve: Curves.easeOut,
                           switchOutCurve: Curves.easeIn,
                           transitionBuilder: (
-                              Widget child,
-                              Animation<double> animation,
-                              ) {
+                            Widget child,
+                            Animation<double> animation,
+                          ) {
                             return SlideTransition(
                               position: Tween<Offset>(
                                 begin: const Offset(1.0, 0.0),
@@ -116,112 +114,59 @@ class ProductInquiryFlow extends StatelessWidget {
                             buttonText = 'Submit for Service Agreement';
                             isAgreement = true;
                           }
-                          debugPrint(
-                            'Step 1 Button: canProceed=$canProceed, '
-                                'selectedProducts=${controller.selectedProducts}, '
-                                'length=${controller.selectedProducts.length}',
-                          );
                         } else if (activeStep == 2 && isSaaS) {
                           canProceed =
                               controller.productUserCounts.isNotEmpty &&
                                   controller.productUserCounts.values.every(
-                                        (count) => count > 0,
+                                    (count) => count > 0,
                                   );
-                        } else if (activeStep == 3 && isSaaS) {
-                          canProceed =
-                              controller.productUserCounts.isNotEmpty &&
-                                  controller.productUserCounts.values.every(
-                                        (count) => count > 0,
-                                  );
-                          buttonText = 'Pay Now';
+                          buttonText = 'Proceed to Payment';
                           isPayment = true;
-                        } else if (activeStep == 4 ||
-                            (activeStep == 2 && !isSaaS)) {
-                          buttonText = 'Submit Inquiry';
                         }
 
-                        onPressed =
-                        canProceed && !controller.isLoading.value
+                        onPressed = canProceed && !controller.isLoading.value
                             ? () async {
-                          controller.isLoading.value = true;
-                          HapticFeedback.lightImpact();
-                          debugPrint(
-                            'Button pressed: activeStep=$activeStep, '
-                                'uiStep=$uiStep, canProceed=$canProceed, '
-                                'selectedProducts=${controller.selectedProducts}, '
-                                'isPayment=$isPayment, isAgreement=$isAgreement',
-                          );
-                          await controller.submitForm(
-                            isPayment: isPayment,
-                            isAgreement: isAgreement,
-                            context: context,
-                          );
-                          if (buttonText == 'Pay Now') {
-                            // Prepare form data
-                            final formData = {
-                              'companyName':
-                              controller.companyController.text,
-                              'fullName':
-                              controller.nameController.text,
-                              'email': controller.emailController.text,
-                              'phoneNumber':
-                              controller.phoneController.text,
-                              'interestedIn': 'Product',
-                              'engagementModel': controller
-                                  .getApiEngagementModel(
-                                controller.engagementModel.value,
-                              ),
-                              'selectedProducts':
-                              controller.selectedProducts
-                                  .map(
-                                    (productName) => {
-                                  'productName': productName,
-                                  if (isSaaS)
-                                    'userCountRange':
-                                    controller
-                                        .productUserRanges[productName] ??
-                                        '1-10',
-                                  if (isSaaS)
-                                    'totalPrice':
-                                    controller.productsList
-                                        .firstWhere(
-                                          (p) =>
-                                      p.name ==
-                                          productName,
-                                    )
-                                        .pricePerUser *
-                                        (controller
-                                            .productUserCounts[productName] ??
-                                            1),
-                                },
-                              )
-                                  .toList(),
-                              if (isSaaS)
-                                'totalAmount': controller.totalPrice,
-                            };
-                            if (kDebugMode) {
-                              print('data====>$formData');
-                            }
+                                controller.isLoading.value = true;
+                                HapticFeedback.lightImpact();
 
-                            // Send data to API
-                            final isSuccess = await controller
-                                .sendUserData(formData);
-                            if (!isSuccess) {
-                              Get.snackbar(
-                                'Error',
-                                'Failed to submit data. Please try again.',
-                                backgroundColor: Colors.red.shade50,
-                                colorText: Colors.red.shade900,
-                                margin: const EdgeInsets.all(16),
-                                borderRadius: 10,
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            }
+                                if (isPayment) {
+                                  // Prepare form data for payment
+                                  final formData = {
+                                    'companyName': controller.companyController.text,
+                                    'fullName': controller.nameController.text,
+                                    'email': controller.emailController.text,
+                                    'phoneNumber': controller.phoneController.text,
+                                    'interestedIn': 'Product',
+                                    'engagementModel':
+                                        controller.getApiEngagementModel(
+                                      controller.engagementModel.value,
+                                    ),
+                                    'selectedProducts': controller.selectedProducts.map(
+                                          (productName) => {
+                                            'productName': productName,
+                                            'userCountRange': controller.productUserRanges[productName] ?? '1-10',
+                                            'planName': controller.selectedPlan.value,
+                                            'totalPrice': controller.productsList.firstWhere((p) => p.name == productName).pricePerUser * (controller.productUserCounts[productName] ?? 1),
+                                          },
+                                        )
+                                        .toList(),
+                                    'totalAmount': controller.totalPrice,
+                                  };
+                                  // Send data to API and get payment session
+                                    await controller.sendUserData(formData);
+                                } else if (isAgreement) {
+                                  // Handle service agreement submission
+                                  await controller.submitForm(
+                                    isAgreement: true,
+                                    context: context,
+                                  );
+                                } else {
+                                  // Handle normal flow
+                                  controller.goToNextStep(context);
+                                }
 
-                            // Call submitForm to handle navigation and dialog
-                          }
-                          controller.isLoading.value = false;
-                        }
+                                controller.isLoading.value = false;
+                              }
                             : null;
 
                         return GradientButton(
@@ -229,12 +174,12 @@ class ProductInquiryFlow extends StatelessWidget {
                           isLoading: controller.isLoading.value,
                           text: buttonText,
                           gradientColors:
-                          canProceed && !controller.isLoading.value
-                              ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
-                              : const [
-                            Color(0xFFB0BEC5),
-                            Color(0xFFCFD8DC),
-                          ],
+                              canProceed && !controller.isLoading.value
+                                  ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
+                                  : const [
+                                      Color(0xFFB0BEC5),
+                                      Color(0xFFCFD8DC),
+                                    ],
                         );
                       }),
                     ),
@@ -260,12 +205,6 @@ class ProductInquiryFlow extends StatelessWidget {
         return isSaaS
             ? PlanPricingStep(key: const ValueKey('step3'))
             : ContactDetailsStep(key: const ValueKey('step4'));
-      case 3:
-        return isSaaS
-            ? CheckoutStep(key: const ValueKey('step4'))
-            : ContactDetailsStep(key: const ValueKey('step4'));
-      case 4:
-        return ContactDetailsStep(key: const ValueKey('step5'));
       default:
         return const SizedBox();
     }

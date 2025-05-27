@@ -1,17 +1,26 @@
 import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
+import 'package:flutter_cashfree_pg_sdk/api/cfpayment/cfwebcheckoutpayment.dart';
+import 'package:flutter_cashfree_pg_sdk/api/cfpaymentgateway/cfpaymentgatewayservice.dart';
+import 'package:flutter_cashfree_pg_sdk/api/cfsession/cfsession.dart';
+import 'package:flutter_cashfree_pg_sdk/utils/cfenums.dart';
+import 'package:flutter_cashfree_pg_sdk/utils/cfexceptions.dart';
+import 'package:flutter_cashfree_pg_sdk/api/cferrorresponse/cferrorresponse.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/enums.dart';
+import '../models/get_payment_user_data.dart';
 import '../models/product_info.dart';
 import '../service/api_service.dart';
 import '../view/screens/main_screen.dart';
+import '../view/screens/payment_success_screen.dart';
+import '../service/payment_service.dart';
+import '../view/screens/payment_failure_screen.dart';
 
 class AppController extends GetxController {
-  final RxMap<String, String> productPlans = <String, String>{}.obs; // Renamed
+  final RxMap<String, String> productPlans = <String, String>{}.obs;
   final RxDouble totalPrice = 0.0.obs;
   final Rx<FlowType?> selectedFlowType = Rx<FlowType?>(null);
   final Rx<EngagementModel?> engagementModel = Rx<EngagementModel?>(null);
@@ -31,6 +40,7 @@ class AppController extends GetxController {
   final phoneController = TextEditingController();
   final messageController = TextEditingController();
 
+  final productFormKey = GlobalKey<FormState>();
   final landingFormKey = GlobalKey<FormState>();
   final serviceFormKey = GlobalKey<FormState>();
   final pricingFormKey = GlobalKey<FormState>();
@@ -39,7 +49,6 @@ class AppController extends GetxController {
 
   void updatePlan(String productName, String plan) {
     productPlans[productName] = plan;
-    // Set default user count based on plan
     int minUsers = plan == 'Free' ? 1 : (plan == 'Essential' ? 1 : 51);
     productUserCounts[productName] = minUsers;
     userCountControllers[productName]!.text = minUsers.toString();
@@ -62,49 +71,49 @@ class AppController extends GetxController {
   }
 
   List<ProductInfo> get productsList => [
-    ProductInfo(
-      name: 'Scan2Hire (S2H)',
-      description: 'Advanced document scanning & AI processing for hiring',
-      icon: Icons.document_scanner_outlined,
-      color: const Color(0xFF2EC4F3),
-      pricePerUser: 500.0,
-    ),
-    ProductInfo(
-      name: 'Nexstaff',
-      description: 'Comprehensive workforce management platform',
-      icon: Icons.people_outline,
-      color: const Color(0xFFBFD633),
-      pricePerUser: 300.0,
-    ),
-    ProductInfo(
-      name: 'Integrated (S2H + Nexstaff)',
-      description: 'Seamless staffing and document solution',
-      icon: Icons.integration_instructions_outlined,
-      color: const Color(0xFF2EC4B6),
-      pricePerUser: 700.0,
-    ),
-    ProductInfo(
-      name: 'CRM',
-      description: 'Customer relationship management ecosystem',
-      icon: Icons.handshake_outlined,
-      color: const Color(0xFFBFD633),
-      pricePerUser: 400.0,
-    ),
-    ProductInfo(
-      name: 'IMS',
-      description: 'Precision inventory management system',
-      icon: Icons.inventory_2_outlined,
-      color: const Color(0xFF2EC4F3),
-      pricePerUser: 350.0,
-    ),
-    ProductInfo(
-      name: 'Dukadin',
-      description: 'Enterprise resource planning solution',
-      icon: Icons.business_outlined,
-      color: const Color(0xFF2EC4B6),
-      pricePerUser: 600.0,
-    ),
-  ];
+        ProductInfo(
+          name: 'Scan2Hire (S2H)',
+          description: 'Advanced document scanning & AI processing for hiring',
+          icon: Icons.document_scanner_outlined,
+          color: const Color(0xFF2EC4F3),
+          pricePerUser: 500.0,
+        ),
+        ProductInfo(
+          name: 'Nexstaff',
+          description: 'Comprehensive workforce management platform',
+          icon: Icons.people_outline,
+          color: const Color(0xFFBFD633),
+          pricePerUser: 300.0,
+        ),
+        ProductInfo(
+          name: 'Integrated (S2H + Nexstaff)',
+          description: 'Seamless staffing and document solution',
+          icon: Icons.integration_instructions_outlined,
+          color: const Color(0xFF2EC4B6),
+          pricePerUser: 700.0,
+        ),
+        ProductInfo(
+          name: 'CRM',
+          description: 'Customer relationship management ecosystem',
+          icon: Icons.handshake_outlined,
+          color: const Color(0xFFBFD633),
+          pricePerUser: 400.0,
+        ),
+        ProductInfo(
+          name: 'IMS',
+          description: 'Precision inventory management system',
+          icon: Icons.inventory_2_outlined,
+          color: const Color(0xFF2EC4F3),
+          pricePerUser: 350.0,
+        ),
+        ProductInfo(
+          name: 'Dukadin',
+          description: 'Enterprise resource planning solution',
+          icon: Icons.business_outlined,
+          color: const Color(0xFF2EC4B6),
+          pricePerUser: 600.0,
+        ),
+      ];
 
   void updateUserRange(String productName, String range) {
     productUserRanges[productName] = range;
@@ -148,45 +157,58 @@ class AppController extends GetxController {
   }
 
   void resetFlow() {
-    selectedFlowType.value = null;
-    engagementModel.value = null;
-    selectedProducts.clear();
-    productUserCounts.clear();
-    productUserRanges.clear();
-    savedCards.clear();
-    nameController.clear();
-    emailController.clear();
-    companyController.clear();
-    phoneController.clear();
-    messageController.clear();
-    userCountControllers.forEach((_, controller) => controller.text = '1');
-    isSubmitted.value = false;
-    hasError.value = false;
-    activeStep.value = 0;
-    isLoading.value = false;
-    for (var product in productsList) {
-      productUserRanges[product.name] = '1-10';
+    try {
+      // Clear all form data
+      nameController.clear();
+      emailController.clear();
+      companyController.clear();
+      phoneController.clear();
+      messageController.clear();
+
+      // Reset all state variables
+      selectedFlowType.value = null;
+      engagementModel.value = null;
+      selectedProducts.clear();
+      productUserCounts.clear();
+      productUserRanges.clear();
+      savedCards.clear();
+      productPlans.clear();
+      selectedPlan.value = 'Free';
+      totalPrice.value = 0.0;
+      isSubmitted.value = false;
+      hasError.value = false;
+      activeStep.value = 0;
+      isLoading.value = false;
+
+      // Reset user count controllers
+      for (var controller in userCountControllers.values) {
+        controller.text = '1';
+      }
+
+      // Reset product ranges
+      for (var product in productsList) {
+        productUserRanges[product.name] = '1-10';
+      }
+
+      debugPrint('Flow reset completed');
+    } catch (e) {
+      debugPrint('Error during flow reset: $e');
     }
-    debugPrint('Flow reset');
   }
 
   Future<bool> sendUserData(Map<String, dynamic> data2) async {
-    // Helper function to convert RxDouble to double recursively
     Map<String, dynamic> convertRxDoubleToDouble(Map<String, dynamic> data) {
       final converted = <String, dynamic>{};
       data.forEach((key, value) {
         if (value is RxDouble) {
-          converted[key] = value.value; // Convert RxDouble to double
+          converted[key] = value.value;
         } else if (value is List) {
-          converted[key] =
-              value.map((item) {
-                if (item is Map<String, dynamic>) {
-                  return convertRxDoubleToDouble(
-                    item,
-                  ); // Recursively convert nested maps
-                }
-                return item;
-              }).toList();
+          converted[key] = value.map((item) {
+            if (item is Map<String, dynamic>) {
+              return convertRxDoubleToDouble(item);
+            }
+            return item;
+          }).toList();
         } else if (value is Map<String, dynamic>) {
           converted[key] = convertRxDoubleToDouble(value);
         } else {
@@ -196,7 +218,6 @@ class AppController extends GetxController {
       return converted;
     }
 
-    // Calculate totalAmount from selectedProducts
     double calculateTotalAmount(Map<String, dynamic> data) {
       final selectedProducts = data['selectedProducts'] as List<dynamic>? ?? [];
       return selectedProducts.fold(0.0, (sum, product) {
@@ -209,10 +230,7 @@ class AppController extends GetxController {
     try {
       EasyLoading.show(status: "Loading...");
 
-      // Convert RxDouble to double
       final convertedData = convertRxDoubleToDouble(data2);
-
-      // Update totalAmount
       convertedData['totalAmount'] = calculateTotalAmount(convertedData);
 
       if (kDebugMode) {
@@ -221,14 +239,33 @@ class AppController extends GetxController {
 
       final response = await ApiService.post(
         convertedData,
-        'https://events.lemolite360.in/api/leads',
+        'http://192.168.29.171:3001/api/leads',
       );
 
-      if (response != null &&
-          (response.statusCode == 201 || response.statusCode == 200)) {
+      if (response != null && response.statusCode == 201) {
+        final responseData =
+            GetPaymentData.fromJson(response.data as Map<String, dynamic>);
         if (kDebugMode) {
-          print('response=======>${response.data}');
+          print('Parsed Response: $responseData');
         }
+
+        final String? orderId = responseData.data?.payment?.orderId;
+        final String? paymentSessionId = responseData.paymentSessionId;
+
+        if (orderId != null && paymentSessionId != null) {
+          if (kDebugMode) {
+            print("Order ID: $orderId");
+            print("Payment Session ID: $paymentSessionId");
+          }
+          await webCheckout(
+              orderId: orderId, paymentSessionId: paymentSessionId);
+        } else {
+          if (kDebugMode) {
+            print(
+                'Error: orderId or paymentSessionId is missing in the response');
+          }
+        }
+
         EasyLoading.dismiss();
         return true;
       } else {
@@ -247,16 +284,201 @@ class AppController extends GetxController {
     }
   }
 
+  void onPaymentVerify(String orderId) async {
+    if (kDebugMode) {
+      print("Payment verification started for order: $orderId");
+    }
+
+    try {
+      final response = await PaymentService.verifyPayment(orderId);
+
+      if (kDebugMode) {
+        print("Payment verification response: $response");
+      }
+
+      final bool success = response['success'] ?? false;
+      final String message = response['message'] ?? 'Unknown status';
+      final paymentStatus =
+          response['data']?['payment']?['status']?.toString().toLowerCase() ??
+              'unknown';
+
+      EasyLoading.dismiss();
+
+      // Store current state before navigation
+      final currentProducts = [...selectedProducts];
+      final currentEngagementModel = engagementModel.value;
+      final currentPlans = Map<String, String>.from(productPlans);
+      final currentUserCounts = Map<String, int>.from(productUserCounts);
+
+      // Reset state before navigation to prevent widget rebuild errors
+      selectedProducts.clear();
+      engagementModel.value = null;
+      productPlans.clear();
+      productUserCounts.clear();
+      activeStep.value = 0;
+
+      if (success && paymentStatus == 'completed') {
+        // Payment successful
+        await Get.offAll(
+          () => PaymentSuccessScreen(orderId: orderId),
+          predicate: (route) => false,
+        );
+
+        Get.snackbar(
+          'Success',
+          'Payment successful!',
+          backgroundColor: Colors.green.shade50,
+          colorText: Colors.green.shade900,
+          margin: const EdgeInsets.all(16),
+          borderRadius: 10,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } else {
+        // Payment failed
+        await Get.offAll(
+          () => PaymentFailureScreen(
+            orderId: orderId,
+            message: message,
+          ),
+          predicate: (route) => false,
+        );
+
+        Get.snackbar(
+          'Failed',
+          message,
+          backgroundColor: Colors.red.shade50,
+          colorText: Colors.red.shade900,
+          margin: const EdgeInsets.all(16),
+          borderRadius: 10,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        // In case of failure, restore the previous state
+        selectedProducts.addAll(currentProducts);
+        engagementModel.value = currentEngagementModel;
+        productPlans.addAll(currentPlans);
+        productUserCounts.addAll(currentUserCounts);
+      }
+
+      // Complete reset only after successful navigation and state update
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (success && paymentStatus == 'completed') {
+          resetFlow();
+        }
+      });
+    } catch (e) {
+      EasyLoading.dismiss();
+      if (kDebugMode) {
+        print("Payment verification error: $e");
+      }
+
+      await Get.offAll(
+        () => PaymentFailureScreen(
+          orderId: orderId,
+          message:
+              'An error occurred while verifying the payment. Please contact support.',
+        ),
+        predicate: (route) => false,
+      );
+
+      Get.snackbar(
+        'Error',
+        'Failed to verify payment status',
+        backgroundColor: Colors.red.shade50,
+        colorText: Colors.red.shade900,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 10,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  void onPaymentError(CFErrorResponse errorResponse, String orderId) {
+    if (kDebugMode) {
+      print("Payment failed for order: $orderId");
+      print("Error: ${errorResponse.getMessage()}");
+    }
+    EasyLoading.dismiss();
+    Get.snackbar(
+      'Error',
+      'Payment failed: ${errorResponse.getMessage()}',
+      backgroundColor: Colors.red.shade50,
+      colorText: Colors.red.shade900,
+      margin: const EdgeInsets.all(16),
+      borderRadius: 10,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
+  Future<void> webCheckout({String? orderId, String? paymentSessionId}) async {
+    try {
+      var session =
+          createSession(orderId: orderId, paymentSessionId: paymentSessionId);
+      if (session == null) {
+        throw CFException("Failed to create payment session");
+      }
+
+      // Set up payment callbacks before initiating payment
+      final cfPaymentGatewayService = CFPaymentGatewayService();
+      cfPaymentGatewayService.setCallback(
+        (orderId) => onPaymentVerify(orderId),
+        (errorResponse, orderId) => onPaymentError(errorResponse, orderId),
+      );
+
+      var cfWebCheckout = CFWebCheckoutPaymentBuilder().setSession(session);
+      await cfPaymentGatewayService.doPayment(cfWebCheckout.build());
+    } on CFException catch (e) {
+      if (kDebugMode) {
+        print("Cashfree Exception: ${e.message}");
+      }
+      EasyLoading.dismiss();
+      Get.snackbar(
+        'Error',
+        'Payment initiation failed: ${e.message}',
+        backgroundColor: Colors.red.shade50,
+        colorText: Colors.red.shade900,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 10,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print("Unexpected Error: $e");
+      }
+      EasyLoading.dismiss();
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred during payment',
+        backgroundColor: Colors.red.shade50,
+        colorText: Colors.red.shade900,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 10,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  CFSession? createSession({String? orderId, String? paymentSessionId}) {
+    try {
+      var session = CFSessionBuilder()
+          .setEnvironment(CFEnvironment.SANDBOX)
+          .setOrderId(orderId ?? "")
+          .setPaymentSessionId(paymentSessionId ?? "")
+          .build();
+      return session;
+    } on CFException catch (e) {
+      if (kDebugMode) {
+        print("Session Creation Error: ${e.message}");
+      }
+      return null;
+    }
+  }
+
   void goToNextStep(BuildContext context) {
     if (activeStep.value < totalSteps - 1) {
       if (activeStep.value == 1 &&
           engagementModel.value != EngagementModel.saas) {
-        // activeStep.value = 2;
-        // debugPrint(
-        //   'Navigated to step ${activeStep.value} (skipped Pricing for non-SaaS)',
-        // );
         showSuccessDialog(context);
-        // final isSuccess = await sendUserData(formData);
       } else if (activeStep.value == 2 &&
           engagementModel.value == EngagementModel.saas) {
         activeStep.value = 3;
@@ -274,17 +496,15 @@ class AppController extends GetxController {
           engagementModel.value != EngagementModel.saas) {
         activeStep.value = 1;
         debugPrint(
-          'Navigated back to step ${activeStep.value} (from Details for non-SaaS)',
-        );
+            'Navigated back to step ${activeStep.value} (from Details for non-SaaS)');
       } else if (activeStep.value == 3 &&
           engagementModel.value == EngagementModel.saas) {
         activeStep.value = 2;
         debugPrint(
-          'Navigated back to step ${activeStep.value} (from Checkout for SaaS)',
-        );
+            'Navigated back to step ${activeStep.value} (from Checkout for SaaS)');
       } else {
         activeStep.value--;
-        debugPrint('Navigated back to step ${activeStep.value}');
+        debugPrint('Navigated to step ${activeStep.value}');
       }
     } else {
       selectedFlowType.value = null;
@@ -336,165 +556,6 @@ class AppController extends GetxController {
     totalPrice; // Update total
   }
 
-  // Future<void> processPayment() async {
-  //   try {
-  //     final paymentData = {
-  //       'email': emailController.text,
-  //       'amount': totalPrice * 100, // Convert to paise for INR
-  //       'currency': 'INR',
-  //       'products':
-  //           selectedProducts
-  //               .map(
-  //                 (p) => {
-  //                   'name': p,
-  //                   'users': productUserCounts[p] ?? 1,
-  //                   'pricePerUser':
-  //                       productsList
-  //                           .firstWhere((prod) => prod.name == p)
-  //                           .pricePerUser,
-  //                 },
-  //               )
-  //               .toList(),
-  //       'referenceNumber':
-  //           'LL${DateTime.now().millisecondsSinceEpoch.toString().substring(5, 13)}',
-  //       'card': savedCards.isNotEmpty ? savedCards.first : null,
-  //     };
-  //
-  //     debugPrint('Processing payment: $paymentData');
-  //     final response = await http.post(
-  //       Uri.parse('https://api.example.com/process-payment'),
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: jsonEncode(paymentData),
-  //     );
-  //
-  //     if (response.statusCode != 200) {
-  //       throw Exception('Payment failed: ${response.body}');
-  //     }
-  //     debugPrint('Payment successful');
-  //   } catch (e) {
-  //     debugPrint('Payment error: $e');
-  //     Get.snackbar(
-  //       'Error',
-  //       'Payment processing failed. Please try again.',
-  //       backgroundColor: Colors.red.shade50,
-  //       colorText: Colors.red.shade900,
-  //       margin: const EdgeInsets.all(16),
-  //       borderRadius: 10,
-  //       snackPosition: SnackPosition.BOTTOM,
-  //     );
-  //     rethrow;
-  //   }
-  // }
-
-  //   Future<void> sendEmails({
-  //     bool isPayment = false,
-  //     bool isAgreement = false,
-  //   }) async {
-  //     final String flow =
-  //         selectedFlowType.value == FlowType.service
-  //             ? 'Service Request'
-  //             : 'Product Inquiry';
-  //     final String referenceNumber =
-  //         'LL${DateTime.now().millisecondsSinceEpoch.toString().substring(5, 13)}';
-  //     final Map<String, dynamic> formData = {
-  //       'flow': flow,
-  //       'name': nameController.text,
-  //       'email': emailController.text,
-  //       'company': companyController.text,
-  //       'phone': phoneController.text,
-  //       'message': messageController.text,
-  //       'engagementModel': engagementModel.value?.toString().split('.').last,
-  //       'selectedProducts':
-  //           selectedProducts
-  //               .map(
-  //                 (p) => {
-  //                   'name': p,
-  //                   if (engagementModel.value == EngagementModel.saas)
-  //                     'users': productUserCounts[p] ?? 1,
-  //                   if (engagementModel.value == EngagementModel.saas)
-  //                     'pricePerUser':
-  //                         productsList
-  //                             .firstWhere((prod) => prod.name == p)
-  //                             .pricePerUser,
-  //                 },
-  //               )
-  //               .toList(),
-  //       'totalPrice': isPayment ? totalPrice : null,
-  //       'referenceNumber': referenceNumber,
-  //       'timestamp': DateTime.now().toIso8601String(),
-  //     };
-  //
-  //     try {
-  //       final internalEmail = {
-  //         'to': 'sales@lemolite.com',
-  //         'subject': '$flow Submission - $referenceNumber',
-  //         'body': '''
-  // New $flow Submission
-  // Reference: $referenceNumber
-  // Name: ${formData['name']}
-  // Email: ${formData['email']}
-  // Company: ${formData['company']}
-  // Phone: ${formData['phone']}
-  // Message: ${formData['message']}
-  // ${flow == 'Product Inquiry' ? 'Engagement Model: ${formData['engagementModel']}\nProducts: ${formData['selectedProducts'].map((p) => '${p['name']} ${p['users'] != null ? '(${p['users']} users @ ₹${p['pricePerUser']}/user/month)' : ''}').join(', ')}' : ''}
-  // ${isPayment
-  //             ? 'Total Paid: ₹${formData['totalPrice']}'
-  //             : isAgreement
-  //             ? 'Service Agreement Requested'
-  //             : ''}
-  // Submitted: ${formData['timestamp']}
-  //         ''',
-  //       };
-  //
-  //       final userEmail = {
-  //         'to': formData['email'],
-  //         'subject': 'nAIrobi $flow Confirmation - $referenceNumber',
-  //         'body': '''
-  // Dear ${formData['name']},
-  //
-  // Thank you for your $flow with nAIrobi. ${isPayment
-  //             ? 'Your payment has been processed successfully.'
-  //             : isAgreement
-  //             ? 'We will get in touch with the service agreement details.'
-  //             : 'We have received your submission and will contact you soon.'}
-  //
-  // Reference Number: $referenceNumber
-  // ${flow == 'Product Inquiry' ? 'Engagement Model: ${formData['engagementModel']}\nSelected Products: ${formData['selectedProducts'].map((p) => '${p['name']} ${p['users'] != null ? '(${p['users']} users)' : ''}').join(', ')}' : 'Service Requirements: ${formData['message']}'}
-  // ${isPayment ? 'Total Paid: ₹${formData['totalPrice']}' : ''}
-  //
-  // Best regards,
-  // nAIrobi Team
-  //         ''',
-  //       };
-  //
-  //       debugPrint('Sending emails: $internalEmail, $userEmail');
-  //       final response = await http.post(
-  //         Uri.parse('https://api.example.com/send-email'),
-  //         headers: {'Content-Type': 'application/json'},
-  //         body: jsonEncode({
-  //           'emails': [internalEmail, userEmail],
-  //         }),
-  //       );
-  //
-  //       if (response.statusCode != 200) {
-  //         throw Exception('Failed to send emails: ${response.body}');
-  //       }
-  //       debugPrint('Emails sent successfully');
-  //     } catch (e) {
-  //       debugPrint('Email error: $e');
-  //       Get.snackbar(
-  //         'Error',
-  //         'Failed to send confirmation emails. Please try again.',
-  //         backgroundColor: Colors.red.shade50,
-  //         colorText: Colors.red.shade900,
-  //         margin: const EdgeInsets.all(16),
-  //         borderRadius: 10,
-  //         snackPosition: SnackPosition.BOTTOM,
-  //       );
-  //       rethrow;
-  //     }
-  //   }
-
   Future<void> submitForm({
     required BuildContext context,
     bool isPayment = false,
@@ -502,10 +563,10 @@ class AppController extends GetxController {
   }) async {
     debugPrint(
       'submitForm called: step=${activeStep.value}, '
-          'isPayment=$isPayment, isAgreement=$isAgreement, '
-          'flowType=${selectedFlowType.value}, '
-          'selectedProducts=$selectedProducts, '
-          'engagementModel=${engagementModel.value}',
+      'isPayment=$isPayment, isAgreement=$isAgreement, '
+      'flowType=${selectedFlowType.value}, '
+      'selectedProducts=$selectedProducts, '
+      'engagementModel=${engagementModel.value}',
     );
 
     if (selectedFlowType.value == FlowType.product) {
@@ -541,8 +602,7 @@ class AppController extends GetxController {
             !pricingFormKey.currentState!.validate()) {
           hasError.value = true;
           debugPrint(
-            'Form validation failed at step ${activeStep.value} (pricing)',
-          );
+              'Form validation failed at step ${activeStep.value} (pricing)');
           Get.snackbar(
             'Error',
             'Please fill all required fields correctly',
@@ -571,19 +631,7 @@ class AppController extends GetxController {
       }
       if (activeStep.value == 3 &&
           engagementModel.value == EngagementModel.saas) {
-        // if (savedCards.isEmpty) {
-        //   Get.snackbar(
-        //     'Payment Method Required',
-        //     'Please add at least one payment card to proceed',
-        //     backgroundColor: Colors.red.shade50,
-        //     colorText: Colors.red.shade900,
-        //     margin: const EdgeInsets.all(16),
-        //     borderRadius: 10,
-        //     snackPosition: SnackPosition.BOTTOM,
-        //   );
-        //   debugPrint('No payment cards added in checkout step');
-        //   return;
-        // }
+        // Payment validation can be added here if needed
       }
       if (activeStep.value == 4 ||
           (activeStep.value == 2 &&
@@ -592,8 +640,7 @@ class AppController extends GetxController {
             !contactFormKey.currentState!.validate()) {
           hasError.value = true;
           debugPrint(
-            'Form validation failed at step ${activeStep.value} (contact)',
-          );
+              'Form validation failed at step ${activeStep.value} (contact)');
           Get.snackbar(
             'Error',
             'Please fill all required fields correctly',
@@ -627,12 +674,10 @@ class AppController extends GetxController {
     isLoading.value = true;
     try {
       if (selectedFlowType.value == FlowType.service) {
-        // await sendEmails();
         isSubmitted.value = true;
         showSuccessDialog(context);
         debugPrint('Service flow submitted');
       } else if (selectedFlowType.value == FlowType.product) {
-        // Prepare form data for API call
         final formData = {
           'companyName': companyController.text,
           'fullName': nameController.text,
@@ -640,22 +685,20 @@ class AppController extends GetxController {
           'phoneNumber': phoneController.text,
           'interestedIn': 'Product',
           'engagementModel': getApiEngagementModel(engagementModel.value),
-          'selectedProducts':
-          selectedProducts
+          'selectedPlan': selectedPlan.value, // Added selectedPlan
+          'selectedProducts': selectedProducts
               .map(
                 (productName) => {
-              'productName': productName,
-              if (engagementModel.value == EngagementModel.saas)
-                'userCountRange':
-                productUserRanges[productName] ?? '1-10',
-              if (engagementModel.value == EngagementModel.saas)
-                'totalPrice':
-                productsList
-                    .firstWhere((p) => p.name == productName)
-                    .pricePerUser *
-                    (productUserCounts[productName] ?? 1),
-            },
-          )
+                  'productName': productName,
+                  if (engagementModel.value == EngagementModel.saas)
+                    'userCountRange': productUserRanges[productName] ?? '1-10',
+                  if (engagementModel.value == EngagementModel.saas)
+                    'totalPrice': productsList
+                            .firstWhere((p) => p.name == productName)
+                            .pricePerUser *
+                        (productUserCounts[productName] ?? 1),
+                },
+              )
               .toList(),
           if (engagementModel.value == EngagementModel.saas)
             'totalAmount': totalPrice,
@@ -672,9 +715,6 @@ class AppController extends GetxController {
         } else if (activeStep.value == 3 &&
             engagementModel.value == EngagementModel.saas &&
             isPayment) {
-          // await processPayment();
-          // await sendEmails(isPayment: true);
-          // Send API data after successful payment
           final isSuccess = await sendUserData(formData);
           if (!isSuccess) {
             Get.snackbar(
@@ -691,11 +731,9 @@ class AppController extends GetxController {
           isSubmitted.value = true;
           showSuccessDialog(context);
           debugPrint('SaaS payment flow submitted');
-        } else if ((activeStep.value == 2 &&
-            engagementModel.value != EngagementModel.saas) &&
+        } else if (activeStep.value == 2 &&
+            engagementModel.value != EngagementModel.saas &&
             isAgreement) {
-          // await sendEmails(isAgreement: true);
-          // Send API data for non-SaaS agreement
           final isSuccess = await sendUserData(formData);
           if (!isSuccess) {
             Get.snackbar(
@@ -713,7 +751,6 @@ class AppController extends GetxController {
           showSuccessDialog(context);
           debugPrint('Non-SaaS agreement flow submitted');
         } else if (activeStep.value == 4) {
-          // Send API data for SaaS final step
           final isSuccess = await sendUserData(formData);
           if (!isSuccess) {
             Get.snackbar(
@@ -748,8 +785,7 @@ class AppController extends GetxController {
     } finally {
       isLoading.value = false;
       debugPrint(
-        'submitForm completed: step=${activeStep.value}, selectedProducts=$selectedProducts',
-      );
+          'submitForm completed: step=${activeStep.value}, selectedProducts=$selectedProducts');
     }
   }
 

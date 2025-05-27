@@ -71,9 +71,9 @@ flutter_launcher_icons
 file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/flutter_launcher_icons-0.14.3/
 file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/flutter_launcher_icons-0.14.3/lib/
 flutter_lints
-3.5
-file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/flutter_lints-5.0.0/
-file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/flutter_lints-5.0.0/lib/
+2.19
+file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/flutter_lints-2.0.3/
+file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/flutter_lints-2.0.3/lib/
 flutter_spinkit
 2.12
 file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/flutter_spinkit-5.2.1/
@@ -127,9 +127,9 @@ leak_tracker_testing
 file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.1/
 file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.1/lib/
 lints
-3.6
-file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/lints-5.1.1/
-file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/lints-5.1.1/lib/
+3.0
+file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/lints-2.1.1/
+file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/lints-2.1.1/lib/
 matcher
 3.4
 file:///Users/dharmikjoshi/.pub-cache/hosted/pub.dev/matcher-0.12.17/
@@ -318,8 +318,8 @@ flutter_web_plugins
 3.7
 file:///Users/dharmikjoshi/Documents/flutter/packages/flutter_web_plugins/
 file:///Users/dharmikjoshi/Documents/flutter/packages/flutter_web_plugins/lib/
-nairobi_app
-3.7
+lemolite_events
+3.2
 file:///Users/dharmikjoshi/StudioProjects/lemolite-events/front-end/
 file:///Users/dharmikjoshi/StudioProjects/lemolite-events/front-end/lib/
 2

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nairobi_app/controllers/payment_controller.dart';
-
+import 'package:lemolite_events/controllers/payment_controller.dart';
 
 class CheckoutStep extends StatelessWidget {
   const CheckoutStep({super.key});
@@ -68,11 +67,9 @@ class CheckoutStep extends StatelessWidget {
                 Center(
                   child: Obx(() {
                     return ElevatedButton(
-                      onPressed:
-                          paymentController.isLoading.value
-                              ? null
-                              : () =>
-                                  paymentController.initiatePayment(sessionId),
+                      onPressed: paymentController.isLoading.value
+                          ? null
+                          : () => paymentController.initiatePayment(sessionId),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 32,
@@ -121,12 +118,11 @@ class CheckoutStep extends StatelessWidget {
                       child: Text(
                         paymentController.paymentStatus.value,
                         style: TextStyle(
-                          color:
-                              paymentController.paymentStatus.value.contains(
-                                    'Success',
-                                  )
-                                  ? Colors.green
-                                  : Colors.red,
+                          color: paymentController.paymentStatus.value.contains(
+                            'Success',
+                          )
+                              ? Colors.green
+                              : Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

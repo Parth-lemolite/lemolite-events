@@ -3,14 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nairobi_app/view/leads_screen/view.dart';
-
-import 'package:nairobi_app/view/screens/landing_screen.dart';
-import 'package:nairobi_app/view/screens/login_leads_page.dart';
-import 'package:nairobi_app/view/screens/product_inquiry_flow.dart';
-import 'package:nairobi_app/view/screens/service_request_flow.dart';
-import 'package:nairobi_app/view/screens/success_screen.dart';
-import 'package:nairobi_app/screens/secret_page.dart';
+import 'package:lemolite_events/view/leads_screen/view.dart';
+import 'package:lemolite_events/view/screens/landing_screen.dart';
+import 'package:lemolite_events/view/screens/login_leads_page.dart';
+import 'package:lemolite_events/view/screens/product_inquiry_flow.dart';
+import 'package:lemolite_events/view/screens/service_request_flow.dart';
+import 'package:lemolite_events/view/screens/success_screen.dart';
 
 import 'controller/app_controller.dart';
 import 'models/enums.dart';
@@ -42,7 +40,12 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/', page: () => const MainScreen()),
         GetPage(
           name: '/leadLogin',
-          page: () => LoginPage(),
+          page: () => const LoginPage(),
+          transition: Transition.fadeIn,
+        ),
+        GetPage(
+          name: '/success',
+          page: () => const SuccessScreen(),
           transition: Transition.fadeIn,
         ),
         GetPage(
@@ -154,7 +157,6 @@ class MyApp extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
             textStyle: GoogleFonts.inter(
               fontSize: 16,
-
               fontWeight: FontWeight.w600,
               letterSpacing: 0.3,
             ),
@@ -198,14 +200,13 @@ class MainScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(color: Colors.grey.shade200),
         child: Obx(
-          () =>
-              controller.isSubmitted.value
-                  ? SuccessScreen()
-                  : controller.selectedFlowType.value == null
-                  ? LandingScreen()
+          () => controller.isSubmitted.value
+              ? const SuccessScreen()
+              : controller.selectedFlowType.value == null
+                  ? const LandingScreen()
                   : controller.selectedFlowType.value == FlowType.service
-                  ? ServiceRequestFlow()
-                  : ProductInquiryFlow(),
+                      ? const ServiceRequestFlow()
+                      : const ProductInquiryFlow(),
         ),
       ),
     );
