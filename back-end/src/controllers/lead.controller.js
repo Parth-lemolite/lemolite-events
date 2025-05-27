@@ -51,7 +51,7 @@ exports.createLead = async (req, res) => {
     await lead.save();
 
     // Send notifications
-    // await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
+    await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
 
     res.status(201).json({
       success: true,
@@ -129,9 +129,9 @@ exports.handlePaymentCallback = async (req, res) => {
     await lead.save();
 
     // Send notifications only after successful payment
-    // if (paymentStatus.status === "PAID") {
-    //   await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
-    // }
+    if (paymentStatus.status === "PAID") {
+      await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
+    }
 
     res.status(200).json({
       success: true,
