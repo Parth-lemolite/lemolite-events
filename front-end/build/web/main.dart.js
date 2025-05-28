@@ -30434,7 +30434,7 @@ l=$.aXa()
 k=t.z
 j=A.Z(["order_id",a],t.N,k)
 s=7
-return A.S(l.awe(0,"https://events.lemolite360.in//leads/payment/callback",null,null,null,A.aPx("GET",null),j,k),$async$To)
+return A.S(l.awe(0,"https://events.lemolite360.in/leads/payment/callback",null,null,null,A.aPx("GET",null),j,k),$async$To)
 case 7:n=c
 if(n.c===200){l=t.a.a(n.a)
 q=l
@@ -94293,7 +94293,7 @@ A.aPN("Loading...")
 m=b.$1(a1)
 J.cV(m,"totalAmount",a.$1(m))
 s=7
-return A.S(A.a80(m,"https://events.lemolite360.in//leads"),$async$kB)
+return A.S(A.a80(m,"https://events.lemolite360.in/leads"),$async$kB)
 case 7:l=a3
 s=l!=null&&l.c===201?8:10
 break
@@ -94911,7 +94911,7 @@ xq(){var s=0,r=A.Q(t.vD),q,p=2,o=[],n,m,l,k,j,i,h,g
 var $async$xq=A.L(function(a,b){if(a===1){o.push(b)
 s=p}while(true)switch(s){case 0:p=4
 s=7
-return A.S(A.bbt(A.i2("https://events.lemolite360.in//leads",0,null)),$async$xq)
+return A.S(A.bbt(A.i2("https://events.lemolite360.in/leads",0,null)),$async$xq)
 case 7:n=b
 if(n.b===200){i=n
 if(A.aVg(A.aUa(i.e)).dT(0,i.w).length===0){i=A.de("Empty response body")
