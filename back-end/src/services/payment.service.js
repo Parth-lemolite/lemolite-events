@@ -40,7 +40,7 @@ class PaymentService {
           customer_phone: lead.phoneNumber,
         },
         order_meta: {
-          return_url: `${process.env.FRONTEND_URL}/#/succsess?order_id={order_id}`,
+          return_url: `${process.env.FRONTEND_URL}/#/checkout?order_id={order_id}`,
           payment_methods: "cc,dc",
         },
       };
