@@ -25,7 +25,7 @@ class LandingController extends GetxController {
     isLoading.value = true; // Set loading to true before API call
     final response = await ApiService.post(
       data,
-      'https://events.lemolite360.in/leads',
+      'https://events.lemolite360.in/api/leads',
     );
     isLoading.value = false; // Set loading to false after API call
     if (response != null && response.statusCode == 201) {
