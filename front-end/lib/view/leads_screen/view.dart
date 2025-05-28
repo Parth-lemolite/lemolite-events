@@ -524,23 +524,23 @@ class LeadsScreenPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      statusValues[lead.status] ?? 'Active',
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        color: const Color(0xFF404B69),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
+                  // const SizedBox(width: 8),
+                  // Container(
+                  //   padding:
+                  //   const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.grey.shade100,
+                  //     borderRadius: BorderRadius.circular(12),
+                  //   ),
+                  //   child: Text(
+                  //     statusValues[lead.status] ?? 'Active',
+                  //     style: GoogleFonts.inter(
+                  //       fontSize: 12,
+                  //       color: const Color(0xFF404B69),
+                  //       fontWeight: FontWeight.w500,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ],
