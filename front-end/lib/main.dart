@@ -30,6 +30,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final Uri uri = Uri.base;
+    final String? orderId = uri.queryParameters['order_id'];
+
+    // Check if the URI is for the success route and has order_id
+    final isSuccessRoute = uri.path.contains('/succsess') && orderId != null;
+
     return GetMaterialApp(
       title: 'n"AI"robi BizTech',
       debugShowCheckedModeBanner: false,
@@ -46,8 +53,8 @@ class MyApp extends StatelessWidget {
           transition: Transition.fadeIn,
         ),
         GetPage(
-          name: '/success',
-          page: () => const SuccessScreen(),
+          name: '/succsess',
+          page: () => const PaymentSuccessScreen(),
           transition: Transition.fadeIn,
         ),
         GetPage(
@@ -56,8 +63,8 @@ class MyApp extends StatelessWidget {
           transition: Transition.fadeIn,
         ),
         GetPage(
-          name: '/succsess',
-          page: () => PaymentSuccessScreen(),
+          name: '/checkout',
+          page: () => const PaymentSuccessScreen(),
           transition: Transition.fadeIn,
         ),
         GetPage(
@@ -196,7 +203,9 @@ class MyApp extends StatelessWidget {
           iconTheme: const IconThemeData(color: Color(0xFF0F1C35)),
         ),
       ),
-      home: const MainScreen(),
+      home: isSuccessRoute
+          ? PaymentSuccessScreen(orderId: orderId)
+          : const MainScreen(),
       builder: EasyLoading.init(),
     );
   }
