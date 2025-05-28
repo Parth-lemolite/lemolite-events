@@ -28,6 +28,28 @@ const sendEmail = async (to, subject, html) => {
 
 const sendLeadNotification = async (lead) => {
   const subject = "New Lead Submission";
+
+  // Helper function to format selected products with plan details
+  const formatSelectedProducts = (products) => {
+    if (!products || products.length === 0) return "";
+
+    return products
+      .map((product) => {
+        let productInfo = product.productName;
+        if (product.planName) {
+          productInfo += ` (${product.planName})`;
+        }
+        if (product.userCountRange) {
+          productInfo += ` - Users: ${product.userCountRange}`;
+        }
+        if (product.totalPrice) {
+          productInfo += ` - Price: $${product.totalPrice}`;
+        }
+        return productInfo;
+      })
+      .join("<br>");
+  };
+
   const html = `
         <h2>New Lead Details</h2>
         <p><strong>Company Name:</strong> ${lead.companyName}</p>
@@ -42,9 +64,9 @@ const sendLeadNotification = async (lead) => {
         }
         ${
           lead.selectedProducts?.length
-            ? `<p><strong>Selected Products:</strong> ${lead.selectedProducts
-                .map((product) => product.productName)
-                .join(", ")}</p>`
+            ? `<p><strong>Selected Products:</strong><br>${formatSelectedProducts(
+                lead.selectedProducts
+              )}</p>`
             : ""
         }
     `;
@@ -54,6 +76,25 @@ const sendLeadNotification = async (lead) => {
 
 const sendAcknowledgment = async (lead) => {
   const subject = "Thank you for your interest in Lemolite";
+
+  // Helper function to format selected products for customer email
+  const formatSelectedProductsForCustomer = (products) => {
+    if (!products || products.length === 0) return "";
+
+    return products
+      .map((product) => {
+        let productInfo = `• ${product.productName}`;
+        if (product.planName) {
+          productInfo += ` - ${product.planName}`;
+        }
+        if (product.userCountRange) {
+          productInfo += ` (${product.userCountRange} users)`;
+        }
+        return productInfo;
+      })
+      .join("<br>");
+  };
+
   const html = `
         <h2>Thank you for your interest!</h2>
         <p>Dear ${lead.fullName},</p>
@@ -68,11 +109,13 @@ const sendAcknowledgment = async (lead) => {
         }
         ${
           lead.selectedProducts?.length
-            ? `<p><strong>Selected Products:</strong> ${lead.selectedProducts
-                .map((product) => product.productName)
-                .join(", ")}</p>`
+            ? `<p><strong>Selected Products:</strong><br>${formatSelectedProductsForCustomer(
+                lead.selectedProducts
+              )}</p>`
             : ""
         }
+      
+        <p>Our sales team will contact you within 24 hours to discuss your requirements in detail.</p>
         <p>Best regards,<br>Lemolite Team</p>
     `;
 
