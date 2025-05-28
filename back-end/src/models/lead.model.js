@@ -24,7 +24,7 @@ const leadSchema = new mongoose.Schema({
   },
   interestedIn: {
     type: String,
-    enum: ["Product", "Service"],
+    enum: ["Product", "Service", "Enquiry"],
     required: true,
   },
   engagementModel: {
