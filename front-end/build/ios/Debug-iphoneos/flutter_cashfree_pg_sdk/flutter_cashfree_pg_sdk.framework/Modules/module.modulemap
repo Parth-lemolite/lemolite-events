@@ -1,0 +1,11 @@
+framework module flutter_cashfree_pg_sdk {
+  umbrella header "flutter_cashfree_pg_sdk-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module flutter_cashfree_pg_sdk.Swift {
+  header "flutter_cashfree_pg_sdk-Swift.h"
+  requires objc
+}
