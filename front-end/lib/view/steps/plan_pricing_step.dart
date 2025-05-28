@@ -28,12 +28,12 @@ class PlanPricingStep extends StatelessWidget {
     if (productName.contains('scan2hire') || productName.contains('s2h')) {
       return {
         'plans': [
-          'Freemium',
+          'Free',
           'Premium',
           'Enterprise'
         ], // Updated to include Premium
         'prices': {
-          'Freemium': 0.0,
+          'Free': 0.0,
           'Premium': 49.0, // Example price for Premium plan ($ per user per month)
           'Enterprise': 79.0, // $ per user per month
         },
@@ -42,9 +42,9 @@ class PlanPricingStep extends StatelessWidget {
 
     if (productName.contains('nexstaff')) {
       return {
-        'plans': ['Freemium','Growth', 'Premium'],
+        'plans': ['Free','Growth', 'Premium'],
         'prices': {
-          'Freemium': 0.0,
+          'Free': 0.0,
           'Growth': 39.0, // Example price for Premium plan ($ per user per month)
           'Premium': 69.0, // $ per user per month
         },
@@ -72,8 +72,8 @@ class PlanPricingStep extends StatelessWidget {
 
     // Default return for unknown products
     return {
-      'plans': ['Freemium'],
-      'prices': {'Freemium': 0.0},
+      'plans': ['Free'],
+      'prices': {'Free': 0.0},
     };
   }
 
@@ -149,13 +149,13 @@ class PlanPricingStep extends StatelessWidget {
                                   .toLowerCase()
                                   .contains('scan2hire') ||
                               productName.toLowerCase().contains('s2h')) {
-                            defaultPlan = 'Freemium';
+                            defaultPlan = 'Free';
                           } else if (productName
                               .toLowerCase()
                               .contains('nexstaff')) {
-                            defaultPlan = 'Freemium';
+                            defaultPlan = 'Free';
                           } else {
-                            defaultPlan = 'Freemium';
+                            defaultPlan = 'Free';
                           }
 
                           final selectedPlan =
@@ -202,8 +202,8 @@ class PlanPricingStep extends StatelessWidget {
                         Obx(() {
                           final selectedPlan =
                               controller.productPlans[productName] ??
-                                  'Freemium';
-                          if (selectedPlan != 'Freemium' &&
+                                  'Free';
+                          if (selectedPlan != 'Free' &&
                               !selectedPlan.contains('One Time')) {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,8 +265,8 @@ class PlanPricingStep extends StatelessWidget {
                         Obx(() {
                           final selectedPlan =
                               controller.productPlans[productName] ??
-                                  'Freemium';
-                          final userCount = selectedPlan == 'Freemium' ||
+                                  'Free';
+                          final userCount = selectedPlan == 'Free' ||
                                   selectedPlan.contains('One Time')
                               ? 1
                               : controller.productUserCounts[productName] ?? 1;
@@ -282,7 +282,7 @@ class PlanPricingStep extends StatelessWidget {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (selectedPlan != 'Freemium' &&
+                              if (selectedPlan != 'Free' &&
                                   !selectedPlan.contains('One Time'))
                                 Text(
                                   '\$${pricePerUser.toStringAsFixed(2)} /User /Month',
@@ -295,7 +295,7 @@ class PlanPricingStep extends StatelessWidget {
                               Text(
                                 selectedPlan.contains('One Time')
                                     ? 'Total: \$${price.toStringAsFixed(2)} (One-time payment)'
-                                    : selectedPlan == 'Freemium'
+                                    : selectedPlan == 'Free'
                                         ? 'Free'
                                         : 'Total: \$${price.toStringAsFixed(2)} /Month',
                                 style: GoogleFonts.inter(
@@ -360,8 +360,8 @@ class PlanPricingStep extends StatelessWidget {
                       double total = 0.0;
                       for (var productName in selectedProducts) {
                         final selectedPlan =
-                            controller.productPlans[productName] ?? 'Freemium';
-                        final userCount = selectedPlan == 'Freemium' ||
+                            controller.productPlans[productName] ?? 'Free';
+                        final userCount = selectedPlan == 'Free' ||
                                 selectedPlan.contains('One Time')
                             ? 1
                             : controller.productUserCounts[productName] ?? 1;
