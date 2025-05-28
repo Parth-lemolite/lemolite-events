@@ -5,7 +5,7 @@ const leadSchema = Joi.object({
   fullName: Joi.string().required().trim(),
   email: Joi.string().email().required().trim().lowercase(),
   phoneNumber: Joi.string().required().trim(),
-  interestedIn: Joi.string().valid("Product", "Service").required(),
+  interestedIn: Joi.string().valid("Product", "Service", "Enquiry").required(),
   engagementModel: Joi.string()
     .valid("SaaS-Based Subscription", "Reseller", "Partner", "Whitelabel")
     .when("interestedIn", {

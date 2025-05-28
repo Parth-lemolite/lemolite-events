@@ -23,6 +23,7 @@ exports.createLead = async (req, res) => {
       const lead = new Lead(leadData);
       await lead.save();
 
+      console.log("Lead created 26:", lead);
       // Create payment order
       const paymentOrder = await paymentService.createOrder(
         lead,
@@ -117,6 +118,8 @@ exports.handlePaymentCallback = async (req, res) => {
       order_id,
       payment_id
     );
+
+    console.log("Payment Status 112:", paymentStatus.status);
 
     lead.payment = {
       ...lead.payment,
