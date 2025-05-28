@@ -309,22 +309,22 @@ class AppController extends GetxController {
           print('Parsed Response: $responseData');
         }
 
-        final String? orderId = responseData.data?.payment?.orderId;
-        final String? paymentSessionId = responseData.paymentSessionId;
-
-        if (orderId != null && paymentSessionId != null) {
-          if (kDebugMode) {
-            print("Order ID: $orderId");
-            print("Payment Session ID: $paymentSessionId");
-          }
-          await webCheckout(
-              orderId: orderId, paymentSessionId: paymentSessionId);
-        } else {
-          if (kDebugMode) {
-            print(
-                'Error: orderId or paymentSessionId is missing in the response');
-          }
-        }
+        // final String? orderId = responseData.data?.payment?.orderId;
+        // final String? paymentSessionId = responseData.paymentSessionId;
+        //
+        // if (orderId != null && paymentSessionId != null) {
+        //   if (kDebugMode) {
+        //     print("Order ID: $orderId");
+        //     print("Payment Session ID: $paymentSessionId");
+        //   }
+        //   await webCheckout(
+        //       orderId: orderId, paymentSessionId: paymentSessionId);
+        // } else {
+        //   if (kDebugMode) {
+        //     print(
+        //         'Error: orderId or paymentSessionId is missing in the response');
+        //   }
+        // }
 
         EasyLoading.dismiss();
         return true;
