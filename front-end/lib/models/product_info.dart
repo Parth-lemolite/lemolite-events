@@ -1,3 +1,4 @@
+// File: lib/models/product_info.dart
 import 'package:flutter/material.dart';
 
 class ProductInfo {
@@ -6,6 +7,7 @@ class ProductInfo {
   final IconData icon;
   final Color color;
   final double pricePerUser;
+  String userCount; // New field for user count
 
   ProductInfo({
     required this.name,
@@ -13,5 +15,6 @@ class ProductInfo {
     required this.icon,
     required this.color,
     required this.pricePerUser,
+    this.userCount = "1", // Default to 1 user
   });
 }

@@ -5,48 +5,43 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../controller/app_controller.dart';
 import '../../models/enums.dart';
+import '../../models/product_info.dart';
 import '../screens/plan_feature_screen.dart';
 
 class PlanPricingStep extends StatelessWidget {
   const PlanPricingStep({super.key});
 
-  // Helper method to get available plans and prices for a product
   Map<String, dynamic> getProductPlansAndPrices(String productName) {
     productName = productName.toLowerCase().trim();
 
-    if (productName.contains('integrated') ||
-        productName.contains('s2h + nexstaff')) {
+    if (productName.contains('integrated') || productName.contains('s2h + nexstaff')) {
       return {
         'plans': ['SaaS Based', 'One Time Cost'],
         'prices': {
-          'SaaS Based': 89.0, // $ per user per month
-          'One Time Cost': 56500.0, // $ one time payment
+          'SaaS Based': 89.0,
+          'One Time Cost': 56500.0,
         },
       };
     }
 
     if (productName.contains('scan2hire') || productName.contains('s2h')) {
       return {
-        'plans': [
-          'Free',
-          'Premium',
-          'Enterprise'
-        ], // Updated to include Premium
+        'plans': ['Free', 'Premium', 'Enterprise'],
         'prices': {
           'Free': 0.0,
-          'Premium': 49.0, // Example price for Premium plan ($ per user per month)
-          'Enterprise': 79.0, // $ per user per month
+          'Premium': 49.0,
+          'Enterprise': 79.0,
         },
       };
     }
 
     if (productName.contains('nexstaff')) {
       return {
-        'plans': ['Free','Growth', 'Premium'],
+        'plans': ['Free', 'Growth', 'Premium'],
         'prices': {
           'Free': 0.0,
-          'Growth': 39.0, // Example price for Premium plan ($ per user per month)
-          'Premium': 69.0, // $ per user per month
+          'Growth': 39.0,
+          'Premium': 69.0,
         },
       };
     }
@@ -55,8 +50,8 @@ class PlanPricingStep extends StatelessWidget {
       return {
         'plans': ['Growth', 'Enterprise'],
         'prices': {
-          'Growth': 19.0, // $ per user per month
-          'Enterprise': 29.0, // $ per user per month
+          'Growth': 19.0,
+          'Enterprise': 29.0,
         },
       };
     }
@@ -65,12 +60,11 @@ class PlanPricingStep extends StatelessWidget {
       return {
         'plans': ['Enterprise'],
         'prices': {
-          'Enterprise': 19.0, // $ per user per month
+          'Enterprise': 19.0,
         },
       };
     }
 
-    // Default return for unknown products
     return {
       'plans': ['Free'],
       'prices': {'Free': 0.0},
@@ -81,12 +75,25 @@ class PlanPricingStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<AppController>();
 
+    // Schedule default plan initialization after the build phase
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final selectedProducts = controller.selectedProducts;
+      for (var productName in selectedProducts) {
+        if (controller.productPlans[productName] == null) {
+          final plansAndPrices = getProductPlansAndPrices(productName);
+          final availablePlans = plansAndPrices['plans'] as List<String>;
+          if (availablePlans.isNotEmpty) {
+            controller.updatePlan(productName, availablePlans.first);
+            debugPrint('Set default plan for $productName: ${availablePlans.first}');
+          }
+        }
+      }
+    });
+
     return Obx(() {
       final isSaaS = controller.engagementModel.value == EngagementModel.saas;
       final selectedProducts = controller.selectedProducts;
-      debugPrint(
-        'PlanPricingStep: isSaaS=$isSaaS, selectedProducts=$selectedProducts',
-      );
+      debugPrint('PlanPricingStep: isSaaS=$isSaaS, selectedProducts=$selectedProducts');
 
       if (!isSaaS || selectedProducts.isEmpty) {
         return const SizedBox.shrink();
@@ -109,7 +116,15 @@ class PlanPricingStep extends StatelessWidget {
             const SizedBox(height: 24),
             ...selectedProducts.map((productName) {
               final product = controller.productsList.firstWhere(
-                (p) => p.name == productName,
+                    (p) => p.name == productName,
+                orElse: () => ProductInfo(
+                  name: productName,
+                  description: '',
+                  icon: Icons.extension,
+                  color: Colors.grey,
+                  pricePerUser: 0.0,
+                  userCount: controller.productUserCounts[productName].toString(),
+                ),
               );
               final plansAndPrices = getProductPlansAndPrices(productName);
               final availablePlans = plansAndPrices['plans'] as List<String>;
@@ -132,35 +147,7 @@ class PlanPricingStep extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Obx(() {
-                          // Set default plan based on product
-                          String defaultPlan;
-                          if (productName
-                                  .toLowerCase()
-                                  .contains('integrated') ||
-                              productName
-                                  .toLowerCase()
-                                  .contains('s2h + nexstaff')) {
-                            defaultPlan = 'SaaS Based';
-                          } else if (productName.toLowerCase() == 'ims') {
-                            defaultPlan = 'Enterprise';
-                          } else if (productName.toLowerCase() == 'crm') {
-                            defaultPlan = 'Growth';
-                          } else if (productName
-                                  .toLowerCase()
-                                  .contains('scan2hire') ||
-                              productName.toLowerCase().contains('s2h')) {
-                            defaultPlan = 'Free';
-                          } else if (productName
-                              .toLowerCase()
-                              .contains('nexstaff')) {
-                            defaultPlan = 'Free';
-                          } else {
-                            defaultPlan = 'Free';
-                          }
-
-                          final selectedPlan =
-                              controller.productPlans[productName] ??
-                                  defaultPlan;
+                          final selectedPlan = controller.productPlans[productName] ?? availablePlans.first;
 
                           return DropdownButtonFormField<String>(
                             dropdownColor: Colors.white,
@@ -169,11 +156,9 @@ class PlanPricingStep extends StatelessWidget {
                               labelText: 'Plan',
                               prefixIcon: Icon(
                                 Icons.card_membership_outlined,
-                                color:
-                                    selectedProducts.indexOf(productName) % 2 ==
-                                            0
-                                        ? const Color(0xFFBFD633)
-                                        : const Color(0xFF2EC4F3),
+                                color: selectedProducts.indexOf(productName) % 2 == 0
+                                    ? const Color(0xFFBFD633)
+                                    : const Color(0xFF2EC4F3),
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -192,19 +177,15 @@ class PlanPricingStep extends StatelessWidget {
                             onChanged: (String? value) {
                               if (value != null) {
                                 controller.updatePlan(productName, value);
-                                debugPrint(
-                                    'Selected plan for $productName: $value');
+                                debugPrint('Selected plan for $productName: $value');
                               }
                             },
                           );
                         }),
                         const SizedBox(height: 16),
                         Obx(() {
-                          final selectedPlan =
-                              controller.productPlans[productName] ??
-                                  'Free';
-                          if (selectedPlan != 'Free' &&
-                              !selectedPlan.contains('One Time')) {
+                          final selectedPlan = controller.productPlans[productName] ?? availablePlans.first;
+                          if (selectedPlan != 'Free' && !selectedPlan.contains('One Time')) {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -213,10 +194,7 @@ class PlanPricingStep extends StatelessWidget {
                                     labelText: 'Number of Users',
                                     prefixIcon: Icon(
                                       Icons.people_outline,
-                                      color: selectedProducts
-                                                      .indexOf(productName) %
-                                                  2 ==
-                                              0
+                                      color: selectedProducts.indexOf(productName) % 2 == 0
                                           ? const Color(0xFFBFD633)
                                           : const Color(0xFF2EC4F3),
                                     ),
@@ -229,18 +207,12 @@ class PlanPricingStep extends StatelessWidget {
                                     FilteringTextInputFormatter.digitsOnly,
                                     LengthLimitingTextInputFormatter(5),
                                   ],
-                                  initialValue: (controller
-                                              .productUserCounts[productName] ??
-                                          1)
-                                      .toString(),
+                                  initialValue: (controller.productUserCounts[productName] ?? 1).toString(),
                                   onChanged: (value) {
                                     if (value.isEmpty) return;
                                     final count = int.tryParse(value) ?? 1;
                                     if (count > 99999) return;
-                                    controller.updateUserCount(
-                                        productName, count.toString());
-                                    debugPrint(
-                                        'Updated user count for $productName: $count');
+                                    controller.updateUserCount(productName, count.toString());
                                   },
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -263,18 +235,12 @@ class PlanPricingStep extends StatelessWidget {
                           return const SizedBox(height: 16);
                         }),
                         Obx(() {
-                          final selectedPlan =
-                              controller.productPlans[productName] ??
-                                  'Free';
-                          final userCount = selectedPlan == 'Free' ||
-                                  selectedPlan.contains('One Time')
+                          final selectedPlan = controller.productPlans[productName] ?? availablePlans.first;
+                          final userCount = selectedPlan == 'Free' || selectedPlan.contains('One Time')
                               ? 1
                               : controller.productUserCounts[productName] ?? 1;
 
-                          // Get price per user for the selected plan
-                          final pricePerUser =
-                              (plansAndPrices['prices']?[selectedPlan] ?? 0.0)
-                                  as double;
+                          final pricePerUser = (plansAndPrices['prices']?[selectedPlan] ?? 0.0) as double;
                           final price = selectedPlan.contains('One Time')
                               ? pricePerUser
                               : pricePerUser * userCount;
@@ -282,8 +248,7 @@ class PlanPricingStep extends StatelessWidget {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (selectedPlan != 'Free' &&
-                                  !selectedPlan.contains('One Time'))
+                              if (selectedPlan != 'Free' && !selectedPlan.contains('One Time'))
                                 Text(
                                   '\$${pricePerUser.toStringAsFixed(2)} /User /Month',
                                   style: GoogleFonts.inter(
@@ -296,14 +261,12 @@ class PlanPricingStep extends StatelessWidget {
                                 selectedPlan.contains('One Time')
                                     ? 'Total: \$${price.toStringAsFixed(2)} (One-time payment)'
                                     : selectedPlan == 'Free'
-                                        ? 'Free'
-                                        : 'Total: \$${price.toStringAsFixed(2)} /Month',
+                                    ? 'Free'
+                                    : 'Total: \$${price.toStringAsFixed(2)} /Month',
                                 style: GoogleFonts.inter(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: selectedProducts.indexOf(productName) %
-                                              2 ==
-                                          0
+                                  color: selectedProducts.indexOf(productName) % 2 == 0
                                       ? const Color(0xFFBFD633)
                                       : const Color(0xFF2EC4F3),
                                 ),
@@ -316,12 +279,10 @@ class PlanPricingStep extends StatelessWidget {
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
                             onTap: () {
-                              Get.to(
-                                () => EnhancedPricingScreen(
-                                  plan1Name: productName,
-                                  plan2Name: productName,
-                                ),
-                              );
+                              Get.to(() => EnhancedPricingScreen(
+                                plan1Name: productName,
+                                plan2Name: productName,
+                              ));
                             },
                             child: Text(
                               'See Features',
@@ -359,17 +320,12 @@ class PlanPricingStep extends StatelessWidget {
                     Obx(() {
                       double total = 0.0;
                       for (var productName in selectedProducts) {
-                        final selectedPlan =
-                            controller.productPlans[productName] ?? 'Free';
-                        final userCount = selectedPlan == 'Free' ||
-                                selectedPlan.contains('One Time')
+                        final selectedPlan = controller.productPlans[productName] ?? getProductPlansAndPrices(productName)['plans'].first;
+                        final userCount = selectedPlan == 'Free' || selectedPlan.contains('One Time')
                             ? 1
                             : controller.productUserCounts[productName] ?? 1;
-                        final plansAndPrices =
-                            getProductPlansAndPrices(productName);
-                        final pricePerUser =
-                            (plansAndPrices['prices']?[selectedPlan] ?? 0.0)
-                                as double;
+                        final plansAndPrices = getProductPlansAndPrices(productName);
+                        final pricePerUser = (plansAndPrices['prices']?[selectedPlan] ?? 0.0) as double;
                         final productTotal = selectedPlan.contains('One Time')
                             ? pricePerUser
                             : pricePerUser * userCount;

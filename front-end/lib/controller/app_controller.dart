@@ -38,6 +38,7 @@ class AppController extends GetxController {
   final companyController = TextEditingController();
   final phoneController = TextEditingController();
   final messageController = TextEditingController();
+  final userCountController = TextEditingController();
 
   final productFormKey = GlobalKey<FormState>();
   final landingFormKey = GlobalKey<FormState>();
@@ -63,9 +64,9 @@ class AppController extends GetxController {
 
     if (productName.contains('scan2hire') || productName.contains('s2h')) {
       return {
-        'plans': ['Freemium', 'Premium', 'Enterprise'],
+        'plans': ['Free', 'Premium', 'Enterprise'],
         'prices': {
-          'Freemium': 0.0,
+          'Free': 0.0,
           'Premium': 49.0,
           'Enterprise': 79.0,
         },
@@ -74,9 +75,9 @@ class AppController extends GetxController {
 
     if (productName.contains('nexstaff')) {
       return {
-        'plans': ['Freemium', 'Enterprise'],
+        'plans': ['Free', 'Enterprise'],
         'prices': {
-          'Freemium': 0.0,
+          'Free': 0.0,
           'Enterprise': 69.0,
         },
       };
@@ -102,18 +103,18 @@ class AppController extends GetxController {
     }
 
     return {
-      'plans': ['Freemium'],
-      'prices': {'Freemium': 0.0},
+      'plans': ['Free'],
+      'prices': {'Free': 0.0},
     };
   }
 
   void updatePlan(String productName, String plan) {
     productPlans[productName] = plan;
-    int minUsers = plan == 'Freemium'
+    int minUsers = plan == 'Free'
         ? 1
         : (plan == 'Premium'
             ? 1
-            : 1); // Adjusted for Freemium/Premium/Enterprise
+            : 1); // Adjusted for Free/Premium/Enterprise
     productUserCounts[productName] = minUsers;
     userCountControllers[productName]!.text = minUsers.toString();
     debugPrint('Updated plan for $productName: $plan, users: $minUsers');
@@ -599,9 +600,16 @@ class AppController extends GetxController {
   }
 
   void updateUserCount(String productName, String count) {
-    final intCount = int.tryParse(count) ?? 1;
-    productUserCounts[productName] = intCount;
-    debugPrint('Updated user count for $productName: $intCount');
+    final parsedCount = int.tryParse(count) ?? 1;
+    productUserCounts[productName] = parsedCount;
+
+    // Sync with ProductInfo in productsList
+    final productIndex = productsList.indexWhere((p) => p.name == productName);
+    if (productIndex != -1) {
+      productsList[productIndex].userCount = parsedCount.toString();
+    }
+    update(); // Notify listeners if needed
+    debugPrint('Updated user count for $productName: $parsedCount');
   }
 
   Future<void> submitForm({

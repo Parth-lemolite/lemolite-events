@@ -361,7 +361,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
       },
 // Other plans (CRM, IMS, Integrated) remain unchanged
       {
-        'name': 'Freemium',
+        'name': 'Free',
         'originalName': 'CRM Growth',
         'price': '\$19',
         'priceKES': 'KES 2,455',

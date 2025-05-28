@@ -43,8 +43,7 @@ class ProductInquiryFlow extends StatelessWidget {
             child: SafeArea(
               child: Obx(() {
                 final int activeStep = controller.activeStep.value;
-                final bool isSaaS =
-                    controller.engagementModel.value == EngagementModel.saas;
+                final bool isSaaS = controller.engagementModel.value == EngagementModel.saas;
                 final int totalSteps = isSaaS ? 3 : 2;
                 final List<String> labels = isSaaS
                     ? const ['Model', 'Products', 'Pricing']
@@ -53,9 +52,9 @@ class ProductInquiryFlow extends StatelessWidget {
 
                 debugPrint(
                   'ProductInquiryFlow rebuilt: activeStep=$activeStep, '
-                  'uiStep=$uiStep, isSaaS=$isSaaS, '
-                  'selectedProducts=${controller.selectedProducts}, '
-                  'engagementModel=${controller.engagementModel.value}',
+                      'uiStep=$uiStep, isSaaS=$isSaaS, '
+                      'selectedProducts=${controller.selectedProducts}, '
+                      'engagementModel=${controller.engagementModel.value}',
                 );
 
                 return Column(
@@ -80,9 +79,9 @@ class ProductInquiryFlow extends StatelessWidget {
                           switchInCurve: Curves.easeOut,
                           switchOutCurve: Curves.easeIn,
                           transitionBuilder: (
-                            Widget child,
-                            Animation<double> animation,
-                          ) {
+                              Widget child,
+                              Animation<double> animation,
+                              ) {
                             return SlideTransition(
                               position: Tween<Offset>(
                                 begin: const Offset(1.0, 0.0),
@@ -116,100 +115,76 @@ class ProductInquiryFlow extends StatelessWidget {
                             isAgreement = true;
                           }
                         } else if (activeStep == 2 && isSaaS) {
-                          canProceed =
-                              controller.productUserCounts.isNotEmpty &&
-                                  controller.productUserCounts.values.every(
-                                    (count) => count > 0,
-                                  );
+                          canProceed = controller.productUserCounts.isNotEmpty &&
+                              controller.productUserCounts.values.every((count) => count > 0);
                           buttonText = 'Submit';
                           isPayment = true;
                         }
 
                         onPressed = canProceed && !controller.isLoading.value
                             ? () async {
-                                controller.isLoading.value = true;
-                                HapticFeedback.lightImpact();
+                          controller.isLoading.value = true;
+                          HapticFeedback.lightImpact();
 
-                                if (isPayment) {
-                                  // Prepare form data for payment
-                                  final formData = {
-                                    'companyName':
-                                        controller.companyController.text,
-                                    'fullName': controller.nameController.text,
-                                    'email': controller.emailController.text,
-                                    'phoneNumber':
-                                        controller.phoneController.text,
-                                    'interestedIn': 'Product',
-                                    'engagementModel':
-                                        controller.getApiEngagementModel(
-                                      controller.engagementModel.value,
-                                    ),
-                                    'selectedProducts':
-                                        controller.selectedProducts.map(
-                                      (productName) {
-                                        final selectedPlan = controller
-                                                .productPlans[productName] ??
-                                            'Freemium';
-                                        final userCount =
-                                            selectedPlan == 'Freemium' ||
-                                                    selectedPlan
-                                                        .contains('One Time')
-                                                ? 1
-                                                : controller.productUserCounts[
-                                                        productName] ??
-                                                    1;
-                                        final plansAndPrices =
-                                            controller.getProductPlansAndPrices(
-                                                productName);
-                                        final pricePerUser =
-                                            plansAndPrices['prices']
-                                                [selectedPlan] as double;
-                                        final totalPrice =
-                                            selectedPlan.contains('One Time')
-                                                ? pricePerUser
-                                                : pricePerUser * userCount;
+                          if (isPayment) {
+                            // Prepare form data for payment
+                            final formData = {
+                              'companyName': controller.companyController.text,
+                              'fullName': controller.nameController.text,
+                              'email': controller.emailController.text,
+                              'phoneNumber': controller.phoneController.text,
+                              'interestedIn': 'Product',
+                              'engagementModel': controller.getApiEngagementModel(
+                                controller.engagementModel.value,
+                              ),
+                              'selectedProducts': controller.selectedProducts.map((productName) {
+                                final selectedPlan = controller.productPlans[productName] ?? 'Free';
+                                final userCount = selectedPlan == 'Free' || selectedPlan.contains('One Time')
+                                    ? 1
+                                    : controller.productUserCounts[productName] ?? 1;
+                                final plansAndPrices = getProductPlansAndPrices(productName); // Use local method
+                                final pricePerUser = plansAndPrices['prices'][selectedPlan] as double;
+                                final totalPrice = selectedPlan.contains('One Time')
+                                    ? pricePerUser
+                                    : pricePerUser * userCount;
 
-                                        return {
-                                          'productName': productName,
-                                          'planName': selectedPlan,
-                                          'userCountRange':
-                                              controller.productUserRanges[
-                                                      productName] ??
-                                                  '1-10',
-                                          'totalPrice': totalPrice,
-                                        };
-                                      },
-                                    ).toList(),
-                                    'totalAmount': controller.totalPrice.value,
-                                  };
-                                  // Send data to API and get payment session
-                                  await controller.sendUserData(formData);
-                                } else if (isAgreement) {
-                                  // Handle service agreement submission
-                                  await controller.submitForm(
-                                    isAgreement: true,
-                                    context: context,
-                                  );
-                                } else {
-                                  // Handle normal flow
-                                  controller.goToNextStep(context);
-                                }
+                                return {
+                                  'productName': productName,
+                                  'planName': selectedPlan,
+                                  // 'userCount': userCount, // Include user count
+                                  'userCountRange': userCount.toString(),
+                                  'totalPrice': totalPrice,
+                                };
+                              }).toList(),
+                              'totalAmount': controller.totalPrice.value,
+                            };
+                            // Send data to API and get payment session
+                            await controller.sendUserData(formData);
+                          } else if (isAgreement) {
+                            // Handle service agreement submission
+                            await controller.submitForm(
+                              isAgreement: true,
+                              context: context,
+                            );
+                          } else {
+                            // Handle normal flow
+                            controller.goToNextStep(context);
+                          }
 
-                                controller.isLoading.value = false;
-                              }
+                          controller.isLoading.value = false;
+                        }
                             : null;
 
                         return GradientButton(
                           onPressed: onPressed,
                           isLoading: controller.isLoading.value,
                           text: buttonText,
-                          gradientColors:
-                              canProceed && !controller.isLoading.value
-                                  ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
-                                  : const [
-                                      Color(0xFFB0BEC5),
-                                      Color(0xFFCFD8DC),
-                                    ],
+                          gradientColors: canProceed && !controller.isLoading.value
+                              ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
+                              : const [
+                            Color(0xFFB0BEC5),
+                            Color(0xFFCFD8DC),
+                          ],
                         );
                       }),
                     ),
@@ -224,8 +199,7 @@ class ProductInquiryFlow extends StatelessWidget {
   }
 
   Widget _buildActiveStep(int step, AppController controller) {
-    final bool isSaaS =
-        controller.engagementModel.value == EngagementModel.saas;
+    final bool isSaaS = controller.engagementModel.value == EngagementModel.saas;
     switch (step) {
       case 0:
         return EngagementModelStep(key: const ValueKey('step1'));
@@ -238,5 +212,66 @@ class ProductInquiryFlow extends StatelessWidget {
       default:
         return const SizedBox();
     }
+  }
+
+  // Duplicate getProductPlansAndPrices to avoid dependency on PlanPricingStep
+  Map<String, dynamic> getProductPlansAndPrices(String productName) {
+    productName = productName.toLowerCase().trim();
+
+    if (productName.contains('integrated') || productName.contains('s2h + nexstaff')) {
+      return {
+        'plans': ['SaaS Based', 'One Time Cost'],
+        'prices': {
+          'SaaS Based': 89.0,
+          'One Time Cost': 56500.0,
+        },
+      };
+    }
+
+    if (productName.contains('scan2hire') || productName.contains('s2h')) {
+      return {
+        'plans': ['Free', 'Premium', 'Enterprise'],
+        'prices': {
+          'Free': 0.0,
+          'Premium': 49.0,
+          'Enterprise': 79.0,
+        },
+      };
+    }
+
+    if (productName.contains('nexstaff')) {
+      return {
+        'plans': ['Free', 'Growth', 'Premium'],
+        'prices': {
+          'Free': 0.0,
+          'Growth': 39.0,
+          'Premium': 69.0,
+        },
+      };
+    }
+
+    if (productName == 'crm') {
+      return {
+        'plans': ['Growth', 'Enterprise'],
+        'prices': {
+          'Growth': 19.0,
+          'Enterprise': 29.0,
+        },
+      };
+    }
+
+    if (productName == 'ims') {
+      return {
+        'plans': ['Enterprise'],
+        'prices': {
+          'Enterprise': 19.0,
+        },
+      };
+    }
+
+    return {
+      'plans': ['Free'],
+      'prices': {'Free': 0.0},
+    };
   }
 }
