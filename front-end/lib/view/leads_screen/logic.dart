@@ -26,7 +26,7 @@ class Leads_screenLogic extends GetxController {
   }
 
   static const String baseUrl =
-      'http://192.168.29.171:3001/api'; // Replace with your actual API URL
+      'https://events.lemolite360.in/'; // Replace with your actual API URL
 
   Future<List<Datum>> getLeadsApi() async {
     try {
