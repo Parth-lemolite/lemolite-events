@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:lemolite_events/view/leads_screen/view.dart';
 import 'package:lemolite_events/view/screens/landing_screen.dart';
 import 'package:lemolite_events/view/screens/login_leads_page.dart';
@@ -73,7 +74,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/failure',
-          page: () => PaymentFailureScreen(),
+          page: () => const PaymentFailureScreen(),
           transition: Transition.fadeIn,
         ),
       ],

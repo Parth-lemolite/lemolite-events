@@ -217,6 +217,16 @@ class _LandingScreenState extends State<LandingScreen> {
                               },
                             ),
                           ),
+                          ListTile(
+                            title: const Text('Enquiry'),
+                            leading: Radio<String>(
+                              value: 'Enquiry',
+                              groupValue: selectedOption.value,
+                              onChanged: (value) {
+                                selectedOption.value = value!;
+                              },
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -334,7 +344,112 @@ class _LandingScreenState extends State<LandingScreen> {
                             } else if (selectedOption.value == 'Product') {
                               controller.selectFlowType(FlowType.product);
                               Get.off(() => const ProductInquiryFlow());
-                            } else {
+                            }
+                            else if (selectedOption.value == 'Enquiry') {
+                              final formData = {
+                                'companyName':
+                                controller.companyController.text,
+                                'fullName': controller.nameController.text,
+                                'email': controller.emailController.text,
+                                'phoneNumber': controller.phoneController.text,
+                                'interestedIn': 'Enquiry',
+                              };
+                              if (kDebugMode) {
+                                print('data====>$formData');
+                              }
+                              final isSuccess = await controller.sendUserData(
+                                formData,
+                              );
+                              if (isSuccess) {
+                                showGeneralDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  barrierLabel: '',
+                                  barrierColor: Colors.black.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                  pageBuilder: (
+                                      context,
+                                      animation1,
+                                      animation2,
+                                      ) {
+                                    return BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                        sigmaX: 5,
+                                        sigmaY: 5,
+                                      ),
+                                      child: Center(
+                                        child: AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
+                                          ),
+                                          backgroundColor: Colors.white
+                                              .withValues(alpha: 0.9),
+                                          title: Text(
+                                            'Thank You!',
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color(0xFF0F1C35),
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Icon(
+                                                Icons.check_circle_outline,
+                                                size: 48,
+                                                color: Colors.green,
+                                              ),
+                                              const SizedBox(height: 16),
+                                              Text(
+                                                'Our team will contact you shortly.',
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: const Color(
+                                                    0xFF404B69,
+                                                  ),
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                          actions: [
+                                            Center(
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+
+                                                  // Get.offAll(
+                                                  //       () => const SuccessScreen(),
+                                                  // );
+                                                },
+                                                child: Text(
+                                                  'OK',
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: const Color(
+                                                      0xFF2EC4F3,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
+                            }
+
+                            else {
                               Get.snackbar(
                                 'Selection Required',
                                 'Please select Service or Product',
