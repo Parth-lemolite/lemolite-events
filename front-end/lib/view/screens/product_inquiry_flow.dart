@@ -121,7 +121,7 @@ class ProductInquiryFlow extends StatelessWidget {
                                   controller.productUserCounts.values.every(
                                     (count) => count > 0,
                                   );
-                          buttonText = 'Proceed to Payment';
+                          buttonText = 'Submit';
                           isPayment = true;
                         }
 

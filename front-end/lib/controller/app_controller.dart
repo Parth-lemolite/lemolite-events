@@ -325,7 +325,7 @@ class AppController extends GetxController {
         //         'Error: orderId or paymentSessionId is missing in the response');
         //   }
         // }
-
+        showSuccessDialog(Get.context!);
         EasyLoading.dismiss();
         return true;
       } else {
