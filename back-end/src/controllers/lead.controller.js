@@ -23,26 +23,28 @@ exports.createLead = async (req, res) => {
       const lead = new Lead(leadData);
       await lead.save();
 
+      await Promise.all([sendLeadNotification(lead), sendAcknowledgment(lead)]);
+
       console.log("Lead created 26:", lead);
       // Create payment order
-      const paymentOrder = await paymentService.createOrder(
-        lead,
-        leadData.totalAmount
-      );
+      // const paymentOrder = await paymentService.createOrder(
+      //   lead,
+      //   leadData.totalAmount
+      // );
 
-      // Update lead with payment details
-      lead.payment = {
-        orderId: paymentOrder.orderId,
-        amount: leadData.totalAmount,
-        status: "pending",
-      };
-      await lead.save();
+      // // Update lead with payment details
+      // lead.payment = {
+      //   orderId: paymentOrder.orderId,
+      //   amount: leadData.totalAmount,
+      //   status: "pending",
+      // };
+      // await lead.save();
 
       return res.status(201).json({
         success: true,
         data: lead,
-        paymentLink: paymentOrder.paymentLink,
-        paymentSessionId: paymentOrder.paymentSessionId,
+        // paymentLink: paymentOrder.paymentLink,
+        // paymentSessionId: paymentOrder.paymentSessionId,
         message: "Lead created successfully. Please complete the payment.",
       });
     }
