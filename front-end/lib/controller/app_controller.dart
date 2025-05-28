@@ -299,7 +299,7 @@ class AppController extends GetxController {
 
       final response = await ApiService.post(
         convertedData,
-        'https://events.lemolite360.in/api/leads',
+        'http://192.168.29.171:3001/api/leads',
       );
 
       if (response != null && response.statusCode == 201) {

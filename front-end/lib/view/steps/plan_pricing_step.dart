@@ -34,8 +34,7 @@ class PlanPricingStep extends StatelessWidget {
         ], // Updated to include Premium
         'prices': {
           'Freemium': 0.0,
-          'Premium':
-              49.0, // Example price for Premium plan ($ per user per month)
+          'Premium': 49.0, // Example price for Premium plan ($ per user per month)
           'Enterprise': 79.0, // $ per user per month
         },
       };
@@ -43,10 +42,11 @@ class PlanPricingStep extends StatelessWidget {
 
     if (productName.contains('nexstaff')) {
       return {
-        'plans': ['Freemium', 'Enterprise'],
+        'plans': ['Freemium','Growth', 'Premium'],
         'prices': {
           'Freemium': 0.0,
-          'Enterprise': 69.0, // $ per user per month
+          'Growth': 39.0, // Example price for Premium plan ($ per user per month)
+          'Premium': 69.0, // $ per user per month
         },
       };
     }

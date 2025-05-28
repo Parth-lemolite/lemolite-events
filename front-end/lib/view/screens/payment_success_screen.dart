@@ -26,11 +26,23 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   }
 
   Future<void> _checkPaymentStatus() async {
+    // Check if orderId is null
+    if (widget.orderId == null || widget.orderId!.isEmpty) {
+      setState(() {
+        isSuccess = false;
+        message = 'Error: No Order ID provided.';
+        isLoading = false;
+      });
+      return;
+    }
+
     try {
       final response = await PaymentService.verifyPayment(widget.orderId!);
-      final status = response['status']?.toLowerCase() ?? '';
 
-      if (status == 'success') {
+      // Extract the status from the nested structure
+      final status = response['data']?['payment']?['status']?.toLowerCase() ?? '';
+
+      if (status == 'completed') { // Check for "completed" instead of "success"
         setState(() {
           isSuccess = true;
           message = 'Payment Successful!';
@@ -52,7 +64,6 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

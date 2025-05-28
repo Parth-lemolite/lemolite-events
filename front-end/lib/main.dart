@@ -64,7 +64,11 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/checkout',
-          page: () => const PaymentSuccessScreen(),
+
+          page: () {
+            final orderId = Get.parameters['order_id'];
+            return PaymentSuccessScreen(orderId: orderId,);
+          },
           transition: Transition.fadeIn,
         ),
         GetPage(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lemolite_events/view/screens/payment_success_screen.dart';
 import 'package:lemolite_events/view/screens/product_inquiry_flow.dart';
 import '../../controller/app_controller.dart';
 // import '../../models/enums.dart';
@@ -22,6 +23,21 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen> {
   RxString selectedOption = ''.obs;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    final Uri uri = Uri.base;
+    final String? orderId = uri.queryParameters['order_id'];
+
+    // Check if the URI is for the success route and has order_id
+    final isSuccessRoute = uri.path.contains('/checkout') && orderId != null;
+
+    if (isSuccessRoute) {
+      Get.to(() => PaymentSuccessScreen(orderId: orderId));
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
