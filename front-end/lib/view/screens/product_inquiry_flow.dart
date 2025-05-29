@@ -43,7 +43,8 @@ class ProductInquiryFlow extends StatelessWidget {
             child: SafeArea(
               child: Obx(() {
                 final int activeStep = controller.activeStep.value;
-                final bool isSaaS = controller.engagementModel.value == EngagementModel.saas;
+                final bool isSaaS =
+                    controller.engagementModel.value == EngagementModel.saas;
                 final int totalSteps = isSaaS ? 3 : 2;
                 final List<String> labels = isSaaS
                     ? const ['Model', 'Products', 'Pricing']
@@ -52,9 +53,9 @@ class ProductInquiryFlow extends StatelessWidget {
 
                 debugPrint(
                   'ProductInquiryFlow rebuilt: activeStep=$activeStep, '
-                      'uiStep=$uiStep, isSaaS=$isSaaS, '
-                      'selectedProducts=${controller.selectedProducts}, '
-                      'engagementModel=${controller.engagementModel.value}',
+                  'uiStep=$uiStep, isSaaS=$isSaaS, '
+                  'selectedProducts=${controller.selectedProducts}, '
+                  'engagementModel=${controller.engagementModel.value}',
                 );
 
                 return Column(
@@ -79,9 +80,9 @@ class ProductInquiryFlow extends StatelessWidget {
                           switchInCurve: Curves.easeOut,
                           switchOutCurve: Curves.easeIn,
                           transitionBuilder: (
-                              Widget child,
-                              Animation<double> animation,
-                              ) {
+                            Widget child,
+                            Animation<double> animation,
+                          ) {
                             return SlideTransition(
                               position: Tween<Offset>(
                                 begin: const Offset(1.0, 0.0),
@@ -115,76 +116,147 @@ class ProductInquiryFlow extends StatelessWidget {
                             isAgreement = true;
                           }
                         } else if (activeStep == 2 && isSaaS) {
-                          canProceed = controller.productUserCounts.isNotEmpty &&
-                              controller.productUserCounts.values.every((count) => count > 0);
+                          // For the pricing step (step 2 for SaaS), button is always enabled
+                          canProceed =
+                              true; // Button is always enabled for this step
                           buttonText = 'Submit';
                           isPayment = true;
                         }
 
                         onPressed = canProceed && !controller.isLoading.value
                             ? () async {
-                          controller.isLoading.value = true;
-                          HapticFeedback.lightImpact();
+                                controller.isLoading.value = true;
+                                HapticFeedback.lightImpact();
 
-                          if (isPayment) {
-                            // Prepare form data for payment
-                            final formData = {
-                              'companyName': controller.companyController.text,
-                              'fullName': controller.nameController.text,
-                              'email': controller.emailController.text,
-                              'phoneNumber': controller.phoneController.text,
-                              'interestedIn': 'Product',
-                              'engagementModel': controller.getApiEngagementModel(
-                                controller.engagementModel.value,
-                              ),
-                              'selectedProducts': controller.selectedProducts.map((productName) {
-                                final selectedPlan = controller.productPlans[productName] ?? 'Free';
-                                final userCount = selectedPlan == 'Free' || selectedPlan.contains('One Time')
-                                    ? 1
-                                    : controller.productUserCounts[productName] ?? 1;
-                                final plansAndPrices = getProductPlansAndPrices(productName); // Use local method
-                                final pricePerUser = plansAndPrices['prices'][selectedPlan] as double;
-                                final totalPrice = selectedPlan.contains('One Time')
-                                    ? pricePerUser
-                                    : pricePerUser * userCount;
+                                if (isPayment) {
+                                  // Prepare form data for payment
+                                  final formData = {
+                                    'companyName':
+                                        controller.companyController.text,
+                                    'fullName': controller.nameController.text,
+                                    'email': controller.emailController.text,
+                                    'phoneNumber':
+                                        controller.phoneController.text,
+                                    'interestedIn': 'Product',
+                                    'engagementModel':
+                                        controller.getApiEngagementModel(
+                                      controller.engagementModel.value,
+                                    ),
+                                    'selectedProducts': controller
+                                        .selectedProducts
+                                        .map((productName) {
+                                      final selectedPlan = controller
+                                              .productPlans[productName] ??
+                                          'Free';
+                                      final userCount = selectedPlan ==
+                                                  'Free' ||
+                                              selectedPlan.contains('One Time')
+                                          ? 1
+                                          : controller.productUserCounts[
+                                                  productName] ??
+                                              1;
+                                      final plansAndPrices =
+                                          getProductPlansAndPrices(
+                                              productName); // Use local method
+                                      final pricePerUser =
+                                          plansAndPrices['prices'][selectedPlan]
+                                              as double;
+                                      final totalPrice =
+                                          selectedPlan.contains('One Time')
+                                              ? pricePerUser
+                                              : pricePerUser * userCount;
 
-                                return {
-                                  'productName': productName,
-                                  'planName': selectedPlan,
-                                  // 'userCount': userCount, // Include user count
-                                  'userCountRange': userCount.toString(),
-                                  'totalPrice': totalPrice,
-                                };
-                              }).toList(),
-                              'totalAmount': controller.totalPrice.value,
-                            };
-                            // Send data to API and get payment session
-                            await controller.sendUserData(formData);
-                          } else if (isAgreement) {
-                            // Handle service agreement submission
-                            await controller.submitForm(
-                              isAgreement: true,
-                              context: context,
-                            );
-                          } else {
-                            // Handle normal flow
-                            controller.goToNextStep(context);
-                          }
+                                      return {
+                                        'productName': productName,
+                                        'planName': selectedPlan,
+                                        // 'userCount': userCount, // Include user count
+                                        'userCountRange': userCount.toString(),
+                                        'totalPrice': totalPrice,
+                                      };
+                                    }).toList(),
+                                    'totalAmount': controller.totalPrice.value,
+                                  };
+                                  // Check form validity before proceeding with payment submission
+                                  if (controller.pricingFormKey.currentState!
+                                      .validate()) {
+                                    // Show custom confirmation dialog
+                                    final bool? confirmed =
+                                        await showDialog<bool>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title:
+                                              const Text('Confirm Submission'),
+                                          content: const Text(
+                                              'Do you want to confirm and submit the pricing details?'),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: const Text('Cancel'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop(
+                                                    false); // Return false on Cancel
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: const Text('Confirm'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop(
+                                                    true); // Return true on Confirm
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
 
-                          controller.isLoading.value = false;
-                        }
+                                    // Only proceed if user confirmed
+                                    if (confirmed == true) {
+                                      await controller.sendUserData(formData);
+                                    } else {
+                                      debugPrint(
+                                          'Submission cancelled by user via custom dialog.');
+                                    }
+                                  } else {
+                                    // If validation fails, do not proceed with API call
+                                    debugPrint(
+                                        'Pricing form validation failed on submit.');
+                                    // TODO: Implement scrolling to the first invalid field
+                                    Get.snackbar(
+                                      'Validation Error',
+                                      'Please fix the user count ranges.',
+                                      backgroundColor: Colors.red.shade50,
+                                      colorText: Colors.red.shade900,
+                                      margin: const EdgeInsets.all(16),
+                                      borderRadius: 10,
+                                      snackPosition: SnackPosition.BOTTOM,
+                                    );
+                                  }
+                                } else if (isAgreement) {
+                                  // Handle service agreement submission
+                                  await controller.submitForm(
+                                    isAgreement: true,
+                                    context: context,
+                                  );
+                                } else {
+                                  // Handle normal flow
+                                  controller.goToNextStep(context);
+                                }
+
+                                controller.isLoading.value = false;
+                              }
                             : null;
 
                         return GradientButton(
                           onPressed: onPressed,
                           isLoading: controller.isLoading.value,
                           text: buttonText,
-                          gradientColors: canProceed && !controller.isLoading.value
-                              ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
-                              : const [
-                            Color(0xFFB0BEC5),
-                            Color(0xFFCFD8DC),
-                          ],
+                          gradientColors:
+                              canProceed && !controller.isLoading.value
+                                  ? const [Color(0xFFBFD633), Color(0xFF2EC4F3)]
+                                  : const [
+                                      Color(0xFFB0BEC5),
+                                      Color(0xFFCFD8DC),
+                                    ],
                         );
                       }),
                     ),
@@ -199,16 +271,17 @@ class ProductInquiryFlow extends StatelessWidget {
   }
 
   Widget _buildActiveStep(int step, AppController controller) {
-    final bool isSaaS = controller.engagementModel.value == EngagementModel.saas;
+    final bool isSaaS =
+        controller.engagementModel.value == EngagementModel.saas;
     switch (step) {
       case 0:
-        return EngagementModelStep(key: const ValueKey('step1'));
+        return const EngagementModelStep(key: ValueKey('step1'));
       case 1:
-        return ProductSelectionStep(key: const ValueKey('step2'));
+        return const ProductSelectionStep(key: ValueKey('step2'));
       case 2:
         return isSaaS
-            ? PlanPricingStep(key: const ValueKey('step3'))
-            : ContactDetailsStep(key: const ValueKey('step4'));
+            ? const PlanPricingStep(key: ValueKey('step3'))
+            : const ContactDetailsStep(key: ValueKey('step4'));
       default:
         return const SizedBox();
     }
@@ -218,7 +291,8 @@ class ProductInquiryFlow extends StatelessWidget {
   Map<String, dynamic> getProductPlansAndPrices(String productName) {
     productName = productName.toLowerCase().trim();
 
-    if (productName.contains('integrated') || productName.contains('s2h + nexstaff')) {
+    if (productName.contains('integrated') ||
+        productName.contains('s2h + nexstaff')) {
       return {
         'plans': ['SaaS Based', 'One Time Cost'],
         'prices': {
