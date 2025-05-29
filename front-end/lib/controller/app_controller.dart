@@ -330,15 +330,6 @@ class AppController extends GetxController {
       return converted;
     }
 
-    double calculateTotalAmount(Map<String, dynamic> data) {
-      final selectedProducts = data['selectedProducts'] as List<dynamic>? ?? [];
-      return selectedProducts.fold(0.0, (sum, product) {
-        final totalPrice = product['totalPrice'];
-        return sum +
-            (totalPrice is RxDouble ? totalPrice.value : totalPrice as double);
-      });
-    }
-
     try {
       EasyLoading.show(status: "Loading...");
 
@@ -354,10 +345,9 @@ class AppController extends GetxController {
         'https://events.lemolite360.in/api/leads',
       );
 
-
       if (response != null && response.statusCode == 201) {
         final responseData =
-            GetPaymentData.fromJson(response.data as Map<String, dynamic>);
+        GetPaymentData.fromJson(response.data as Map<String, dynamic>);
         if (kDebugMode) {
           print('Parsed Response: $responseData');
         }
@@ -395,6 +385,28 @@ class AppController extends GetxController {
       EasyLoading.dismiss();
       return false;
     }
+  }
+
+  double calculateTotalAmount(Map<String, dynamic> data) {
+    final selectedProducts = data['selectedProducts'] as List<dynamic>? ?? [];
+    return selectedProducts.fold(0.0, (sum, product) {
+      final totalPrice = product['totalPrice'];
+      final planName = product['planName'] as String? ?? '';
+
+      // Apply 3-month multiplication for applicable plans
+      if (planName == 'Premium' ||
+          planName == 'Growth' ||
+          planName == 'Enterprise' ||
+          planName == 'SaaS Based') {
+        return sum +
+            (totalPrice is RxDouble ? totalPrice.value : totalPrice as double) *
+                3;
+      } else {
+        // For Free and One Time Cost plans, add the total price directly
+        return sum +
+            (totalPrice is RxDouble ? totalPrice.value : totalPrice as double);
+      }
+    });
   }
 
   void onPaymentVerify(String orderId) async {

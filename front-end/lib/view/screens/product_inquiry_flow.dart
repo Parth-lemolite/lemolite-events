@@ -168,7 +168,6 @@ class ProductInquiryFlow extends StatelessWidget {
                                       return {
                                         'productName': productName,
                                         'planName': selectedPlan,
-                                        // 'userCount': userCount, // Include user count
                                         'userCountRange': userCount.toString(),
                                         'totalPrice': totalPrice,
                                       };
@@ -230,7 +229,8 @@ class ProductInquiryFlow extends StatelessWidget {
                                       snackPosition: SnackPosition.BOTTOM,
                                     );
                                   }
-                                } else if (isAgreement) {
+                                }
+                                else if (isAgreement) {
                                   // Handle service agreement submission
                                   // await controller.submitForm(
                                   //   isAgreement: true,
@@ -238,7 +238,7 @@ class ProductInquiryFlow extends StatelessWidget {
                                   // );
 
                                   final bool? confirmed =
-                                      await showDialog<bool>(
+                                  await showDialog<bool>(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
@@ -264,37 +264,8 @@ class ProductInquiryFlow extends StatelessWidget {
                                       );
                                     },
                                   );
-                                  // Only proceed if user confirmed
-                                  if (confirmed == true) {
-                                    final formData = {
-                                      'companyName':
-                                          controller.companyController.text,
-                                      'fullName':
-                                          controller.nameController.text,
-                                      'email': controller.emailController.text,
-                                      'phoneNumber':
-                                          controller.phoneController.text,
-                                      'interestedIn': 'Product',
-                                      'engagementModel':
-                                          controller.getApiEngagementModel(
-                                        controller.engagementModel.value,
-                                      ),
-                                      'selectedProducts': controller
-                                          .selectedProducts
-                                          .map((productName) {
-                                        return {
-                                          'productName': productName,
 
-                                          // 'userCount': userCount, // Include user count
-                                        };
-                                      }).toList(),
-                                    };
-                                    print(formData);
-                                    await controller.sendUserData2(formData);
-                                  } else {
-                                    debugPrint(
-                                        'Submission cancelled by user via custom dialog.');
-                                  }
+
                                 } else {
                                   // Handle normal flow
                                   controller.goToNextStep(context);
