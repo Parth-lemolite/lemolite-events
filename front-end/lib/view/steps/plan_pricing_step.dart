@@ -76,6 +76,11 @@ class PlanPricingStep extends StatelessWidget {
   Map<String, int> getUserCountConstraints(String productName, String plan) {
     productName = productName.toLowerCase().trim();
 
+    // Special case for Integrated SaaS Based plan
+    if (productName.contains('integrated') && plan == 'SaaS Based') {
+      return {'min': 10, 'max': 99999};
+    }
+
     if (productName.contains('nexstaff')) {
       switch (plan) {
         case 'Free':
@@ -204,7 +209,7 @@ class PlanPricingStep extends StatelessWidget {
   Widget _buildProductCard(
       BuildContext context, AppController controller, String productName) {
     final product = controller.productsList.firstWhere(
-      (p) => p.name == productName,
+          (p) => p.name == productName,
       orElse: () => ProductInfo(
         name: productName,
         description: '',
@@ -296,9 +301,7 @@ class PlanPricingStep extends StatelessWidget {
           controller.productPlans[productName] ?? availablePlans.first;
 
       return Theme(
-        data: ThemeData(
-          canvasColor: Colors.white
-        ),
+        data: ThemeData(canvasColor: Colors.white),
         child: DropdownButtonFormField<String>(
           value: selectedPlan,
           decoration: InputDecoration(
@@ -335,12 +338,12 @@ class PlanPricingStep extends StatelessWidget {
 
     // Get current user count
     final currentUserCount = int.tryParse(
-            controller.userCountControllers[productName]?.text ?? '1') ??
+        controller.userCountControllers[productName]?.text ?? '1') ??
         1;
 
     // Validate and correct user count
     final correctedUserCount =
-        validateAndCorrectUserCount(productName, newPlan, currentUserCount);
+    validateAndCorrectUserCount(productName, newPlan, currentUserCount);
 
     // Update controller and text field
     controller.userCountControllers[productName]?.text =
@@ -382,7 +385,7 @@ class PlanPricingStep extends StatelessWidget {
         decoration: InputDecoration(
           labelText: 'Number of Users',
           hintText:
-              _getUserCountHint(productName, selectedPlan, minUsers, maxUsers),
+          _getUserCountHint(productName, selectedPlan, minUsers, maxUsers),
           prefixIcon: Icon(
             Icons.people_outline,
             color: controller.selectedProducts.indexOf(productName) % 2 == 0
@@ -419,9 +422,9 @@ class PlanPricingStep extends StatelessWidget {
     final enteredCount = int.tryParse(enteredText) ?? 1;
 
     final correctedCount =
-        validateAndCorrectUserCount(productName, selectedPlan, enteredCount);
+    validateAndCorrectUserCount(productName, selectedPlan, enteredCount);
     final validationMessage =
-        getValidationMessage(productName, selectedPlan, enteredCount);
+    getValidationMessage(productName, selectedPlan, enteredCount);
 
     if (correctedCount != enteredCount) {
       // Update the text field and controller
@@ -477,14 +480,14 @@ class PlanPricingStep extends StatelessWidget {
     return Obx(() {
       final selectedPlan = controller.productPlans[productName] ?? '';
       final userCount = selectedPlan == 'Free' ||
-              selectedPlan.contains('One Time')
+          selectedPlan.contains('One Time')
           ? 1
           : int.tryParse(
-                  controller.userCountControllers[productName]?.text ?? '1') ??
-              1;
+          controller.userCountControllers[productName]?.text ?? '1') ??
+          1;
 
       final pricePerUser =
-          (plansAndPrices['prices']?[selectedPlan] ?? 0.0) as double;
+      (plansAndPrices['prices']?[selectedPlan] ?? 0.0) as double;
       final price = selectedPlan.contains('One Time')
           ? pricePerUser
           : pricePerUser * userCount;
@@ -503,8 +506,8 @@ class PlanPricingStep extends StatelessWidget {
             selectedPlan.contains('One Time')
                 ? 'Total: \$${price.toStringAsFixed(2)} (One-time payment)'
                 : selectedPlan == 'Free'
-                    ? 'Free'
-                    : 'Total: \$${price.toStringAsFixed(2)} /Month',
+                ? 'Free'
+                : 'Total: \$${price.toStringAsFixed(2)} /Month',
             style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -524,9 +527,9 @@ class PlanPricingStep extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           Get.to(() => EnhancedPricingScreen(
-                plan1Name: productName,
-                plan2Name: productName,
-              ));
+            plan1Name: productName,
+            plan2Name: productName,
+          ));
         },
         child: Text(
           'See Features',
@@ -567,25 +570,24 @@ class PlanPricingStep extends StatelessWidget {
 
                   for (var productName in selectedProducts) {
                     final plansAndPrices =
-                        getProductPlansAndPrices(productName);
+                    getProductPlansAndPrices(productName);
                     final selectedPlan =
                         controller.productPlans[productName] ?? '';
                     final pricePerUser =
-                        (plansAndPrices['prices']?[selectedPlan] ?? 0.0)
-                            as double;
+                    (plansAndPrices['prices']?[selectedPlan] ?? 0.0)
+                    as double;
 
+                    // Get user count from the observable map
                     final userCount = selectedPlan == 'Free' ||
-                            selectedPlan.contains('One Time')
+                        selectedPlan.contains('One Time')
                         ? 1
-                        : int.tryParse(controller
-                                    .userCountControllers[productName]?.text ??
-                                '1') ??
-                            1;
+                        : controller.productUserCounts[productName] ??
+                        1; // Read from the observable map
 
                     final totalPriceForProduct =
-                        selectedPlan.contains('One Time')
-                            ? pricePerUser
-                            : pricePerUser * userCount;
+                    selectedPlan.contains('One Time')
+                        ? pricePerUser
+                        : pricePerUser * userCount;
 
                     // Check if plan should be excluded from 3-month calculation
                     if (selectedPlan == 'Free' ||
