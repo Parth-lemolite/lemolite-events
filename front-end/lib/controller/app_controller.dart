@@ -32,11 +32,13 @@ class AppController extends GetxController {
   final RxInt activeStep = 0.obs;
   final RxBool isLoading = false.obs;
   final RxList<Map<String, String>> savedCards = <Map<String, String>>[].obs;
+  Map<String, TextEditingController> userCountControllers = {};
 
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final companyController = TextEditingController();
-  final phoneController = TextEditingController();
+
+  final nameController = TextEditingController(text: "test");
+  final emailController = TextEditingController(text: "test@gmail.com");
+  final companyController = TextEditingController(text: "Test Company");
+  final phoneController = TextEditingController(text: "1234567890");
   final messageController = TextEditingController();
   final userCountController = TextEditingController();
 
@@ -45,8 +47,7 @@ class AppController extends GetxController {
   final serviceFormKey = GlobalKey<FormState>();
   final pricingFormKey = GlobalKey<FormState>();
   final contactFormKey = GlobalKey<FormState>();
-  final Map<String, TextEditingController> userCountControllers = {};
-
+  final focusNodes = <String, FocusNode>{}.obs;
   // Helper method to get plans and prices (duplicated from PlanPricingStep for price calculation)
   Map<String, dynamic> getProductPlansAndPrices(String productName) {
     productName = productName.toLowerCase().trim();
@@ -300,7 +301,7 @@ class AppController extends GetxController {
 
       final response = await ApiService.post(
         convertedData,
-        'https://events.lemolite360.in/api/leads',
+        'http://192.168.29.171:3001/api/leads',
       );
 
 
@@ -311,22 +312,22 @@ class AppController extends GetxController {
           print('Parsed Response: $responseData');
         }
 
-        // final String? orderId = responseData.data?.payment?.orderId;
-        // final String? paymentSessionId = responseData.paymentSessionId;
-        //
-        // if (orderId != null && paymentSessionId != null) {
-        //   if (kDebugMode) {
-        //     print("Order ID: $orderId");
-        //     print("Payment Session ID: $paymentSessionId");
-        //   }
-        //   await webCheckout(
-        //       orderId: orderId, paymentSessionId: paymentSessionId);
-        // } else {
-        //   if (kDebugMode) {
-        //     print(
-        //         'Error: orderId or paymentSessionId is missing in the response');
-        //   }
-        // }
+        final String? orderId = responseData.data?.payment?.orderId;
+        final String? paymentSessionId = responseData.paymentSessionId;
+
+        if (orderId != null && paymentSessionId != null) {
+          if (kDebugMode) {
+            print("Order ID: $orderId");
+            print("Payment Session ID: $paymentSessionId");
+          }
+          await webCheckout(
+              orderId: orderId, paymentSessionId: paymentSessionId);
+        } else {
+          if (kDebugMode) {
+            print(
+                'Error: orderId or paymentSessionId is missing in the response');
+          }
+        }
         showSuccessDialog(Get.context!);
         EasyLoading.dismiss();
         return true;

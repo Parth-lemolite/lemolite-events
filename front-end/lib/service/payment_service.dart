@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 class PaymentService {
   static final Dio _dio = Dio();
-  static const String baseUrl = 'https://events.lemolite360.in/api/';
+  static const String baseUrl = 'http://192.168.29.171:3001/api';
 
   static Future<Map<String, dynamic>> verifyPayment(String orderId) async {
     try {

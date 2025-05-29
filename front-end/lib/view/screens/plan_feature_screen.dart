@@ -25,7 +25,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
 
   @override
   void initState() {
-    print(widget.plan1Name);
+    print("Names: ${widget.plan1Name}, ${widget.plan2Name}");
     print(widget.plan2Name);
     super.initState();
     _animationController = AnimationController(
@@ -60,12 +60,10 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'Free',
         'originalName': 'Scan2Hire Free',
         'price': 'FREE',
-        'priceKES': '',
         'subtitle': '7 Days Trial',
         'description':
             'Perfect for getting started with basic recruitment needs',
         'setupFee': 'No Fee',
-        'setupFeeKES': '',
         'customization': 'N/A',
         'support': 'FAQ and ticket support (mail)',
         'supportRate': 'N/A',
@@ -115,13 +113,10 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'Premium',
         'originalName': 'Scan2Hire Premium',
         'price': '\$49',
-        'priceKES': 'KES 6,400',
         'subtitle': 'Per User/Month',
         'description': 'Advanced features for growing recruitment needs',
         'setupFee': '\$1,000',
-        'setupFeeKES': 'KES 130,000',
         'customization': '\$15/hr',
-        'customizationKES': 'KES 2,000/hr',
         'support': 'Standard Support',
         'supportRate': '10 hrs/month',
         'contract': '3 Months',
@@ -175,14 +170,11 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'Enterprise',
         'originalName': 'Scan2Hire Enterprise',
         'price': '\$79',
-        'priceKES': 'KES 10,220',
         'subtitle': 'Per User/Month',
         'description':
             'Complete solution for large organizations with advanced features',
         'setupFee': '\$2,500',
-        'setupFeeKES': 'KES 323,448',
         'customization': '\$15/hr',
-        'customizationKES': 'KES 1,940/hr',
         'support': 'Premium Support',
         'supportRate': '15 hrs/month',
         'contract': '3 Months',
@@ -237,13 +229,10 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'Free',
         'originalName': 'NextStaff Free',
         'price': '\$0',
-        'priceKES': '',
         'subtitle': '14 Days Trial',
         'description': 'Perfect for small teams starting with basic HR needs',
         'setupFee': '\$0',
-        'setupFeeKES': '',
         'customization': '\$0',
-        'customizationKES': '',
         'support': 'Basic Support',
         'supportRate': 'N/A',
         'contract': '14 Days',
@@ -279,13 +268,10 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'Growth',
         'originalName': 'NextStaff Growth',
         'price': '\$39',
-        'priceKES': '',
         'subtitle': 'Per User/Month',
         'description': 'Ideal for growing teams with advanced HR features',
         'setupFee': '\$1,000',
-        'setupFeeKES': '',
         'customization': '\$15/hr',
-        'customizationKES': '',
         'support': 'Standard Support',
         'supportRate': '15 hrs/month',
         'contract': '3 Months',
@@ -321,13 +307,10 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'Premium',
         'originalName': 'NextStaff Premium',
         'price': '\$69',
-        'priceKES': '',
         'subtitle': 'Per User/Month',
         'description': 'Advanced HR features for growing businesses',
         'setupFee': '\$1,500',
-        'setupFeeKES': '',
         'customization': '\$15/hr',
-        'customizationKES': '',
         'support': 'Premium Support',
         'supportRate': '15 hrs/month',
         'contract': '3 Months',
@@ -364,13 +347,10 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'Free',
         'originalName': 'CRM Growth',
         'price': '\$19',
-        'priceKES': 'KES 2,455',
         'subtitle': 'Per User/Month',
         'description': 'Ideal for small teams starting with CRM features',
         'setupFee': '\$1,500',
-        'setupFeeKES': 'KES 1,93,770',
         'customization': '\$15/hr',
-        'customizationKES': 'KES 1,938/hr',
         'support': 'Basic Support',
         'supportRate': '10 hrs/month',
         'contract': '3 Months',
@@ -403,13 +383,10 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'Enterprise',
         'originalName': 'CRM Enterprise',
         'price': '\$29',
-        'priceKES': 'KES 3,746',
         'subtitle': 'Per User/Month',
         'description': 'Advanced CRM features for growing businesses',
         'setupFee': '\$2,500',
-        'setupFeeKES': 'KES 3,22,950',
         'customization': '\$15/hr',
-        'customizationKES': 'KES 1,938/hr',
         'support': 'Premium Support',
         'supportRate': '15 hrs/month',
         'contract': '3 Months',
@@ -442,14 +419,11 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'Enterprise',
         'originalName': 'IMS Enterprise',
         'price': '\$19',
-        'priceKES': 'KES 2,455',
         'subtitle': 'Per User/Month',
         'description':
             'Comprehensive IMS for efficient inventory and operations',
         'setupFee': '\$2,500',
-        'setupFeeKES': 'KES 3,22,950',
         'customization': '\$15/hr',
-        'customizationKES': 'KES 1,938/hr',
         'support': 'Premium Support',
         'supportRate': '15 hrs/month',
         'contract': '3 Months',
@@ -496,14 +470,11 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
         'name': 'SaaS Based',
         'originalName': 'Integrated SaaS',
         'price': '\$89',
-        'priceKES': '',
         'subtitle': 'Per User/Month',
         'description':
             'Complete HR & Recruitment solution with SaaS flexibility',
         'setupFee': '\$1,500',
-        'setupFeeKES': 'KES 3,23,013',
         'customization': '\$15/hr',
-        'customizationKES': 'KES 1,938/hr',
         'support': 'Premium Support',
         'supportRate': '15 hrs/month',
         'contract': '3 Months',
@@ -538,15 +509,12 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
       {
         'name': 'One Time Cost',
         'originalName': 'Integrated One Time',
-        'price': '\$63,360',
-        'priceKES': '',
+        'price': '\$52,000',
         'subtitle': 'One-time payment',
         'description':
             'Complete solution with unlimited users and one-time cost',
         'setupFee': '\$2,500',
-        'setupFeeKES': 'KES 3,22,950',
         'customization': '\$15/hr',
-        'customizationKES': 'KES 1,938/hr',
         'support': 'Premium Support',
         'supportRate': '15 hrs/month',
         'contract': 'N/A',
@@ -583,10 +551,10 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
 // Get the product type based on the product name
     String? getProductType(String productName) {
       productName = productName.toLowerCase().trim();
-      if (productName.contains('scan2hire') || productName.contains('s2h')) {
+      if (productName.contains('scan2hire')) {
         return 'Scan2Hire';
       }
-      if (productName.contains('nexstaff')) {
+      if (productName == 'nexstaff') {
         return 'NextStaff';
       }
       if (productName.contains('crm')) {
@@ -598,8 +566,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
       if (productName.contains('dukadin')) {
         return null; // No plans for Dukadin
       }
-      if (productName.contains('integrated') ||
-          productName.contains('s2h + nextstaff')) {
+      if (productName.contains('integrated (s2h + nexstaff)')) {
         return 'Integrated'; // Show Integrated plans for integrated product
       }
       return null;
@@ -1053,37 +1020,32 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                               _buildHighlightItem(
                                 'Setup Fee',
                                 planData['setupFee'],
-                                planData['setupFeeKES'],
-                                true,
                                 Icons.settings,
+                                isPopular,
                               ),
                               _buildHighlightItem(
                                 'Customization',
                                 planData['customization'],
-                                planData['customizationKES'],
-                                true,
                                 Icons.code,
+                                isPopular,
                               ),
                               _buildHighlightItem(
                                 'Support',
                                 planData['support'],
-                                planData['supportRate'],
-                                true,
                                 Icons.support_agent,
+                                isPopular,
                               ),
                               _buildHighlightItem(
                                 'Contract',
                                 planData['contract'],
-                                '',
-                                true,
                                 Icons.description,
+                                isPopular,
                               ),
                               _buildHighlightItem(
                                 'Users',
                                 planData['limits']['Users'],
-                                '',
-                                true,
                                 Icons.group,
+                                isPopular,
                               ),
                             ],
                           ),
@@ -1117,7 +1079,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                             'TL Dashboard',
                           ],
                           planData,
-                          true,
+                          isPopular,
                         ),
 
 // Hiring & Management
@@ -1131,7 +1093,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                             'Expense Management',
                           ],
                           planData,
-                          true,
+                          isPopular,
                         ),
 
 // Employee Services
@@ -1146,7 +1108,7 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                             'Roles and Permission',
                           ],
                           planData,
-                          true,
+                          isPopular,
                         ),
 
                         const SizedBox(height: 32),
@@ -1314,29 +1276,6 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
-                                            if (planData['priceKES']
-                                                .isNotEmpty) ...[
-                                              const SizedBox(width: 8),
-                                              Flexible(
-                                                child: Text(
-                                                  '(${planData['priceKES']})',
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: isPopular
-                                                        ? Colors.white
-                                                            .withOpacity(
-                                                            0.9,
-                                                          )
-                                                        : const Color(
-                                                            0xFF13477A,
-                                                          ),
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ],
                                           ],
                                         ),
                                         Text(
@@ -1427,25 +1366,21 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                               _buildPricingDetail(
                                 'Setup Fee',
                                 planData['setupFee'],
-                                planData['setupFeeKES'],
                                 isPopular,
                               ),
                               _buildPricingDetail(
                                 'Customization',
                                 planData['customization'],
-                                '',
                                 isPopular,
                               ),
                               _buildPricingDetail(
                                 'Support',
                                 planData['support'],
-                                planData['supportRate'],
                                 isPopular,
                               ),
                               _buildPricingDetail(
                                 'Contract Period',
                                 planData['contract'],
-                                '',
                                 isPopular,
                               ),
                             ],
@@ -1868,7 +1803,6 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
   Widget _buildPricingDetail(
     String label,
     String value,
-    String kenyaValue,
     bool isPopular,
   ) {
     return Padding(
@@ -1893,31 +1827,14 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
           const SizedBox(width: 8),
           Flexible(
             flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  value,
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: isPopular ? Colors.white : const Color(0xFF1E293B),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (kenyaValue.isNotEmpty)
-                  Text(
-                    kenyaValue,
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: isPopular
-                          ? Colors.white.withOpacity(0.8)
-                          : const Color(0xFF64748B),
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-              ],
+            child: Text(
+              value,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isPopular ? Colors.white : const Color(0xFF1E293B),
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -1999,9 +1916,8 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
   Widget _buildHighlightItem(
     String label,
     String value,
-    String subValue,
-    bool isPopular,
     IconData icon,
+    bool isPopular,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -2044,16 +1960,6 @@ class _EnhancedPricingScreenState extends State<EnhancedPricingScreen>
                     color: isPopular ? Colors.white : const Color(0xFF1E293B),
                   ),
                 ),
-                if (subValue.isNotEmpty)
-                  Text(
-                    subValue,
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: isPopular
-                          ? Colors.white.withOpacity(0.7)
-                          : const Color(0xFF64748B),
-                    ),
-                  ),
               ],
             ),
           ),

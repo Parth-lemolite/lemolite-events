@@ -10,7 +10,6 @@ import '../steps/product_selection_step.dart';
 import '../steps/plan_pricing_step.dart';
 import '../steps/contact_details_step.dart';
 import '../widgets/step_progress_indicator.dart';
-import '../../services/payment_service.dart';
 
 class ProductInquiryFlow extends StatelessWidget {
   const ProductInquiryFlow({super.key});

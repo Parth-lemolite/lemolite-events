@@ -22,11 +22,29 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   @override
   void initState() {
     super.initState();
-    _checkPaymentStatus();
+    check();
   }
 
+  int retryCount = 0;
+  final int maxRetries = 12;
+
+  void check() async {
+    while (mounted && retryCount < maxRetries) {
+      await _checkPaymentStatus();
+      if (isSuccess) break;
+      retryCount++;
+      await Future.delayed(const Duration(seconds: 5));
+    }
+
+    if (!isSuccess && mounted) {
+      setState(() {
+        message = 'Unable to verify payment after multiple attempts.';
+      });
+    }
+  }
+
+
   Future<void> _checkPaymentStatus() async {
-    // Check if orderId is null
     if (widget.orderId == null || widget.orderId!.isEmpty) {
       setState(() {
         isSuccess = false;
@@ -39,24 +57,28 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
     try {
       final response = await PaymentService.verifyPayment(widget.orderId!);
 
-      // Extract the status from the nested structure
-      final status = response['data']?['payment']?['status']?.toLowerCase() ?? '';
+      final paymentStatus = response["data"]?["payment"]?["status"]?.toLowerCase() ?? '';
 
-      if (status == 'completed') { // Check for "completed" instead of "success"
+
+      print("DEBUG: paymentStatus = $paymentStatus,");
+
+      if (paymentStatus == "completed" ) {
         setState(() {
           isSuccess = true;
           message = 'Payment Successful!';
+          isLoading = false;
         });
       } else {
         setState(() {
           isSuccess = false;
-          message = 'Payment Failed or Cancelled.';
+          message = 'Payment status: $paymentStatus ';
         });
       }
     } catch (e) {
       setState(() {
         isSuccess = false;
-        message = 'Error verifying payment.';
+        message = 'Error verifying payment. Retrying...';
+        print("Error verifying payment: $e");
       });
     } finally {
       setState(() {
@@ -64,6 +86,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
