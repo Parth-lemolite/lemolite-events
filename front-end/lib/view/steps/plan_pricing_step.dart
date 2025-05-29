@@ -188,6 +188,7 @@ class PlanPricingStep extends StatelessWidget {
 
   void _initializePlansAndUserCounts(AppController controller) {
     for (var productName in controller.selectedProducts) {
+      // Only initialize if the product hasn't been initialized yet
       if (controller.productPlans[productName] == null) {
         final plansAndPrices = getProductPlansAndPrices(productName);
         final availablePlans = plansAndPrices['plans'] as List<String>;
@@ -195,11 +196,21 @@ class PlanPricingStep extends StatelessWidget {
           final defaultPlan = availablePlans.first;
           controller.updatePlan(productName, defaultPlan);
 
-          final constraints = getUserCountConstraints(productName, defaultPlan);
-          final defaultUserCount = constraints['min'].toString();
+          // Determine default user count
+          String defaultUserCount;
+          if (productName.toLowerCase().contains('integrated') &&
+              defaultPlan == 'SaaS Based') {
+            defaultUserCount = '10';
+          } else {
+            final constraints =
+            getUserCountConstraints(productName, defaultPlan);
+            defaultUserCount = constraints['min'].toString();
+          }
 
+          // Update controller and create/set TextEditingController
           controller.updateUserCount(productName, defaultUserCount);
-          controller.userCountControllers[productName] ??=
+          // Ensure the controller exists and set its text
+          controller.userCountControllers[productName] =
               TextEditingController(text: defaultUserCount);
         }
       }
@@ -222,10 +233,6 @@ class PlanPricingStep extends StatelessWidget {
 
     final plansAndPrices = getProductPlansAndPrices(productName);
     final availablePlans = plansAndPrices['plans'] as List<String>;
-
-    controller.userCountControllers[productName] ??= TextEditingController(
-      text: controller.productUserCounts[productName]?.toString() ?? '1',
-    );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -336,18 +343,19 @@ class PlanPricingStep extends StatelessWidget {
     final constraints = getUserCountConstraints(productName, newPlan);
     final minUsers = constraints['min']!;
 
-    // Get current user count
-    final currentUserCount = int.tryParse(
-        controller.userCountControllers[productName]?.text ?? '1') ??
-        1;
+    // Get current user count from the observable map
+    final currentUserCount = controller.productUserCounts[productName] ?? 1;
 
     // Validate and correct user count
     final correctedUserCount =
     validateAndCorrectUserCount(productName, newPlan, currentUserCount);
 
     // Update controller and text field
+    // Ensure the controller exists before setting text
+    controller.userCountControllers[productName] ??= TextEditingController();
     controller.userCountControllers[productName]?.text =
         correctedUserCount.toString();
+
     controller.updateUserCount(productName, correctedUserCount.toString());
 
     // Force UI update
