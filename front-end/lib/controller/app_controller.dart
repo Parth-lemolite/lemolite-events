@@ -35,10 +35,10 @@ class AppController extends GetxController {
   Map<String, TextEditingController> userCountControllers = {};
 
 
-  final nameController = TextEditingController(text: "test");
-  final emailController = TextEditingController(text: "test@gmail.com");
-  final companyController = TextEditingController(text: "Test Company");
-  final phoneController = TextEditingController(text: "1234567890");
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final companyController = TextEditingController();
+  final phoneController = TextEditingController();
   final messageController = TextEditingController();
   final userCountController = TextEditingController();
 
@@ -173,13 +173,7 @@ class AppController extends GetxController {
           color: const Color(0xFF2EC4F3),
           pricePerUser: 350.0,
         ),
-        ProductInfo(
-          name: 'Dukadin',
-          description: 'Enterprise resource planning solution',
-          icon: Icons.business_outlined,
-          color: const Color(0xFF2EC4B6),
-          pricePerUser: 600.0,
-        ),
+
       ];
 
   void updateUserRange(String productName, String range) {
@@ -258,6 +252,62 @@ class AppController extends GetxController {
     }
   }
 
+
+  Future<bool> sendUserData2(Map<String, dynamic> data2) async {
+    try {
+      EasyLoading.show(status: "Loading...");
+
+      if (kDebugMode) {
+        print('body====>$data2');
+      }
+
+      final response = await ApiService.post(
+        data2,
+        'https://events.lemolite360.in/api/leads',
+      );
+
+      if (response != null && response.statusCode == 201) {
+        // final responseData =
+        // GetPaymentData.fromJson(response.data as Map<String, dynamic>);
+        // if (kDebugMode) {
+        //   print('Parsed Response: $responseData');
+        // }
+
+        // final String? orderId = responseData.data?.payment?.orderId;
+        // final String? paymentSessionId = responseData.paymentSessionId;
+        //
+        // if (orderId != null && paymentSessionId != null) {
+        //   if (kDebugMode) {
+        //     print("Order ID: $orderId");
+        //     print("Payment Session ID: $paymentSessionId");
+        //   }
+        //   await webCheckout(
+        //       orderId: orderId, paymentSessionId: paymentSessionId);
+        // } else {
+        //   if (kDebugMode) {
+        //     print(
+        //         'Error: orderId or paymentSessionId is missing in the response');
+        //   }
+        // }
+        showSuccessDialog(Get.context!);
+        EasyLoading.dismiss();
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('Error: ${response?.statusCode} - ${response?.data}');
+        }
+        EasyLoading.dismiss();
+        return false;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error sending user data: $e');
+      }
+      EasyLoading.dismiss();
+      return false;
+    }
+  }
+
   Future<bool> sendUserData(Map<String, dynamic> data2) async {
     Map<String, dynamic> convertRxDoubleToDouble(Map<String, dynamic> data) {
       final converted = <String, dynamic>{};
@@ -301,7 +351,7 @@ class AppController extends GetxController {
 
       final response = await ApiService.post(
         convertedData,
-        'http://192.168.29.171:3001/api/leads',
+        'https://events.lemolite360.in/api/leads',
       );
 
 
@@ -312,22 +362,22 @@ class AppController extends GetxController {
           print('Parsed Response: $responseData');
         }
 
-        final String? orderId = responseData.data?.payment?.orderId;
-        final String? paymentSessionId = responseData.paymentSessionId;
-
-        if (orderId != null && paymentSessionId != null) {
-          if (kDebugMode) {
-            print("Order ID: $orderId");
-            print("Payment Session ID: $paymentSessionId");
-          }
-          await webCheckout(
-              orderId: orderId, paymentSessionId: paymentSessionId);
-        } else {
-          if (kDebugMode) {
-            print(
-                'Error: orderId or paymentSessionId is missing in the response');
-          }
-        }
+        // final String? orderId = responseData.data?.payment?.orderId;
+        // final String? paymentSessionId = responseData.paymentSessionId;
+        //
+        // if (orderId != null && paymentSessionId != null) {
+        //   if (kDebugMode) {
+        //     print("Order ID: $orderId");
+        //     print("Payment Session ID: $paymentSessionId");
+        //   }
+        //   await webCheckout(
+        //       orderId: orderId, paymentSessionId: paymentSessionId);
+        // } else {
+        //   if (kDebugMode) {
+        //     print(
+        //         'Error: orderId or paymentSessionId is missing in the response');
+        //   }
+        // }
         showSuccessDialog(Get.context!);
         EasyLoading.dismiss();
         return true;

@@ -232,10 +232,69 @@ class ProductInquiryFlow extends StatelessWidget {
                                   }
                                 } else if (isAgreement) {
                                   // Handle service agreement submission
-                                  await controller.submitForm(
-                                    isAgreement: true,
+                                  // await controller.submitForm(
+                                  //   isAgreement: true,
+                                  //   context: context,
+                                  // );
+
+                                  final bool? confirmed =
+                                      await showDialog<bool>(
                                     context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Confirm Submission'),
+                                        content: const Text(
+                                            'Do you want to confirm and submit the pricing details?'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('Cancel'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(
+                                                  false); // Return false on Cancel
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text('Confirm'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(
+                                                  true); // Return true on Confirm
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   );
+                                  // Only proceed if user confirmed
+                                  if (confirmed == true) {
+                                    final formData = {
+                                      'companyName':
+                                          controller.companyController.text,
+                                      'fullName':
+                                          controller.nameController.text,
+                                      'email': controller.emailController.text,
+                                      'phoneNumber':
+                                          controller.phoneController.text,
+                                      'interestedIn': 'Product',
+                                      'engagementModel':
+                                          controller.getApiEngagementModel(
+                                        controller.engagementModel.value,
+                                      ),
+                                      'selectedProducts': controller
+                                          .selectedProducts
+                                          .map((productName) {
+                                        return {
+                                          'productName': productName,
+
+                                          // 'userCount': userCount, // Include user count
+                                        };
+                                      }).toList(),
+                                    };
+                                    print(formData);
+                                    await controller.sendUserData2(formData);
+                                  } else {
+                                    debugPrint(
+                                        'Submission cancelled by user via custom dialog.');
+                                  }
                                 } else {
                                   // Handle normal flow
                                   controller.goToNextStep(context);

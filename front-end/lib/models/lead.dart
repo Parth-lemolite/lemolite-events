@@ -1,18 +1,26 @@
-enum InterestedIn { PRODUCT, SERVICE }
-
+enum InterestedIn { PRODUCT, SERVICE, ENQUIRY }
 enum Status { PENDING }
-
 enum EngagementModel { SAAS_BASED_SUBSCRIPTION, RESELLER, WHITELABEL }
 
-// Map for InterestedIn enum
 const interestedInValues = {
   InterestedIn.PRODUCT: 'Product',
   InterestedIn.SERVICE: 'Service',
+  InterestedIn.ENQUIRY: 'Enquiry',
 };
 
-// Map for Status enum
 const statusValues = {
   Status.PENDING: 'Pending',
+};
+
+const productNameValues = {
+  'Scan2Hire (S2H)': 'Scan2Hire',
+  'Nexstaff': 'Nexstaff',
+};
+
+const userCountRangeValues = {
+  '1-10': '1-10 Users',
+  '11-50': '11-50 Users',
+  '51-100': '51-100 Users',
 };
 
 class Lead {
@@ -80,6 +88,8 @@ class Datum {
           ? InterestedIn.PRODUCT
           : json['interestedIn'] == 'Service'
           ? InterestedIn.SERVICE
+          : json['interestedIn'] == 'Enquiry'
+          ? InterestedIn.ENQUIRY
           : null,
       engagementModel: json['engagementModel'] == 'SaaS-Based Subscription'
           ? EngagementModel.SAAS_BASED_SUBSCRIPTION
@@ -115,6 +125,8 @@ class Datum {
           ? 'Product'
           : interestedIn == InterestedIn.SERVICE
           ? 'Service'
+          : interestedIn == InterestedIn.ENQUIRY
+          ? 'Enquiry'
           : null,
       'engagementModel': engagementModel == EngagementModel.SAAS_BASED_SUBSCRIPTION
           ? 'SaaS-Based Subscription'
@@ -185,15 +197,3 @@ class Payment {
     };
   }
 }
-const productNameValues = {
-  'Scan2Hire (S2H)': 'Scan2Hire',
-  'Nexstaff': 'Nexstaff',
-  // Add more product names as needed
-};
-
-const userCountRangeValues = {
-  '1-10': '1-10 Users',
-  '11-50': '11-50 Users',
-  '51-100': '51-100 Users',
-  // Add more ranges as needed
-};

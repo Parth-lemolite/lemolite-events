@@ -108,8 +108,8 @@ class PlanPricingStep extends StatelessWidget {
   }
 
   // Validate and correct user count
-  int validateAndCorrectUserCount(String productName, String plan,
-      int enteredCount) {
+  int validateAndCorrectUserCount(
+      String productName, String plan, int enteredCount) {
     final constraints = getUserCountConstraints(productName, plan);
     final minUsers = constraints['min']!;
     final maxUsers = constraints['max']!;
@@ -122,8 +122,8 @@ class PlanPricingStep extends StatelessWidget {
     return enteredCount;
   }
 
-  String getValidationMessage(String productName, String plan,
-      int enteredCount) {
+  String getValidationMessage(
+      String productName, String plan, int enteredCount) {
     final constraints = getUserCountConstraints(productName, plan);
     final minUsers = constraints['min']!;
     final maxUsers = constraints['max']!;
@@ -163,17 +163,11 @@ class PlanPricingStep extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Plan & Pricing',
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .headlineMedium),
+                style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 8),
             Text(
               'Select a plan and specify the number of users for each product.',
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .bodyLarge,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 24),
             ...selectedProducts.map((productName) {
@@ -207,19 +201,18 @@ class PlanPricingStep extends StatelessWidget {
     }
   }
 
-  Widget _buildProductCard(BuildContext context, AppController controller,
-      String productName) {
+  Widget _buildProductCard(
+      BuildContext context, AppController controller, String productName) {
     final product = controller.productsList.firstWhere(
-          (p) => p.name == productName,
-      orElse: () =>
-          ProductInfo(
-            name: productName,
-            description: '',
-            icon: Icons.extension,
-            color: Colors.grey,
-            pricePerUser: 0.0,
-            userCount: '1',
-          ),
+      (p) => p.name == productName,
+      orElse: () => ProductInfo(
+        name: productName,
+        description: '',
+        icon: Icons.extension,
+        color: Colors.grey,
+        pricePerUser: 0.0,
+        userCount: '1',
+      ),
     );
 
     final plansAndPrices = getProductPlansAndPrices(productName);
@@ -237,13 +230,50 @@ class PlanPricingStep extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                product.name,
-                style: GoogleFonts.montserrat(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF0F1C35),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    product.name,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF0F1C35),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      controller.toggleProduct(product.name);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.close,
+                            size: 16,
+                            color: Colors.red.shade700,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Remove',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.red.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               _buildPlanDropdown(controller, productName, availablePlans),
@@ -262,35 +292,40 @@ class PlanPricingStep extends StatelessWidget {
   Widget _buildPlanDropdown(AppController controller, String productName,
       List<String> availablePlans) {
     return Obx(() {
-      final selectedPlan = controller.productPlans[productName] ??
-          availablePlans.first;
+      final selectedPlan =
+          controller.productPlans[productName] ?? availablePlans.first;
 
-      return DropdownButtonFormField<String>(
-        value: selectedPlan,
-        decoration: InputDecoration(
-          labelText: 'Plan',
-          prefixIcon: Icon(
-            Icons.card_membership_outlined,
-            color: controller.selectedProducts.indexOf(productName) % 2 == 0
-                ? const Color(0xFFBFD633)
-                : const Color(0xFF2EC4F3),
-          ),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      return Theme(
+        data: ThemeData(
+          canvasColor: Colors.white
         ),
-        items: availablePlans
-            .map((plan) => DropdownMenuItem(value: plan, child: Text(plan)))
-            .toList(),
-        onChanged: (value) {
-          if (value != null) {
-            _handlePlanChange(controller, productName, value);
-          }
-        },
+        child: DropdownButtonFormField<String>(
+          value: selectedPlan,
+          decoration: InputDecoration(
+            labelText: 'Plan',
+            prefixIcon: Icon(
+              Icons.card_membership_outlined,
+              color: controller.selectedProducts.indexOf(productName) % 2 == 0
+                  ? const Color(0xFFBFD633)
+                  : const Color(0xFF2EC4F3),
+            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          items: availablePlans
+              .map((plan) => DropdownMenuItem(value: plan, child: Text(plan)))
+              .toList(),
+          onChanged: (value) {
+            if (value != null) {
+              _handlePlanChange(controller, productName, value);
+            }
+          },
+        ),
       );
     });
   }
 
-  void _handlePlanChange(AppController controller, String productName,
-      String newPlan) {
+  void _handlePlanChange(
+      AppController controller, String productName, String newPlan) {
     // Update plan first
     controller.updatePlan(productName, newPlan);
 
@@ -300,12 +335,12 @@ class PlanPricingStep extends StatelessWidget {
 
     // Get current user count
     final currentUserCount = int.tryParse(
-        controller.userCountControllers[productName]?.text ?? '1'
-    ) ?? 1;
+            controller.userCountControllers[productName]?.text ?? '1') ??
+        1;
 
     // Validate and correct user count
-    final correctedUserCount = validateAndCorrectUserCount(
-        productName, newPlan, currentUserCount);
+    final correctedUserCount =
+        validateAndCorrectUserCount(productName, newPlan, currentUserCount);
 
     // Update controller and text field
     controller.userCountControllers[productName]?.text =
@@ -316,8 +351,8 @@ class PlanPricingStep extends StatelessWidget {
     controller.update();
   }
 
-  Widget _buildUserCountField(BuildContext context, AppController controller,
-      String productName) {
+  Widget _buildUserCountField(
+      BuildContext context, AppController controller, String productName) {
     return Obx(() {
       final selectedPlan = controller.productPlans[productName] ?? '';
 
@@ -346,8 +381,8 @@ class PlanPricingStep extends StatelessWidget {
         focusNode: controller.focusNodes[productName],
         decoration: InputDecoration(
           labelText: 'Number of Users',
-          hintText: _getUserCountHint(
-              productName, selectedPlan, minUsers, maxUsers),
+          hintText:
+              _getUserCountHint(productName, selectedPlan, minUsers, maxUsers),
           prefixIcon: Icon(
             Icons.people_outline,
             color: controller.selectedProducts.indexOf(productName) % 2 == 0
@@ -367,8 +402,8 @@ class PlanPricingStep extends StatelessWidget {
     });
   }
 
-  String _getUserCountHint(String productName, String selectedPlan,
-      int minUsers, int maxUsers) {
+  String _getUserCountHint(
+      String productName, String selectedPlan, int minUsers, int maxUsers) {
     if (maxUsers == 99999) {
       return '$minUsers-99999 users';
     } else {
@@ -376,17 +411,17 @@ class PlanPricingStep extends StatelessWidget {
     }
   }
 
-  void _handleUserCountFocusLost(BuildContext context, AppController controller,
-      String productName) {
+  void _handleUserCountFocusLost(
+      BuildContext context, AppController controller, String productName) {
     final selectedPlan = controller.productPlans[productName] ?? '';
-    final enteredText = controller.userCountControllers[productName]?.text ??
-        '1';
+    final enteredText =
+        controller.userCountControllers[productName]?.text ?? '1';
     final enteredCount = int.tryParse(enteredText) ?? 1;
 
-    final correctedCount = validateAndCorrectUserCount(
-        productName, selectedPlan, enteredCount);
-    final validationMessage = getValidationMessage(
-        productName, selectedPlan, enteredCount);
+    final correctedCount =
+        validateAndCorrectUserCount(productName, selectedPlan, enteredCount);
+    final validationMessage =
+        getValidationMessage(productName, selectedPlan, enteredCount);
 
     if (correctedCount != enteredCount) {
       // Update the text field and controller
@@ -411,8 +446,8 @@ class PlanPricingStep extends StatelessWidget {
     }
   }
 
-  String? _validateUserCount(String productName, String selectedPlan,
-      String? value) {
+  String? _validateUserCount(
+      String productName, String selectedPlan, String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter number of users';
     }
@@ -442,13 +477,14 @@ class PlanPricingStep extends StatelessWidget {
     return Obx(() {
       final selectedPlan = controller.productPlans[productName] ?? '';
       final userCount = selectedPlan == 'Free' ||
-          selectedPlan.contains('One Time')
+              selectedPlan.contains('One Time')
           ? 1
           : int.tryParse(
-          controller.userCountControllers[productName]?.text ?? '1') ?? 1;
+                  controller.userCountControllers[productName]?.text ?? '1') ??
+              1;
 
-      final pricePerUser = (plansAndPrices['prices']?[selectedPlan] ??
-          0.0) as double;
+      final pricePerUser =
+          (plansAndPrices['prices']?[selectedPlan] ?? 0.0) as double;
       final price = selectedPlan.contains('One Time')
           ? pricePerUser
           : pricePerUser * userCount;
@@ -467,8 +503,8 @@ class PlanPricingStep extends StatelessWidget {
             selectedPlan.contains('One Time')
                 ? 'Total: \$${price.toStringAsFixed(2)} (One-time payment)'
                 : selectedPlan == 'Free'
-                ? 'Free'
-                : 'Total: \$${price.toStringAsFixed(2)} /Month',
+                    ? 'Free'
+                    : 'Total: \$${price.toStringAsFixed(2)} /Month',
             style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -487,8 +523,7 @@ class PlanPricingStep extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: GestureDetector(
         onTap: () {
-          Get.to(() =>
-              EnhancedPricingScreen(
+          Get.to(() => EnhancedPricingScreen(
                 plan1Name: productName,
                 plan2Name: productName,
               ));
@@ -506,8 +541,8 @@ class PlanPricingStep extends StatelessWidget {
     );
   }
 
-  Widget _buildGrandTotalCard(AppController controller,
-      List<String> selectedProducts) {
+  Widget _buildGrandTotalCard(
+      AppController controller, List<String> selectedProducts) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -531,24 +566,26 @@ class PlanPricingStep extends StatelessWidget {
                   double oneTimeTotal = 0;
 
                   for (var productName in selectedProducts) {
-                    final plansAndPrices = getProductPlansAndPrices(
-                        productName);
-                    final selectedPlan = controller.productPlans[productName] ??
-                        '';
-                    final pricePerUser = (plansAndPrices['prices']?[selectedPlan] ??
-                        0.0) as double;
+                    final plansAndPrices =
+                        getProductPlansAndPrices(productName);
+                    final selectedPlan =
+                        controller.productPlans[productName] ?? '';
+                    final pricePerUser =
+                        (plansAndPrices['prices']?[selectedPlan] ?? 0.0)
+                            as double;
 
                     final userCount = selectedPlan == 'Free' ||
-                        selectedPlan.contains('One Time')
+                            selectedPlan.contains('One Time')
                         ? 1
-                        : int.tryParse(
-                        controller.userCountControllers[productName]?.text ??
-                            '1') ?? 1;
+                        : int.tryParse(controller
+                                    .userCountControllers[productName]?.text ??
+                                '1') ??
+                            1;
 
-                    final totalPriceForProduct = selectedPlan.contains(
-                        'One Time')
-                        ? pricePerUser
-                        : pricePerUser * userCount;
+                    final totalPriceForProduct =
+                        selectedPlan.contains('One Time')
+                            ? pricePerUser
+                            : pricePerUser * userCount;
 
                     // Check if plan should be excluded from 3-month calculation
                     if (selectedPlan == 'Free' ||

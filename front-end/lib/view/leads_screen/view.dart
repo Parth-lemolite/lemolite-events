@@ -361,8 +361,7 @@ class LeadsScreenPage extends StatelessWidget {
                               Obx(() => _buildLeadsCardList(
                                 state.leads.where((lead) {
                                   final categoryMatch =
-                                      state.selectedCategory.value ==
-                                          null ||
+                                      state.selectedCategory.value == null ||
                                           lead.interestedIn ==
                                               state.selectedCategory.value;
                                   final query =
@@ -524,23 +523,6 @@ class LeadsScreenPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // const SizedBox(width: 8),
-                  // Container(
-                  //   padding:
-                  //   const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.grey.shade100,
-                  //     borderRadius: BorderRadius.circular(12),
-                  //   ),
-                  //   child: Text(
-                  //     statusValues[lead.status] ?? 'Active',
-                  //     style: GoogleFonts.inter(
-                  //       fontSize: 12,
-                  //       color: const Color(0xFF404B69),
-                  //       fontWeight: FontWeight.w500,
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             ],
@@ -631,7 +613,7 @@ class LeadsScreenPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '\$${_formatAmount(lead.totalAmount?.toDouble() ?? 0)}', // Changed ₹ to $
+                      '\$${_formatAmount(lead.totalAmount?.toDouble() ?? 0)}',
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -643,6 +625,47 @@ class LeadsScreenPage extends StatelessWidget {
               ),
             ],
           ),
+
+          // Engagement Model Section
+          if (lead.engagementModel != null) ...[
+            const SizedBox(height: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.business_center_outlined,
+                      size: 16,
+                      color: Color(0xFF2EC4F3),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Engagement Model',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF404B69),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  lead.engagementModel == EngagementModel.SAAS_BASED_SUBSCRIPTION
+                      ? 'SaaS-Based Subscription'
+                      : lead.engagementModel == EngagementModel.RESELLER
+                      ? 'Reseller'
+                      : 'Whitelabel',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF0F1C35),
+                  ),
+                ),
+              ],
+            ),
+          ],
 
           // Products Section
           if (lead.interestedIn == InterestedIn.PRODUCT) ...[
@@ -703,7 +726,7 @@ class LeadsScreenPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '\$${_formatAmount(product.totalPrice?.toDouble() ?? 0)}', // Changed ₹ to $
+                            '\$${_formatAmount(product.totalPrice?.toDouble() ?? 0)}',
                             style: GoogleFonts.inter(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -832,7 +855,7 @@ class LeadsScreenPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '\$${_formatAmount(totalAmount)}', // Changed ₹ to $
+                        '\$${_formatAmount(totalAmount)}',
                         style: GoogleFonts.inter(
                           color: const Color(0xFF0F1C35),
                           fontSize: 20,
@@ -1048,11 +1071,11 @@ class LeadsScreenPage extends StatelessWidget {
 
   String _formatAmount(double amount) {
     if (amount >= 1000000) {
-      return '${(amount / 1000000).toStringAsFixed(1)}M'; // Changed Cr to M for millions
+      return '${(amount / 1000000).toStringAsFixed(1)}M';
     } else if (amount >= 1000) {
-      return '${(amount / 1000).toStringAsFixed(1)}K'; // Thousands
+      return '${(amount / 1000).toStringAsFixed(1)}K';
     } else {
-      return amount.toStringAsFixed(0); // No suffix for amounts less than 1000
+      return amount.toStringAsFixed(0);
     }
   }
 }

@@ -53,18 +53,17 @@ class ProductSelectionStep extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color:
-                      isSelected ? product.color : const Color(0xFFEAEEF5),
+                          isSelected ? product.color : const Color(0xFFEAEEF5),
                       width: isSelected ? 2 : 1,
                     ),
-                    boxShadow:
-                    isSelected
+                    boxShadow: isSelected
                         ? [
-                      BoxShadow(
-                        color: product.color.withValues(alpha: 0.1),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
-                      ),
-                    ]
+                            BoxShadow(
+                              color: product.color.withValues(alpha: 0.1),
+                              blurRadius: 16,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
                         : [],
                   ),
                   child: Stack(
@@ -114,18 +113,43 @@ class ProductSelectionStep extends StatelessWidget {
                         Positioned(
                           top: 8,
                           right: 8,
-                          child: Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              color: product.color,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.check,
-                              size: 16,
-                              color: Colors.white,
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.lightImpact();
+                                  controller.toggleProduct(product.name);
+                                },
+                                child: Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.close,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                width: 24,
+                                height: 24,
+                                decoration: BoxDecoration(
+                                  color: product.color,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.check,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                     ],
