@@ -613,7 +613,7 @@ class LeadsScreenPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '\$${_formatAmount(lead.totalAmount?.toDouble() ?? 0)}',
+                      '\$${lead.totalAmount?.toDouble() ?? 0.0}',
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -726,7 +726,7 @@ class LeadsScreenPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '\$${_formatAmount(product.totalPrice?.toDouble() ?? 0)}',
+                            '\$${product.totalPrice?.toDouble() ?? 0}',
                             style: GoogleFonts.inter(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -855,7 +855,7 @@ class LeadsScreenPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '\$${_formatAmount(totalAmount)}',
+                        '\$$totalAmount',
                         style: GoogleFonts.inter(
                           color: const Color(0xFF0F1C35),
                           fontSize: 20,
@@ -1069,13 +1069,13 @@ class LeadsScreenPage extends StatelessWidget {
     );
   }
 
-  String _formatAmount(double amount) {
-    if (amount >= 1000000) {
-      return '${(amount / 1000000).toStringAsFixed(1)}M';
-    } else if (amount >= 1000) {
-      return '${(amount / 1000).toStringAsFixed(1)}K';
-    } else {
-      return amount.toStringAsFixed(0);
-    }
-  }
+  // String _formatAmount(double amount) {
+  //   if (amount >= 1000000) {
+  //     return '${(amount / 1000000).toStringAsFixed(1)}M';
+  //   } else if (amount >= 1000) {
+  //     return '${(amount / 1000).toStringAsFixed(1)}K';
+  //   } else {
+  //     return amount.toStringAsFixed(0);
+  //   }
+  // }
 }
