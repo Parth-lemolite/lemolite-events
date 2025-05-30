@@ -94083,7 +94083,7 @@ A.Ba.prototype={
 lv(a){var s
 a=B.c.cO(a.toLowerCase())
 if(B.c.p(a,"integrated")||B.c.p(a,"s2h + nexstaff")){s=t.N
-return A.U(["plans",A.b(["SaaS Based","One Time Cost"],t.s),"prices",A.U(["SaaS Based",89,"One Time Cost",56500],s,t.i)],s,t.z)}if(B.c.p(a,"scan2hire")||B.c.p(a,"s2h")){s=t.N
+return A.U(["plans",A.b(["SaaS Based","One Time Cost"],t.s),"prices",A.U(["SaaS Based",89,"One Time Cost",52e3],s,t.i)],s,t.z)}if(B.c.p(a,"scan2hire")||B.c.p(a,"s2h")){s=t.N
 return A.U(["plans",A.b(["Free","Premium","Enterprise"],t.s),"prices",A.U(["Free",0,"Premium",49,"Enterprise",79],s,t.i)],s,t.z)}if(B.c.p(a,"nexstaff")){s=t.N
 return A.U(["plans",A.b(["Free","Enterprise"],t.s),"prices",A.U(["Free",0,"Enterprise",69],s,t.i)],s,t.z)}if(a==="crm"){s=t.N
 return A.U(["plans",A.b(["Growth","Enterprise"],t.s),"prices",A.U(["Growth",19,"Enterprise",29],s,t.i)],s,t.z)}if(a==="ims"){s=t.N
@@ -95552,7 +95552,7 @@ default:return B.YI}},
 lv(a){var s
 a=B.c.cO(a.toLowerCase())
 if(B.c.p(a,"integrated")||B.c.p(a,"s2h + nexstaff")){s=t.N
-return A.U(["plans",A.b(["SaaS Based","One Time Cost"],t.s),"prices",A.U(["SaaS Based",89,"One Time Cost",56500],s,t.i)],s,t.z)}if(B.c.p(a,"scan2hire")||B.c.p(a,"s2h")){s=t.N
+return A.U(["plans",A.b(["SaaS Based","One Time Cost"],t.s),"prices",A.U(["SaaS Based",89,"One Time Cost",52e3],s,t.i)],s,t.z)}if(B.c.p(a,"scan2hire")||B.c.p(a,"s2h")){s=t.N
 return A.U(["plans",A.b(["Free","Premium","Enterprise"],t.s),"prices",A.U(["Free",0,"Premium",49,"Enterprise",79],s,t.i)],s,t.z)}if(B.c.p(a,"nexstaff")){s=t.N
 return A.U(["plans",A.b(["Free","Growth","Premium"],t.s),"prices",A.U(["Free",0,"Growth",39,"Premium",69],s,t.i)],s,t.z)}if(a==="crm"){s=t.N
 return A.U(["plans",A.b(["Growth","Enterprise"],t.s),"prices",A.U(["Growth",19,"Enterprise",29],s,t.i)],s,t.z)}if(a==="ims"){s=t.N
