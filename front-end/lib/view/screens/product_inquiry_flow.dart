@@ -326,7 +326,7 @@ class ProductInquiryFlow extends StatelessWidget {
         'plans': ['SaaS Based', 'One Time Cost'],
         'prices': {
           'SaaS Based': 89.0,
-          'One Time Cost': 56500.0,
+          'One Time Cost': 52000.0,
         },
       };
     }
